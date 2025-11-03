@@ -1,0 +1,20 @@
+:root {
+    --verde: #b9d8b8;
+    --amarillo: #f1cd71;
+    --blanco: #f7f6ed;
+    --negro: #47413e;
+    --naranja: #fa6d48;
+    --celeste: #a6cde4;
+    --morado: #a096c8;
+
+    --padding: 14px;
+    --border: 11px;
+    --h4: 18px;
+    
+}
+@font-face {
+  font-family: 'Nunito-Bold';
+  src: url('../fonts/Nunito/Nunito-Bold.ttf') format('truetype');
+  font-weight: 700;
+  font-style: normal;
+}

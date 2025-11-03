@@ -1,0 +1,128 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: sans-serif;
+  background-color: var(--blanco);
+}
+
+.container {
+  display: flex;
+  height: 100vh;
+}
+
+/* Navbar lateral */
+.sidebar {
+  width: 80px;
+  background-color: var(--verde);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 30px;
+  border-right: var(--border-estandar);
+  border-top-right-radius: 40px;
+  border-bottom-right-radius: 40px;
+  margin-right: 20px;
+}
+
+.icon-bar {
+  position: relative;
+  width: 60px;
+  height: 60px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+.icon-bar img {
+    width: 32px; /* Tamaño aumentado */
+    height: 32px;
+    z-index: 1; /* Importante para que esté sobre el hover-effect */
+    transition: transform 0.2s ease;
+}
+
+.hover-effect {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.1);
+    border-radius: 12px;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.icon-bar:hover .hover-effect {
+    opacity: 1;
+}
+
+.main-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  padding-left: 10px;
+  margin: 10px;
+  gap: 10px;
+}
+
+.top-section {
+  height: 60px;
+  display: flex;
+  align-items: center;
+  padding: 0px 0px;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.search-bar {
+  width: max-content;
+  display: flex;
+  flex: 1;
+  align-items: center;
+  padding: var(--padding);
+  border-radius: var(--border);
+  background: var(--amarillo);
+  border: var(--border-estandar);
+}
+.search-input {
+  font-size: var(--h4);
+  font-family: var(--nunito);
+  color: var(--negro);
+  outline: none;
+  border: none;
+  background: transparent;
+}
+.order-by,
+.user-data{
+  width: max-content;
+  display: flex;
+  align-items: center;
+  padding: var(--padding);
+  border-radius: var(--border);
+  background: transparent;
+  cursor: pointer;
+  border: var(--border-estandar);
+}
+.order-by:hover,
+.user-data:hover{
+  background-color: var(--amarillo);
+  transition: opacity 0.3s ease;
+}
+.order img {
+  transform: rotate(90deg);
+}
+p{
+  font-family: var(--nunito);
+  color: var(--negro);
+}
+.bottom-section {
+  flex: 1;
+  background-color: var(--blanco);
+  overflow-y: auto;
+  border: var(--border-estandar);
+}
