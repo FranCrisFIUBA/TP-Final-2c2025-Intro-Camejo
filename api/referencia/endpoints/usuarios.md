@@ -117,15 +117,13 @@ Remueve un usuario
 - id: id del usuario
 
 ### Request
-``` json
-/* request vacia */
-```
+Request vacia
 
 ### Response
 
 #### 200 - Ok
 El usuario se ha removido con exito
-``` json
+``` text
 Ok
 ```
 
@@ -222,9 +220,7 @@ Obtiene un usuario
 - id: id del usuario
 
 ### Request
-``` json
-/* request vacia */
-```
+Request vacia
 
 ### Response
 
