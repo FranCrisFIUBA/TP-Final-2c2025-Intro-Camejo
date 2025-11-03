@@ -5,31 +5,28 @@
 
 ## POST /usuario/
 Crea un nuevo usuario.
-Vease [Base64](https://developer.mozilla.org/es/docs/Glossary/Base64)
+
 ### Request
 ``` json
 {
-    /*
-    nombre del usuario
-    debe contener entre 6 a 24 caracteres, los cuales pueden ser,
-    alfanumericos (mayusculas y minusculas), '.', '-' y '_'
-    */
     "nombre": "Pablito1234",
-    
-    /*
-    debe contener entre 6 a 24 caracteres, entre los cuales debe haber, 
-    al menos una mayuscula y al menos uno de los siguientes simbolos '.', '-' o '_',
-    el resto pueden ser caracteres alfanumericos
-    */
     "contrasenia": "123.PassWord",
-    
-    /*
-    opcional
-    datos de la imagen del icono formateados en base64
-    */
     "icono": "j01j3dolsajdsa..." 
 }
 ```
+
+##### Campos
+- ***nombre***:
+nombre del usuario, 
+debe contener entre 6 a 24 caracteres, los cuales pueden ser, 
+alfanumericos (mayusculas y minusculas), '.', '-' y '_'
+- ***contrasenia***:
+debe contener entre 6 a 24 caracteres, entre los cuales debe haber, 
+al menos una mayuscula y al menos uno de los siguientes simbolos '.', '-' o '_',
+el resto pueden ser caracteres alfanumericos
+- ***icono***:
+opcional, 
+datos de la imagen del icono formateados en [Base64](https://developer.mozilla.org/es/docs/Glossary/Base64)
 
 ### Response
 
@@ -37,17 +34,20 @@ Vease [Base64](https://developer.mozilla.org/es/docs/Glossary/Base64)
 El usuario fue creado satisfactoriamente
 ``` json
 {
-    /*
-    id del nuevo usuario creado
-    */
     "id": 123
 }
 ```
 
+##### Campos
+* ***id***:
+id del nuevo usuario creado
+
+---
+
 #### 400 - Bad Request
 Hubo un problema en la request
 
-###### Ejemplo:
+##### Ejemplo:
 ``` text
 Largo del nombre de usuario invalido, debe contener entre 6 y 24 caracteres
 ```
@@ -60,35 +60,33 @@ Error interno del servidor
 
 ---
 
-## PUT /usuario/:id
+## PATCH /usuario/:id
 Edita un usuario
 
-### Parámetros
+##### Parámetros de la query
 - id: id del usuario
 
 ### Request
 Los datos de la request deben cumplir con los mismos criterios que en [POST /usuario/](#post-usuario)
 ``` json
 {
-    /*
-    opcional
-    nuevo nombre de usuario
-    */
-    "nombre": "",
-    
-    /*
-    opcional
-    nueva contraseña del usuario
-    */
-    "contrasenia": "",
-    
-    /*
-    opcional
-    nuevo icono de usuario
-    */
+    "nombre": "Jose.321",
+    "contrasenia": "_contra123",
     "icon": "j01j3dolsajdsa..."
 }
 ```
+
+##### Campos
+
+- ***nombre***:
+opcional,
+nuevo nombre de usuario
+- ***contrasenia***:
+opcional,
+nueva contraseña del usuario
+- ***icon***:
+opcional,
+nuevo icono de usuario
 
 ### Response
 
@@ -115,7 +113,7 @@ Error interno del servidor
 ## DELETE /usuario/:id
 Remueve un usuario
 
-### Parámetros
+##### Parámetros de la query
 - id: id del usuario
 
 ### Request
@@ -146,37 +144,32 @@ pensado para ser usado en una lista de usuarios separada por paginas
 ### Request
 ``` json
 {
-    /*
-    requerido
-    cantidad de usuarios maximos en las que agrupar las paginas
-    */
     "cantidad_por_pagina": 20,
-    
-    /*
-    requerido
-    numero de pagina que obtener
-    */
     "numero_pagina": 3,
-    
-    /*
-    opcional
-    criterio de orden
-    valor por defecto: "nombre"
-    opciones:
-        "publicaciones recientes"
-        "fecha_registro"
-        "nombre"
-    */
-    "ordenar_por": "fecha_registro", // opcional
-    
-    /*
-    opcional
-    indica si se requiere invertir o no el orden
-    valor por defecto: false
-    */
+    "ordenar_por": "fecha_registro",
     "orden_invertido": true,
 }
 ```
+
+##### Campos
+- ***cantidad_por_pagina***:
+requerido,
+cantidad de usuarios maximos en las que agrupar las paginas
+- ***numero_pagina***:
+requerido,
+numero de pagina que obtener
+- ***ordenar_por***:
+opcional,
+criterio de orden, 
+  - ***valor por defecto***: "nombre".
+  - ***opciones***:
+  "publicaciones recientes",
+  "fecha_registro",
+  "nombre"
+- ***orden_invertido***:
+opcional,
+indica si se requiere invertir o no el orden,
+valor por defecto: false.
 
 ### Response
 
@@ -184,25 +177,22 @@ pensado para ser usado en una lista de usuarios separada por paginas
 Se ha encontrado y enviado con exito el usuario
 ``` json
 {
-    /*
-    lista de usuarios en la pagina
-    largo menor o igual a "cantidad_por_pagina"
-    formato de cada usuario igual al de GET /usuario/:id
-    */
     "usuarios": [],
-    
-    /*
-    cantidad de paginas totales, con los valores de numero_pagina y cantidad_por_pagina actuales
-    */
     "cantidad_de_paginas": 12,
-    
-    /* igual que en la request */
     "numero_pagina": 1,
-    
-    /* igual que en la request */
     "cantidad_por_pagina": 20
 }
 ```
+
+##### Campos
+- ***usuarios***:
+lista de usuarios en la pagina,
+largo menor o igual a "cantidad_por_pagina"
+formato de cada usuario igual al de GET /usuario/:id
+- ***cantidad_de_paginas***:
+cantidad de paginas totales (con numero_pagina y cantidad_por_pagina actuales)
+- ***numero_pagina***: igual que en la request
+- ***cantidad_por_pagina***: igual que en la request
 
 #### 400 - Bad Request
 Hubo un problema en la request
@@ -228,7 +218,7 @@ Error interno del servidor
 ## GET /usuario/:id
 Obtiene un usuario
 
-### Parámetros
+##### Parámetros de la query
 - id: id del usuario
 
 ### Request
@@ -241,22 +231,20 @@ Obtiene un usuario
 #### 200 - Ok
 ``` json
 {
-    /* nombre del usuario */
     "nombre": "Pablito1234",
-    
-    /* contraseña del usuario */
     "contrasenia": "123.PassWord"
-    
-    /* url de la imagen del icono de usuario */
     "icono": "url",
-    
-    /* timestamp de la fecha de nacimiento del usuario*/
     "fecha_nacimiento": 3107832103720,
-    
-    /* timestamp de la fecha de registro del usuario*/
     "fecha_registro": 131232141412321
 }
 ```
+
+##### Campos
+* nombre: nombre del usuario
+* contrasenia: contraseña del usuario
+* icono: url de la imagen del icono de usuario
+* fecha_nacimiento: timestamp de la fecha de nacimiento del usuario
+* fecha_registro: timestamp de la fecha de registro del usuario
 
 #### 404 - Not Found
 No se pudo encontrar al usuario
