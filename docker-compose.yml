@@ -28,3 +28,8 @@ services:
       ADMINER_DESIGN: dark
     volumes:
       - ./adminer/designs/adminer-dark.css:/var/www/html/designs/dark/adminer.css:ro
+
+  api:
+    build: ./api/
+    ports:
+      - "3000:3000"
