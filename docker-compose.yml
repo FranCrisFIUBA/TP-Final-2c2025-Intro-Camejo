@@ -1,0 +1,24 @@
+
+services:
+  # los servicios db y admirer se implementaron tomando
+  # como referencia al ejemplo compose.yaml de https://hub.docker.com/_/postgres
+
+  database:
+    image: postgres:18-alpine3.22
+    restart: always
+    environment:
+      # usuario: postgres
+      POSTGRES_PASSWORD: contra1234
+      POSTGRES_DB: imagoDB
+    volumes:
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql:ro
+      - type: tmpfs
+        target: /dev/shm
+        tmpfs:
+          size: 134217728 # 128MB
+
+  adminer:
+    image: adminer
+    restart: always
+    ports:
+      - "8080:8080"
