@@ -1,13 +1,17 @@
 
 import express from 'express'
 
-const APP = express()
+import usuarioRouter from "./routes/usuarioRouter.js";
+import usuariosRouter from "./routes/usuariosRouter.js";
+
 const PORT = 3000
+const app = express()
 
-APP.get('/', (req, res) => {
-    res.send('Hello World!')
-})
+app.use(express.json()) // parsea a json los cuerpos de las request
 
-APP.listen(PORT, () => {
+app.use("/usuario", usuarioRouter)
+app.use("/usuarios", usuariosRouter)
+
+app.listen(PORT, () => {
     console.log(`Example app listening on port ${PORT}`)
 })
