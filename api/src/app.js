@@ -16,5 +16,5 @@ app.use("/usuario", usuarioRouter)
 app.use("/usuarios", usuariosRouter)
 
 app.listen(PORT, () => {
-    console.log(`Example app listening on port ${PORT}`)
+    console.log(`Api escuchando en el puerto ${PORT}`)
 })

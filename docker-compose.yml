@@ -36,5 +36,8 @@ services:
     depends_on:
       - db
     build: ./api/
+    restart: always
     ports:
       - "3000:3000"
+    environment:
+      DATABASE_URL: "postgres://admin:1234@localhost:5432/imagoDB"
