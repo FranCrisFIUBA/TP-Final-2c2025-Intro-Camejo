@@ -1,0 +1,44 @@
+* {
+    box-sizing: border-box;
+}
+
+
+form {
+    width: 320px;
+    margin: 50px,auto;
+    border: 1px solid;
+    border-radius: 30px;
+    text-align: center;
+}
+
+
+
+input {
+    width: 80%;
+    margin-bottom: 8px;
+    margin-left: 8px;
+    margin-right: 8px ;
+}
+
+input[type="date"] {
+    width: 35%;
+    margin-right: 150px;
+}
+
+.campo-registrarse {
+    width: auto;
+    margin-bottom: 4px;
+}
+
+p {
+
+    margin-top: 5px;
+    
+}
+
+body {
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
