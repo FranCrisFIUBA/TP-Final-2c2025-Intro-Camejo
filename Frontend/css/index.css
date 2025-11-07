@@ -12,21 +12,24 @@ body {
 .container {
   display: flex;
   height: 100vh;
+  overflow: hidden;
+  gap: var(--gap-max); /*espacio entre el sidebar y el main*/
+  margin-top: 5px;
+  margin-left: 5px;
+  margin-right: 5px;
 }
 
-/* Navbar lateral */
 .sidebar {
-  width: 80px;
+  width: 67px;
   background-color: var(--verde);
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 30px;
-  border-right: var(--border-estandar);
-  border-top-right-radius: 40px;
-  border-bottom-right-radius: 40px;
-  margin-right: 20px;
+  gap: 30px; /*espacio entre botones*/
+  border: var(--border-estandar);
+  border-radius: var(--border-radius);
+  overflow: hidden;
 }
 
 .icon-bar {
@@ -39,11 +42,17 @@ body {
   border-radius: 12px;
   cursor: pointer;
   transition: all 0.3s ease;
+  
+  /*le quito todos los estilos al boton*/
+  background: none;
+  border: none;
+  outline: none;
+  padding: 0;
 }
 .icon-bar img {
-    width: 32px; /* Tamaño aumentado */
-    height: 32px;
-    z-index: 1; /* Importante para que esté sobre el hover-effect */
+    width: 35px; 
+    height: 35px;
+    z-index: 1; 
     transition: transform 0.2s ease;
 }
 
@@ -65,18 +74,19 @@ body {
   flex: 1;
   display: flex;
   flex-direction: column;
-  padding-left: 10px;
-  margin: 10px;
-  gap: 10px;
+  gap: var(--gap-min); /*espacio entre el search-bar y el contenido*/
 }
 
 .top-section {
-  height: 60px;
+  position: sticky;
+  top: 0;
+  /*height: 40px; elimine esto para que no me ponga un margen vertical que no quiero*/ 
   display: flex;
   align-items: center;
-  padding: 0px 0px;
   justify-content: space-between;
-  gap: 10px;
+  gap: var(--gap-max);
+  z-index: 10;
+  flex-shrink: 0;
 }
 
 .search-bar {
@@ -85,7 +95,7 @@ body {
   flex: 1;
   align-items: center;
   padding: var(--padding);
-  border-radius: var(--border);
+  border-radius: var(--border-radius);
   background: var(--amarillo);
   border: var(--border-estandar);
 }
@@ -97,32 +107,35 @@ body {
   border: none;
   background: transparent;
 }
-.order-by,
-.user-data{
+.order-by{
   width: max-content;
   display: flex;
   align-items: center;
   padding: var(--padding);
-  border-radius: var(--border);
+  border-radius: var(--border-radius);
   background: transparent;
   cursor: pointer;
   border: var(--border-estandar);
 }
-.order-by:hover,
-.user-data:hover{
+.order-by:hover{
   background-color: var(--amarillo);
   transition: opacity 0.3s ease;
 }
 .order img {
   transform: rotate(90deg);
 }
-p{
+.order-by p {
   font-family: var(--nunito);
+  font-size: 16px; 
   color: var(--negro);
+  margin-right: 5px;
 }
 .bottom-section {
   flex: 1;
   background-color: var(--blanco);
   overflow-y: auto;
   border: var(--border-estandar);
+  padding: var(--padding-estandar);
 }
+
+

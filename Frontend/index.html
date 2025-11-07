@@ -10,29 +10,51 @@
 <body>
     <div class="container">
         <nav class="sidebar">
-            <div class="icon home"><img src="./img/home_app_logo_24dp_47413E_FILL0_wght400_GRAD0_opsz24.svg"></div>
-            <div class="icon search"><img src="./img/explore_24dp_47413E_FILL0_wght400_GRAD0_opsz24.svg"></div>
-            <div class="icon add"><img src="./img/add_box_24dp_47413E_FILL0_wght400_GRAD0_opsz24.svg"></div>
+            <div class="sidebar-top">
+                <div class="logo">
+                    <img src="./img/logo.svg" alt="Logo de la página">
+                </div>
+            </div>
+            <div class="sidebar-middle">
+                <button class="icon-bar home" aria-label="Inicio">
+                    <div class="hover-effect"></div>
+                    <img src="./img/home_app_logo_24dp_47413E_FILL0_wght400_GRAD0_opsz24.svg" alt="Inicio">
+                </button>
+                <button class="icon-bar search" aria-label="Buscar">
+                    <div class="hover-effect"></div>
+                    <img src="./img/explore_24dp_47413E_FILL0_wght400_GRAD0_opsz24.svg" alt="Buscar">
+                </button>
+                <button class="icon-bar add" aria-label="Agregar">
+                    <div class="hover-effect"></div>
+                    <img src="./img/add_box_24dp_47413E_FILL0_wght400_GRAD0_opsz24.svg" alt="Agregar">
+                </button>
+            </div>
+            <div class="sidebar-bottom">
+                <button class="user-avatar" aria-label="Perfil de usuario">
+                    <img src="./img/[940] avatar 𓂃꙳⋆.jpeg" alt="Foto de usuario">
+                </button>
+            </div>
         </nav>
         <main class="main-content">
-            <div class="top-section">
-                <div class="search-bar">
-                    <span class="search-icon"><img src="./img/search_24dp_47413E_FILL0_wght400_GRAD0_opsz24.svg"></span>
-                    <input class="search-input" type="search"/>
-                </div>
-                <div class="order-by">
-                    <span class="icon order"><img src="./img/compare_arrows_24dp_47413E_FILL0_wght400_GRAD0_opsz24.svg"></span>
+            <header class="top-section" role="toolbar"> 
+                <form class="search-bar" role="search"> 
+                    <span class="search-icon">
+                        <img src="./img/search_24dp_47413E_FILL0_wght400_GRAD0_opsz24.svg" >
+                    </span>
+                    <input class="search-input" type="search" aria-label="Buscar contenido"/>
+                </form>
+                
+                <button class="order-by" aria-label="Ordenar por">
+                    <span class="icon order">
+                        <img src="./img/compare_arrows_24dp_47413E_FILL0_wght400_GRAD0_opsz24.svg" alt="Ordenar">
+                    </span>
                     <p>Ordenar por</p>
-                </div>
-                <div class="user-data">
-                    <span class="icon user"><img src="./img/face_24dp_47413E_FILL0_wght400_GRAD0_opsz24.svg"></span>
-                    <span class="icon arrow-desplace"><img src="./img/keyboard_arrow_down_24dp_47413E_FILL0_wght400_GRAD0_opsz24.svg"></span>
-                </div>  
-            </div>
+                </button>
+            </header>
 
-            <div class="bottom-section">
-                <p>Contenido principal</p>
-            </div>
+            <section class="bottom-section" aria-label="Contenido principal">
+               
+            </section>
         </main>
     </div>
 </body>
