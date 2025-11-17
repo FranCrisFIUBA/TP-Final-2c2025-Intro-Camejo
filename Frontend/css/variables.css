@@ -7,10 +7,15 @@
     --celeste: #a6cde4;
     --morado: #a096c8;
 
-    --padding: 14px;
-    --border: 11px;
+    --padding-pag-6px: 6px;
+    --padding-estandar: 8px;
+    --border-radius: 8px;
     --h4: 18px;
-    
+    --border-estandar: 2px solid var(--negro);
+    --gap-min: 5px;
+    --gap-max: 10px;
+
+    --nunito: 'Nunito-Bold', sans-serif;
 }
 @font-face {
   font-family: 'Nunito-Bold';
