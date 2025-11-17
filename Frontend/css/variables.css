@@ -1,11 +1,14 @@
 :root {
     --verde: #b9d8b8;
+    --verde-oscuro: #a0c79f;
     --amarillo: #f1cd71;
+    --amarillo-oscuro: #e0bb5c;
     --blanco: #f7f6ed;
     --negro: #47413e;
     --naranja: #fa6d48;
     --celeste: #a6cde4;
     --morado: #a096c8;
+    --gris: #dfded5;
 
     --padding-pag-6px: 6px;
     --padding-estandar: 8px;
@@ -16,10 +19,53 @@
     --gap-max: 10px;
 
     --nunito: 'Nunito-Bold', sans-serif;
+    --nunito-light: 'Nunito-Light', sans-serif;
+    --nunito-bold: 'Nunito-ExtraBold', sans-serif;
 }
+
+.btn-amarillo {
+  display: flex;
+  align-items: center;
+  padding: var(--padding-pag-6px);
+  border-radius: var(--border-radius);
+  background: var(--amarillo);
+  cursor: pointer;
+  border: var(--border-estandar);
+  padding-top: 10px;
+  padding-bottom: 10px;
+}
+
+.btn-amarillo:hover {
+  background-color: var(--amarillo-oscuro);
+  transition: opacity 0.3s ease;
+}
+
+.btn-amarillo p {
+  font-family: var(--nunito-light);
+  font-size: 16px; 
+  color: var(--negro);
+  margin-right: 5px;
+}
+
+
+
 @font-face {
   font-family: 'Nunito-Bold';
   src: url('../fonts/Nunito/Nunito-Bold.ttf') format('truetype');
+  font-weight: 700;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Nunito-Light';
+  src: url('../fonts/Nunito/Nunito-Light.ttf') format('truetype');
+  font-weight: 700;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Nunito-ExtraBold';
+  src: url('../fonts/Nunito/Nunito-ExtraBold.ttf') format('truetype');
   font-weight: 700;
   font-style: normal;
 }
