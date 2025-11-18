@@ -4,7 +4,7 @@
 
 body {
   font-family: var(--nunito-bold);
-  background: url("../img/fondo-registo.png") no-repeat center center fixed;
+  background: url("../img/registro-fondo.png") no-repeat center center fixed;
   background-size: cover;
   display: flex;
   justify-content: center;
