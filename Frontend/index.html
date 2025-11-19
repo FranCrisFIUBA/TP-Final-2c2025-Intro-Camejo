@@ -56,7 +56,31 @@
             </section>
         </main>
     </div>
+<<<<<<< HEAD
     <script src="./JS/navbar.js"></script>
+=======
+    <script> //para que funcionen los iconos del nav
+        document.addEventListener("DOMContentLoaded", () => {
+            const homeBtn = document.querySelector(".icon-bar.home");
+            const searchBtn = document.querySelector(".icon-bar.search");
+            const addBtn = document.querySelector(".icon-bar.add");
+            const imgUser = document.querySelector(".user-avatar")
+
+            homeBtn.addEventListener("click", () => {
+                window.location.href = "index.html"; 
+            });
+
+            searchBtn.addEventListener("click", () => {
+                window.location.href = ".html";
+            });
+
+            addBtn.addEventListener("click", () => {
+                window.location.href = "create-pin.html";
+            });
+
+        });
+    </script>
+>>>>>>> origin/develop-frontend
     <script> //para que funcione el boton de ordenar
         document.addEventListener("DOMContentLoaded", () => {
             const orderBtn = document.querySelector(".order-by");
