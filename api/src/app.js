@@ -1,6 +1,10 @@
 
 // carga las variables de entorno
-import 'dotenv/config.js'
+import dotenv from 'dotenv'
+dotenv.config()
+
+console.log(`NODE_ENV: ${process.env.NODE_ENV}`)
+
 const PORT = process.env.PORT || 3000;
 
 import express from 'express'
