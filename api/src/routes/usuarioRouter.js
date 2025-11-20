@@ -3,19 +3,19 @@ import express from 'express'
 
 const usuarioRouter = express.Router()
 
-usuarioRouter.get('/:id', (req, res) => {
+usuarioRouter.get('/:id',  async (req, res) => {
     res.status(501).send()
 })
 
-usuarioRouter.post('/', (req, res) => {
+usuarioRouter.post('/', async (req, res) => {
     res.status(501).send()
 })
 
-usuarioRouter.patch('/:id', (req, res) => {
+usuarioRouter.patch('/:id', async (req, res) => {
     res.status(501).send()
 })
 
-usuarioRouter.delete('/:id', (req, res) => {
+usuarioRouter.delete('/:id', async (req, res) => {
     res.status(501).send()
 })
 
