@@ -1,0 +1,172 @@
+{
+  "cards": [
+    {
+      "id": 1,
+      "image": "https://i.pinimg.com/736x/c4/05/4f/c4054f4894c769abee498e3b90211660.jpg",
+      "authorAvatar": "https://i.pinimg.com/1200x/fe/dc/3a/fedc3ac9e3518739bc6557abf20420fa.jpg",
+      "authorName": "Luna_Art",
+      "likes": 342
+    },
+    {
+      "id": 2,
+      "image": "https://i.pinimg.com/736x/db/08/1e/db081e249328bad544fa388b21254735.jpg",
+      "authorAvatar": "https://i.pinimg.com/736x/43/a2/c6/43a2c6d460bb035dea632e98a1ef10a4.jpg",
+      "authorName": "Mountain_Explorer",
+      "likes": 567
+    },
+    {
+      "id": 3,
+      "image": "https://i.pinimg.com/736x/b3/1a/e2/b31ae253dbfbe11b07c72a05a926be81.jpg",
+      "authorAvatar": "https://i.pinimg.com/736x/9c/65/0c/9c650ca064b75b734ad41caf39883788.jpg",
+      "authorName": "Forest_Dreamer",
+      "likes": 891
+    },
+    {
+      "id": 4,
+      "image": "https://i.pinimg.com/736x/5a/34/dd/5a34dd2af2b588a918606a6941d1525a.jpg",
+      "authorAvatar": "https://i.pinimg.com/736x/73/79/01/737901410f86deb57a2fcccb99418fd1.jpg",
+      "authorName": "Sky_Watcher",
+      "likes": 723
+    },
+    {
+      "id": 5,
+      "image": "https://i.pinimg.com/736x/c8/25/f9/c825f9fc29e1d12c3318f4b6154378b1.jpg",
+      "authorAvatar": "https://i.pinimg.com/736x/27/e9/6e/27e96e3b3b28dd4d9a8d94e2a8a0a93c.jpg",
+      "authorName": "Golden_Hour",
+      "likes": 456
+    },
+    {
+      "id": 6,
+      "image": "https://i.pinimg.com/736x/43/a2/c6/43a2c6d460bb035dea632e98a1ef10a4.jpg",
+      "authorAvatar": "https://i.pinimg.com/1200x/f4/2a/86/f42a868250838ced918b506b04fd52ab.jpg",
+      "authorName": "Golden_Hour",
+      "likes": 634
+    },
+    {
+      "id": 7,
+      "image": "https://i.pinimg.com/1200x/5a/fa/08/5afa082bdcfbba4bd3a16d20cca6c759.jpg",
+      "authorAvatar": "https://i.pinimg.com/736x/90/6f/f0/906ff07281be2f362d033e7c5c4f013e.jpg",
+      "authorName": "Wild_Spirit",
+      "likes": 1023
+    },
+    {
+      "id": 8,
+      "image": "https://i.pinimg.com/1200x/23/a3/2e/23a32e3d5db758da2a6304356bfc6db0.jpg",
+      "authorAvatar": "https://i.pinimg.com/736x/63/ef/97/63ef97cbac858314687d2ce7f5a667b2.jpg",
+      "authorName": "Nature_Lover",
+      "likes": 789
+    },
+    {
+      "id": 9,
+      "image": "https://i.pinimg.com/736x/09/03/40/090340bc1ac065f2532d8d2a4b06c45c.jpg",
+      "authorAvatar": "https://i.pinimg.com/1200x/91/10/ea/9110ea8ee4374256f01f6c913b3d488d.jpg",
+      "authorName": "Urban_Explorer",
+      "likes": 567
+    },
+    {
+      "id": 10,
+      "image": "https://i.pinimg.com/1200x/0c/13/a0/0c13a09f57e61b77131eb4419d0add5a.jpg",
+      "authorAvatar": "https://i.pinimg.com/736x/89/5d/9e/895d9e5a59fc4267ff4c523f50349d32.jpg",
+      "authorName": "Color_Palette",
+      "likes": 845
+    },
+    {
+      "id": 11,
+      "image": "https://i.pinimg.com/1200x/ee/70/81/ee7081b00c5a379b1b4448834b17e88a.jpg",
+      "authorAvatar": "https://i.pinimg.com/736x/91/69/8d/91698d0a8419670bc940525a75275038.jpg",
+      "authorName": "Seasonal_Moods",
+      "likes": 923
+    },
+    {
+      "id": 12,
+      "image": "https://i.pinimg.com/736x/67/3e/a3/673ea3c1e4f0a43aee66bcc9b5b3809f.jpg",
+      "authorAvatar": "https://i.pinimg.com/736x/f8/75/92/f87592c9508d214b320928dc5e0dd4ea.jpg",
+      "authorName": "Water_Flow",
+      "likes": 678
+    },
+    {
+      "id": 13,
+      "image": "https://i.pinimg.com/736x/6a/f5/e7/6af5e730896dd52aee6f9ef2ba4456ca.jpg",
+      "authorAvatar": "https://i.pinimg.com/736x/f8/75/92/f87592c9508d214b320928dc5e0dd4ea.jpg",
+      "authorName": "Autumn_Vibes",
+      "likes": 756
+    },
+    {
+      "id": 14,
+      "image": "https://i.pinimg.com/736x/ff/ff/7e/ffff7ea4e32af6e9f3c414852c435d94.jpg",
+      "authorAvatar": "https://i.pinimg.com/736x/c8/c2/32/c8c23250b368d19582f84677315115ae.jpg",
+      "authorName": "Peak_Seeker",
+      "likes": 1123
+    },
+    {
+      "id": 15,
+      "image": "https://i.pinimg.com/736x/76/1f/b1/761fb175580801ac9912ad6bcf8155ed.jpg",
+      "authorAvatar": "https://i.pinimg.com/736x/0a/43/ab/0a43ab40b86170087178f37024b097fe.jpg",
+      "authorName": "Starry_Nights",
+      "likes": 987
+    },
+    {
+      "id": 16,
+      "image": "https://i.pinimg.com/1200x/e8/47/b8/e847b8d25e458bfe72d1227aa82c5ed7.jpg",
+      "authorAvatar": "https://i.pinimg.com/736x/fb/d7/e0/fbd7e080c200f3e58f64a0b296ee4a19.jpg",
+      "authorName": "Rock_Climber",
+      "likes": 834
+    },
+    {
+      "id": 17,
+      "image": "https://i.pinimg.com/1200x/69/bb/77/69bb7724eb0cde3a75e9b918e56aba45.jpg",
+      "authorAvatar": "https://i.pinimg.com/736x/a3/c1/e2/a3c1e2c20c83566b3bcb7709b7d42a51.jpg",
+      "authorName": "Ocean_Breeze",
+      "likes": 645
+    },
+    {
+      "id": 18,
+      "image": "https://i.pinimg.com/736x/33/63/f9/3363f9afedfef3a9c878b96c1b69acd2.jpg",
+      "authorAvatar": "https://i.pinimg.com/736x/e7/6b/32/e76b324ea6956cc398879c6cfef250d5.jpg",
+      "authorName": "Forest_Whisper",
+      "likes": 723
+    },
+    {
+      "id": 19,
+      "image": "https://i.pinimg.com/736x/b2/c0/80/b2c080cdd395ebde150435384dadbd9d.jpg",
+      "authorAvatar": "https://i.pinimg.com/736x/c5/a5/c1/c5a5c10ad5a4217819e67e41231c7dc0.jpg",
+      "authorName": "Meadow_Walker",
+      "likes": 589
+    },
+    {
+      "id": 20,
+      "image": "https://i.pinimg.com/736x/1e/f7/30/1ef730d2577dbd558c4b50e9e70160fd.jpg",
+      "authorAvatar": "https://i.pinimg.com/736x/bf/6d/54/bf6d54b98243e6bf250a89f0e2b6a708.jpg",
+      "authorName": "Artistic_Soul",
+      "likes": 912
+    },
+    {
+      "id": 21,
+      "image": "https://i.pinimg.com/736x/f6/a8/81/f6a881051d6a5c055d8fee72d1bfdb39.jpg",
+      "authorAvatar": "https://i.pinimg.com/736x/bf/6d/54/bf6d54b98243e6bf250a89f0e2b6a708.jpg",
+      "authorName": "Sunset_Chaser",
+      "likes": 1045
+    },
+    {
+      "id": 22,
+      "image": "https://i.pinimg.com/736x/da/0c/15/da0c156440524b7e1753f7e513a9b93e.jpg",
+      "authorAvatar": "https://i.pinimg.com/1200x/22/f2/f2/22f2f29a25b31bfb5eebbfe66ea066bc.jpg",
+      "authorName": "Wilderness_Seeker",
+      "likes": 876
+    },
+    {
+      "id": 23,
+      "image": "https://i.pinimg.com/1200x/f5/29/be/f529be182f7b66bd83b4477f5bf1056a.jpg",
+      "authorAvatar": "https://i.pinimg.com/736x/a7/45/ed/a745ed539be17f18d93c8a63be3985a2.jpg",
+      "authorName": "Cloud_Dreamer",
+      "likes": 765
+    },
+    {
+      "id": 24,
+      "image": "https://i.pinimg.com/736x/5d/84/53/5d845384dcfa35a5fe523926d2e34c79.jpg",
+      "authorAvatar": "https://i.pinimg.com/736x/9f/c6/f9/9fc6f94a02b2bc705972cdbc456d3c83.jpg",
+      "authorName": "Adventure_Caller",
+      "likes": 998
+    }
+  ]
+}

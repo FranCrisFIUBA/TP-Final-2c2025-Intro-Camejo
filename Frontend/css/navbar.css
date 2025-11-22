@@ -1,0 +1,119 @@
+.sidebar-top {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 30px; /* Espacio entre logo y botones */
+}
+
+.logo {
+  width: 50px;
+  height: 50px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.logo img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  margin-top: 5px;
+  border-radius: 50%;
+  cursor: pointer;
+}
+
+.logo:hover {
+  transform: scale(1.05);
+}
+.sidebar-middle {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 30px; /* Espacio entre botones */
+}
+
+.sidebar-bottom {
+  display: flex;
+  justify-content: center;
+  margin-top: auto; /* Empuja hacia abajo */
+  padding-top: 20px; /* Espacio arriba del avatar */
+}
+
+.user-avatar {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  border: none;
+  background: none;
+  cursor: pointer;
+  overflow: hidden;
+  transition: transform 0.2s ease;
+}
+
+.user-avatar:hover {
+  transform: scale(1.05);
+}
+
+.user-avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 50%;
+}
+
+.sidebar {
+  position: fixed;          /* fija la barra lateral */
+  top: 5px;                 /* coincide con tu margen */
+  left: 5px;
+  width: 67px;
+  height: calc(100vh - 10px); /* ocupa toda la altura visible */
+  background-color: var(--verde);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 30px;
+  border: var(--border-estandar);
+  border-radius: var(--border-radius);
+  overflow: hidden;
+  z-index: 1000; /* queda encima del resto */
+}
+
+.icon-bar {
+  position: relative;
+  width: 60px;
+  height: 60px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 12px;
+  cursor: pointer;
+  background: none;
+  border: none;
+  outline: none;
+  padding: 0;
+  transition: all 0.3s ease;
+}
+
+.icon-bar img {
+  width: 35px; 
+  height: 35px;
+  z-index: 1; 
+  transition: transform 0.2s ease;
+  margin-bottom: 5px;
+}
+
+.hover-effect {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.1);
+  border-radius: 12px;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.icon-bar:hover .hover-effect {
+  opacity: 1;
+}
