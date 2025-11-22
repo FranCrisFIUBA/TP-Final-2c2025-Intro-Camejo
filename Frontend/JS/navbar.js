@@ -12,6 +12,7 @@ function Navbar() {
     const homeBtn = document.querySelector(".icon-bar.home");
     const searchBtn = document.querySelector(".icon-bar.search");
     const addBtn = document.querySelector(".icon-bar.add");
+    const perfilBtn = document.querySelector("sidebar-bottom");
 
     if (homeBtn) {
         homeBtn.addEventListener("click", () => {
@@ -28,6 +29,11 @@ function Navbar() {
     if (addBtn) {
         addBtn.addEventListener("click", () => {
             window.location.href = "create-pin.html";
+        });
+    }
+    if (perfilBtn) {
+        perfilBtn.addEventListener("click", () => {
+            window.location.href = "perfil.html";
         });
     }
 }
