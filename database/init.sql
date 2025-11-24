@@ -62,17 +62,17 @@ CREATE TABLE suscripciones_a_usuarios (
     id INT PRIMARY KEY,
     usuario_id INT NOT NULL,
     susciptor_id INT NOT NULL
-)
+);
 
 CREATE TABLE listas_guardadas (
     id INT PRIMARY KEY,
     usuario_id INT NOT NULL,
     lista_id INT NOT NULL
-)
+);
 
 -- TODO: tabla tableros guardados
 CREATE TABLE tableros_guardados (
     id INT PRIMARY KEY,
     usuario_id INT NOT NULL,
     tablero_id INT NOT NULL
-)
+);
