@@ -1,6 +1,5 @@
 -- Esta query tiene como objetivo generar las tablas necesarias al iniciar la base de datos.
 
--- TODO: tabla usuarios
 CREATE TABLE usuarios (
     id INT PRIMARY KEY,
     nombre CHAR(24) NOT NULL, -- de 5 a 25 caracteres
