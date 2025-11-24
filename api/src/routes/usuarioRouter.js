@@ -1,6 +1,7 @@
 
 import express from 'express'
 import {pool} from "../db.js";
+import * as zod from "zod";
 
 const esquemaUsuario = zod.object({
     nombre: zod.string().regex(regexNombre, ""),
@@ -11,7 +12,7 @@ const esquemaUsuario = zod.object({
     fecha_registro: zod.date(""),
 })
 
-async function intentarConseguirUsuarioPorNombre(nombre: string) {
+async function intentarConseguirUsuarioPorNombre(nombre) {
     const result = await pool.query("SELECT * FROM usuarios WHERE nombre = ?", [nombre])
 
     if (result.rowCount !== 0)
@@ -20,7 +21,7 @@ async function intentarConseguirUsuarioPorNombre(nombre: string) {
     return esquemaUsuario.safeParseAsync(result.rows[0])
 }
 
-async function intentarConseguirUsuarioPorId(id: number) {
+async function intentarConseguirUsuarioPorId(id) {
     const result = await pool.query("SELECT * FROM usuarios WHERE id = ?", [id])
 
     if (result.rowCount !== 0)
@@ -109,13 +110,21 @@ usuarioRouter.patch('/:id', async (req, res) => {
                 res.status(404).send();})
     } catch (err) {
         console.error(err);
-        res.status(500).send({})
+        res.status(500).send()
     }
 })
 
 usuarioRouter.delete('/:id', async (req, res) => {
     try {
-        const result = await pool.query()
+        const result = await pool.query(
+            "DELETE FROM usuarios WHERE id = ?",
+            req.params.id
+        )
+
+        res.status(200).send()
+    } catch (err) {
+        console.error(err);
+        res.status(500).send();
     }
 })
 
