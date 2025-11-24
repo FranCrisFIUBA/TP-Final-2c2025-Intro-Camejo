@@ -108,6 +108,8 @@ usuarioRouter.patch('/:id', async (req, res) => {
             .catch( (err) => {
                 console.error(err);
                 res.status(404).send();})
+
+        // TODO: terminar de implementar patch
     } catch (err) {
         console.error(err);
         res.status(500).send()
@@ -120,6 +122,8 @@ usuarioRouter.delete('/:id', async (req, res) => {
             "DELETE FROM usuarios WHERE id = ?",
             req.params.id
         )
+
+        // TODO: agregar logs
 
         res.status(200).send()
     } catch (err) {
