@@ -10,7 +10,18 @@ CREATE TABLE usuarios (
     fecha_registro TIMESTAMP NOT NULL
 );
 
--- TODO: tabla publicaciones
+CREATE TABLE publicaciones (
+    id INT PRIMARY KEY,
+    usuario_id INT NOT NULL,
+    titulo VARCHAR NOT NULL,
+    etiquetas VARCHAR,
+    url_imagen VARCHAR NOT NULL,
+    fecha_publicacion TIMESTAMP NOT NULL,
+    fecha_edicion TIMESTAMP NOT NULL,
+
+    FOREIGN KEY (usuario_id) REFERENCES usuarios(id)
+);
+
 -- TODO: tabla likes usuarios a publicaciones
 -- TODO: tabla comentarios
 -- TODO: tabla listas
