@@ -2,8 +2,8 @@
 
 CREATE TABLE usuarios (
     id INT PRIMARY KEY,
-    nombre CHAR(24) NOT NULL, -- de 5 a 25 caracteres
-    contrasenia CHAR(24) NOT NULL, -- de 5 a 25 caracteres
+    nombre VARCHAR NOT NULL, -- de 5 a 25 caracteres
+    contrasenia VARCHAR NOT NULL, -- de 5 a 25 caracteres
     email VARCHAR NOT NULL,
     icono VARCHAR NOT NULL, -- URL al icono
     fecha_nacimiento TIMESTAMP NOT NULL,
@@ -13,8 +13,8 @@ CREATE TABLE usuarios (
 CREATE TABLE publicaciones (
     id INT PRIMARY KEY,
     usuario_id INT NOT NULL,
-    titulo VARCHAR NOT NULL,
-    etiquetas VARCHAR,
+    titulo VARCHAR NOT NULL, -- maximo de 100 caracteres
+    etiquetas VARCHAR NOT NULL,
     url_imagen VARCHAR NOT NULL, -- url que indica donde se encuentra la imagen, apunta a un archivo publico del servidor
     alto_imagen INT, -- alto arreglado (fixed) opcional de la imagen
     ancho_imagen INT, -- ancho arreglado (fixed) opcional de la imagen
