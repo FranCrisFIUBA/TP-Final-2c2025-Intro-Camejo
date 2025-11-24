@@ -15,7 +15,9 @@ CREATE TABLE publicaciones (
     usuario_id INT NOT NULL,
     titulo VARCHAR NOT NULL,
     etiquetas VARCHAR,
-    url_imagen VARCHAR NOT NULL,
+    url_imagen VARCHAR NOT NULL, -- url que indica donde se encuentra la imagen, apunta a un archivo publico del servidor
+    alto_imagen INT, -- alto arreglado (fixed) opcional de la imagen
+    ancho_imagen INT, -- ancho arreglado (fixed) opcional de la imagen
     fecha_publicacion TIMESTAMP NOT NULL,
     fecha_edicion TIMESTAMP NOT NULL,
 
@@ -34,7 +36,6 @@ CREATE TABLE comentarios (
     FOREIGN KEY (publicacion_id) REFERENCES publicaciones(id)
 )
 
--- TODO: tabla listas
 -- TODO: tabla usuarios a listas
 -- TODO: tabla tableros
 -- TODO: tabla usuarios a tableros
