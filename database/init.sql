@@ -10,10 +10,54 @@ CREATE TABLE usuarios (
     fecha_registro TIMESTAMP NOT NULL
 );
 
--- TODO: tabla publicaciones
--- TODO: tabla likes usuarios a publicaciones
--- TODO: tabla comentarios
--- TODO: tabla listas
--- TODO: tabla usuarios a listas
--- TODO: tabla tableros
--- TODO: tabla usuarios a tableros
+CREATE TABLE publicaciones (
+    id INT PRIMARY KEY,
+    usuario_id INT NOT NULL,
+    titulo VARCHAR NOT NULL,
+    etiquetas VARCHAR,
+    url_imagen VARCHAR NOT NULL, -- url que indica donde se encuentra la imagen, apunta a un archivo publico del servidor
+    alto_imagen INT, -- alto arreglado (fixed) opcional de la imagen
+    ancho_imagen INT, -- ancho arreglado (fixed) opcional de la imagen
+    fecha_publicacion TIMESTAMP NOT NULL,
+    fecha_edicion TIMESTAMP NOT NULL,
+
+    FOREIGN KEY (usuario_id) REFERENCES usuarios(id)
+);
+
+CREATE TABLE comentarios (
+    id INT PRIMARY KEY,
+    usuario_id INT NOT NULL,
+    publicacion_id INT NOT NULL,
+    contenido VARCHAR NOT NULL,
+    fecha_publicacion TIMESTAMP NOT NULL,
+    fecha_edicion TIMESTAMP NOT NULL,
+
+    FOREIGN KEY (usuario_id) REFERENCES usuarios(id),
+    FOREIGN KEY (publicacion_id) REFERENCES publicaciones(id)
+);
+
+CREATE TABLE listas (
+    id INT PRIMARY KEY,
+    usuario_id INT NOT NULL, -- autor
+    titulo VARCHAR NOT NULL,
+    etiquetas VARCHAR,
+    fecha_publicacion_min TIMESTAMP,
+    fecha_publicacion_max TIMESTAMP,
+
+    FOREIGN KEY (usuario_id) REFERENCES usuarios(id)
+);
+
+CREATE TABLE tableros (
+    id INT PRIMARY KEY,
+    usuario_id INT NOT NULL, -- autor
+    titulo VARCHAR NOT NULL,
+    etiquetas VARCHAR,
+    fecha_publicacion TIMESTAMP NOT NULL,
+    fecha_edicion TIMESTAMP NOT NULL,
+
+    FOREIGN KEY (usuario_id) REFERENCES usuarios(id)
+);
+
+-- TODO: tabla suscripciones a usuarios
+-- TODO: tabla listas guardadas
+-- TODO: tabla tableros guardados
