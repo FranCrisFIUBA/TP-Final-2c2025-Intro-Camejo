@@ -38,7 +38,7 @@ CREATE TABLE comentarios (
 
 CREATE TABLE listas (
     id INT PRIMARY KEY,
-    usuario_id INT NOT NULL,
+    usuario_id INT NOT NULL, -- autor
     titulo VARCHAR NOT NULL,
     etiquetas VARCHAR,
     fecha_publicacion_min TIMESTAMP,
@@ -47,6 +47,17 @@ CREATE TABLE listas (
     FOREIGN KEY (usuario_id) REFERENCES usuarios(id)
 )
 
--- TODO: tabla usuarios a listas
--- TODO: tabla tableros
--- TODO: tabla usuarios a tableros
+CREATE TABLE tableros (
+    id INT PRIMARY KEY,
+    usuario_id INT NOT NULL, -- autor
+    titulo VARCHAR NOT NULL,
+    etiquetas VARCHAR,
+    fecha_publicacion TIMESTAMP NOT NULL,
+    fecha_edicion TIMESTAMP NOT NULL,
+
+    FOREIGN KEY (usuario_id) REFERENCES usuarios(id)
+)
+
+-- TODO: tabla suscripciones a usuarios
+-- TODO: tabla listas guardadas
+-- TODO: tabla tableros guardados
