@@ -34,7 +34,7 @@ CREATE TABLE comentarios (
 
     FOREIGN KEY (usuario_id) REFERENCES usuarios(id),
     FOREIGN KEY (publicacion_id) REFERENCES publicaciones(id)
-)
+);
 
 CREATE TABLE listas (
     id INT PRIMARY KEY,
@@ -45,7 +45,7 @@ CREATE TABLE listas (
     fecha_publicacion_max TIMESTAMP,
 
     FOREIGN KEY (usuario_id) REFERENCES usuarios(id)
-)
+);
 
 CREATE TABLE tableros (
     id INT PRIMARY KEY,
@@ -56,7 +56,7 @@ CREATE TABLE tableros (
     fecha_edicion TIMESTAMP NOT NULL,
 
     FOREIGN KEY (usuario_id) REFERENCES usuarios(id)
-)
+);
 
 -- TODO: tabla suscripciones a usuarios
 -- TODO: tabla listas guardadas
