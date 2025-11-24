@@ -61,18 +61,27 @@ CREATE TABLE tableros (
 CREATE TABLE suscripciones_a_usuarios (
     id INT PRIMARY KEY,
     usuario_id INT NOT NULL,
-    susciptor_id INT NOT NULL
+    susciptor_id INT NOT NULL,
+
+    FOREIGN KEY (usuario_id) REFERENCES usuarios(id),
+    FOREIGN KEY (susciptor_id) REFERENCES usuarios(id)
 );
 
 CREATE TABLE listas_guardadas (
     id INT PRIMARY KEY,
     usuario_id INT NOT NULL,
-    lista_id INT NOT NULL
+    lista_id INT NOT NULL,
+
+    FOREIGN KEY (usuario_id) REFERENCES usuarios(id),
+    FOREIGN KEY (lista_id) REFERENCES listas(id)
 );
 
 -- TODO: tabla tableros guardados
 CREATE TABLE tableros_guardados (
     id INT PRIMARY KEY,
     usuario_id INT NOT NULL,
-    tablero_id INT NOT NULL
+    tablero_id INT NOT NULL,
+
+    FOREIGN KEY (usuario_id) REFERENCES usuarios(id),
+    FOREIGN KEY (tablero_id) REFERENCES tableros(id)
 );
