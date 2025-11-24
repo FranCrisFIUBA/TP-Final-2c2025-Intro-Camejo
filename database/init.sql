@@ -64,5 +64,10 @@ CREATE TABLE suscripciones_a_usuarios (
     susciptor_id INT NOT NULL
 )
 
--- TODO: tabla listas guardadas
+CREATE TABLE listas_guardadas (
+    id INT PRIMARY KEY,
+    usuario_id INT NOT NULL,
+    lista_id INT NOT NULL
+)
+
 -- TODO: tabla tableros guardados
