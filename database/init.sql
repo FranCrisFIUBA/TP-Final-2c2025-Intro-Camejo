@@ -36,6 +36,17 @@ CREATE TABLE comentarios (
     FOREIGN KEY (publicacion_id) REFERENCES publicaciones(id)
 )
 
+CREATE TABLE listas (
+    id INT PRIMARY KEY,
+    usuario_id INT NOT NULL,
+    titulo VARCHAR NOT NULL,
+    etiquetas VARCHAR,
+    fecha_publicacion_min TIMESTAMP,
+    fecha_publicacion_max TIMESTAMP,
+
+    FOREIGN KEY (usuario_id) REFERENCES usuarios(id)
+)
+
 -- TODO: tabla usuarios a listas
 -- TODO: tabla tableros
 -- TODO: tabla usuarios a tableros
