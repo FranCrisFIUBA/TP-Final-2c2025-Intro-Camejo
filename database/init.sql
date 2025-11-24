@@ -22,8 +22,18 @@ CREATE TABLE publicaciones (
     FOREIGN KEY (usuario_id) REFERENCES usuarios(id)
 );
 
--- TODO: tabla likes usuarios a publicaciones
--- TODO: tabla comentarios
+CREATE TABLE comentarios (
+    id INT PRIMARY KEY,
+    usuario_id INT NOT NULL,
+    publicacion_id INT NOT NULL,
+    contenido VARCHAR NOT NULL,
+    fecha_publicacion TIMESTAMP NOT NULL,
+    fecha_edicion TIMESTAMP NOT NULL,
+
+    FOREIGN KEY (usuario_id) REFERENCES usuarios(id),
+    FOREIGN KEY (publicacion_id) REFERENCES publicaciones(id)
+)
+
 -- TODO: tabla listas
 -- TODO: tabla usuarios a listas
 -- TODO: tabla tableros
