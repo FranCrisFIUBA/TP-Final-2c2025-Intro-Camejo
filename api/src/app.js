@@ -10,7 +10,6 @@ const PORT = process.env.PORT || 3000;
 import express from 'express'
 
 import usuarioRouter from "./routes/usuarioRouter.js";
-import usuariosRouter from "./routes/usuariosRouter.js";
 
 const app = express()
 

@@ -2,6 +2,7 @@
 import express from 'express'
 import {pool} from "../db.js";
 import * as zod from "zod";
+import usuariosRouter from "./usuariosRouter.js";
 
 const esquemaUsuario = zod.object({
     nombre: zod.string().regex(regexNombre, ""),
@@ -31,6 +32,17 @@ async function intentarConseguirUsuarioPorId(id) {
 }
 
 const usuarioRouter = express.Router()
+
+usuarioRouter.get('/', async (req, res) => {
+    try {
+        const result = await pool.query('SELECT * FROM usuarios');
+
+        res.status(200).json(result.rows);
+    } catch (err) {
+        console.error(err);
+        res.status(500).send();
+    }
+})
 
 usuarioRouter.get('/:id',  async (req, res) => {
     try {
