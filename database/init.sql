@@ -71,3 +71,8 @@ CREATE TABLE listas_guardadas (
 )
 
 -- TODO: tabla tableros guardados
+CREATE TABLE tableros_guardados (
+    id INT PRIMARY KEY,
+    usuario_id INT NOT NULL,
+    tablero_id INT NOT NULL
+)
