@@ -58,6 +58,11 @@ CREATE TABLE tableros (
     FOREIGN KEY (usuario_id) REFERENCES usuarios(id)
 );
 
--- TODO: tabla suscripciones a usuarios
+CREATE TABLE suscripciones_a_usuarios (
+    id INT PRIMARY KEY,
+    usuario_id INT NOT NULL,
+    susciptor_id INT NOT NULL
+)
+
 -- TODO: tabla listas guardadas
 -- TODO: tabla tableros guardados
