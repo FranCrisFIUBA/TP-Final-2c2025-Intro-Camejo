@@ -76,7 +76,6 @@ CREATE TABLE listas_guardadas (
     FOREIGN KEY (lista_id) REFERENCES listas(id)
 );
 
--- TODO: tabla tableros guardados
 CREATE TABLE tableros_guardados (
     id INT PRIMARY KEY,
     usuario_id INT NOT NULL,
