@@ -1,27 +1,23 @@
-// Función para cargar y mostrar los cards
 async function cargarCards() {
     try {
-        console.log('Cargando pines desde API...');
-        const response = await fetch('./data1.json'); // Cambiado a tu endpoint
+        console.log('Cargando cards desde JSON...');
+        const response = await fetch('./data.json');
         if (!response.ok) {
-            throw new Error('No se pudo cargar los pines');
+            throw new Error('No se pudo cargar el JSON');
         }
         const data = await response.json();
         console.log('Datos cargados:', data);
-        
-        if (data.success && data.data) {
-            displayCards(data.data);
-        } else {
-            throw new Error('Estructura de datos inválida');
-        }
+        listarPublicaciones(data.cards);
     } catch (error) {
         console.error('Error loading cards:', error);
         jsonError();
     }
 }
 
-// Función para mostrar los cards dinámicamente
-function displayCards(pines) {
+
+
+
+function listarPublicaciones(cards) {
     const container = document.getElementById('cards-container');
     
     if (!container) {
@@ -29,51 +25,90 @@ function displayCards(pines) {
         return;
     }
     
-    console.log('Mostrando', pines.length, 'pines');
-    container.innerHTML = ''; // Limpiar contenedor
+    console.log('Mostrando', cards.length, 'cards');
+    container.innerHTML = ''; 
     
-    pines.forEach(pin => {
-        const cardElement = crearCard(pin);
-        container.appendChild(cardElement);
+    cards.forEach(card => {
+        const cardElement = crearCard(card);
+        container.appendChild(cardElement); //agreganos las cards al container
     });
 }
 
-// Función para crear el HTML de cada card
-function crearCard(pin) {
-    const cardDiv = document.createElement('div');
-    cardDiv.className = 'card';
-    cardDiv.setAttribute('data-id', pin.id);
-    
-    cardDiv.innerHTML = `
-        <img src="${pin.url_imagen}" alt="Imagen de ${pin.titulo}" class="card-image">
-        <div class="card-content">
-            <div class="card-footer">
-                <div class="card-author">
-                    <img src="${pin.usuario.foto_perfil}" alt="Avatar de ${pin.usuario.nombre_usuario}" class="author-avatar">
-                    <span class="author-name">${pin.usuario.nombre_usuario}</span>
-                </div>
-                <div class="card-actions">
-                    <button class="action-btn">
-                        <svg class="action-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <path d="M12 21.35L10.55 20.03C5.4 15.36 2 12.28 2 8.5C2 5.42 4.42 3 7.5 3C9.24 3 10.91 3.81 12 5.09C13.09 3.81 14.76 3 16.5 3C19.58 3 22 5.42 22 8.5C22 12.28 18.6 15.36 13.45 20.04L12 21.35Z" fill="currentColor"/>
-                        </svg>
-                        <span>${pin.estadisticas.total_likes}</span>
-                    </button>
-                </div>
-            </div>
+
+function crearCard(card) {
+    const cardDiv = document.createElement("div");
+    cardDiv.className = "card";
+    cardDiv.setAttribute("data-id", card.id);
+
+    const img = document.createElement("img");
+    img.src = card.image;
+    img.alt = "Imagen de " + card.authorName;
+    img.className = "card-image";
+
+    if (card.width && card.height) {
+        const aspectRatio = card.width / card.height;
+        img.style.aspectRatio = aspectRatio;
+        img.style.maxWidth = "100%"; 
+        img.style.objectFit = "cover";
+        img.style.display = "block";
+    }
+
+    const content = document.createElement("div");
+    content.className = "card-content";
+
+    const footer = document.createElement("div");
+    footer.className = "card-footer";
+
+    footer.innerHTML = `
+        <div class="card-author">
+            <img src="${card.authorAvatar}" alt="Avatar" class="author-avatar">
+            <span class="author-name">${card.authorName}</span>
+        </div>
+        <div class="card-actions">
+            <button class="action-btn">
+                <svg class="action-icon" viewBox="0 0 24 24">
+                    <path d="M12 21.35L10.55 20.03C5.4 15.36 2 12.28
+                    2 8.5C2 5.42 4.42 3 7.5 3c1.74 0 3.41.81
+                    4.5 2.09C13.09 3.81 14.76 3 16.5 3
+                    C19.58 3 22 5.42 22 8.5c0 3.78-3.4
+                    6.86-8.55 11.54L12 21.35Z" fill="currentColor"/>
+                </svg>
+                <span>${card.likes}</span>
+            </button>
         </div>
     `;
+
+    content.appendChild(footer);
+    cardDiv.appendChild(img);
+    cardDiv.appendChild(content);
     
-    cardDiv.addEventListener('click', () => {
-        openCardModal(pin);
+    cardDiv.addEventListener("click", (e) => {
+        if (!e.target.closest('.card-author')) {
+            abrirCardModal(card);
+        }
     });
     
+    const authorElement = footer.querySelector('.card-author');
+    authorElement.addEventListener("click", (e) => {
+        e.stopPropagation(); 
+        irAlPerfil(card.authorName);
+    });
+
     return cardDiv;
 }
 
-function openCardModal(pin) {
+
+// Función para redirigir al perfil del usuario
+function irAlPerfil(username) {
+   /* window.location.href = `/perfil.html?usuario=${encodeURIComponent(username)}`;*/
+    window.location.href = `/perfil.html`
+    console.log(`Redirigiendo al perfil de: ${username}`);
+}
+
+
+
+function abrirCardModal(card) {
     let modal = document.getElementById('card-modal');
-    
     if (!modal) {
         modal = document.createElement('div');
         modal.id = 'card-modal';
@@ -84,43 +119,47 @@ function openCardModal(pin) {
                 <button class="modal-close">&times;</button>
                 <div class="modal-body">
                     <div class="modal-image-section">
-                        <img src="${pin.url_imagen}" alt="Imagen de ${pin.titulo}" class="modal-image">
+                        <img src="${card.image}" alt="Imagen de ${card.authorName}" class="modal-image">
                         <div class="modal-author-info">
-                            <img src="${pin.usuario.foto_perfil}" alt="Avatar de ${pin.usuario.nombre_usuario}" class="modal-author-avatar">
-                            <span class="modal-author-name">${pin.usuario.nombre_usuario}</span>
+                            <img src="${card.authorAvatar}" alt="Avatar de ${card.authorName}" class="modal-author-avatar">
+                            <div class="modal-author-details">
+                                <div class="modal-author-name">
+                                    <span class="modal-author-name">${card.authorName}</span>
+                                </div>
+                                <span class="modal-publish-date">${calcularFecha(card.publishDate)}</span>
+                            </div>
                             <div class="modal-likes">
                                 <svg class="like-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                                     <path d="M12 21.35L10.55 20.03C5.4 15.36 2 12.28 2 8.5C2 5.42 4.42 3 7.5 3C9.24 3 10.91 3.81 12 5.09C13.09 3.81 14.76 3 16.5 3C19.58 3 22 5.42 22 8.5C22 12.28 18.6 15.36 13.45 20.04L12 21.35Z" fill="currentColor"/>
                                 </svg>
-                                <span>${pin.estadisticas.total_likes}</span>
+                                <span>${card.likes}</span>
                             </div>
-                        </div>
-                        <div class="modal-tags">
-                            ${pin.etiquetas.map(etiqueta => 
-                                `<span class="tag">${etiqueta.nombre}</span>`
-                            ).join('')}
                         </div>
                     </div>
                     <div class="modal-comments-section">
-                        <h3>Comentarios (${pin.comentarios.length})</h3>
-                        <div class="comments-container">
-                            ${pin.comentarios.length > 0 ? 
-                                pin.comentarios.map(comentario => `
-                                    <div class="comment">
-                                        <div class="comment-author">
-                                            <img src="${comentario.usuario.foto_perfil}" alt="${comentario.usuario.nombre_usuario}" class="comment-avatar">
-                                            <span class="comment-author-name">${comentario.usuario.nombre_usuario}</span>
-                                        </div>
-                                        <p class="comment-content">${comentario.contenido}</p>
-                                        <span class="comment-date">${formatearFecha(comentario.fecha_publicacion)}</span>
-                                    </div>
-                                `).join('') : 
-                                '<p class="no-comments">Aún no hay comentarios. ¡Sé el primero en comentar!</p>'
-                            }
+                        <div class="modal-details">
+                            <h2 class="modal-title">${card.title || 'Sin título'}</h2>
+                            ${card.hashtags ? `<div class="modal-hashtags">${listarHashtags(card.hashtags)}</div>` : ''}
                         </div>
-                        <div class="comment-form">
-                            <textarea placeholder="Añade un comentario..." class="comment-input"></textarea>
-                            <button class="comment-submit">Comentar</button>
+                        
+                        <div class="comments-header">
+                            <h3>Comentarios</h3>
+                            <span class="comments-count">${card.comments ? card.comments.length : 0} comentarios</span>
+                        </div>
+                        
+                        <div class="comments-container">
+                            ${listarComentarios(card.comments || [])}
+                        </div>
+                        
+                        <div class="add-comment-section">
+                            <div class="comment-input-container">
+                                <textarea 
+                                    class="comment-input" 
+                                    placeholder="Añade un comentario..."
+                                    rows="3"
+                                ></textarea>
+                                <button class="comment-submit-btn">Publicar</button>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -130,112 +169,211 @@ function openCardModal(pin) {
         
         const closeBtn = modal.querySelector('.modal-close');
         const overlay = modal.querySelector('.modal-overlay');
+        const commentSubmitBtn = modal.querySelector('.comment-submit-btn');
+        const commentInput = modal.querySelector('.comment-input');
         
         closeBtn.addEventListener('click', closeCardModal);
         overlay.addEventListener('click', closeCardModal);
+        commentSubmitBtn.addEventListener('click', () => publicarComentario(card, commentInput));
         
-        // Cerrar con tecla ESC
-        document.addEventListener('keydown', (e) => {
-            if (e.key === 'Escape') {
-                closeCardModal();
+        commentInput.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault();
+                publicarComentario(card, commentInput);
             }
         });
-        
-        // Agregar funcionalidad al botón de comentar
-        const commentSubmit = modal.querySelector('.comment-submit');
-        const commentInput = modal.querySelector('.comment-input');
-        
-        commentSubmit.addEventListener('click', () => {
-            const comentario = commentInput.value.trim();
-            if (comentario) {
-                // Aquí puedes agregar la lógica para enviar el comentario
-                console.log('Nuevo comentario:', comentario);
-                commentInput.value = '';
-                // Recargar los comentarios o agregar el nuevo comentario localmente
-            }
+
+        const modalAuthorName = modal.querySelector('.modal-author-info');
+        modalAuthorName.addEventListener('click', (e) => {
+            e.stopPropagation(); // Evitar que afecte otros eventos
+            irAlPerfil(card.authorName);
         });
-        
-    } else {
-        // Actualizar el contenido del modal existente
-        updateModalContent(modal, pin);
     }
     
-    // Mostrar el modal
+    actualizarModal(modal, card);
     modal.style.display = 'block';
-    document.body.style.overflow = 'hidden'; // Prevenir scroll
+    document.body.style.overflow = 'hidden';
 }
 
-// Función para actualizar el contenido del modal
-function updateModalContent(modal, pin) {
-    const modalImage = modal.querySelector('.modal-image');
+
+
+
+function actualizarModal(modal, card) {
+    const modalImage = modal.querySelector('.modal-image'); //Buscamos los elementos en el DOM
     const modalAuthorAvatar = modal.querySelector('.modal-author-avatar');
     const modalAuthorName = modal.querySelector('.modal-author-name');
+    const modalPublishDate = modal.querySelector('.modal-publish-date');
     const modalLikes = modal.querySelector('.modal-likes span');
-    const modalTags = modal.querySelector('.modal-tags');
+    const modalTitle = modal.querySelector('.modal-title');
+    const modalHashtags = modal.querySelector('.modal-hashtags');
     const commentsContainer = modal.querySelector('.comments-container');
-    const commentsTitle = modal.querySelector('.modal-comments-section h3');
+    const commentsCount = modal.querySelector('.comments-count');
     
-    modalImage.src = pin.url_imagen;
-    modalImage.alt = `Imagen de ${pin.titulo}`;
-    modalAuthorAvatar.src = pin.usuario.foto_perfil;
-    modalAuthorName.textContent = pin.usuario.nombre_usuario;
-    modalLikes.textContent = pin.estadisticas.total_likes;
+    modalImage.src = card.image;
+    modalImage.alt = `Imagen de ${card.authorName}`;
+    modalAuthorAvatar.src = card.authorAvatar;
+    modalAuthorName.textContent = card.authorName;
+    modalPublishDate.textContent = calcularFecha(card.publishDate);
+    modalLikes.textContent = card.likes;
+    modalTitle.textContent = card.title || 'Sin título';
     
-    // Actualizar etiquetas
-    modalTags.innerHTML = pin.etiquetas.map(etiqueta => 
-        `<span class="tag">${etiqueta.nombre}</span>`
-    ).join('');
+    if (card.hashtags && modalHashtags) {
+        modalHashtags.innerHTML = listarHashtags(card.hashtags);
+    }
     
-    // Actualizar comentarios
-    commentsTitle.textContent = `Comentarios (${pin.comentarios.length})`;
-    commentsContainer.innerHTML = pin.comentarios.length > 0 ? 
-        pin.comentarios.map(comentario => `
-            <div class="comment">
-                <div class="comment-author">
-                    <img src="${comentario.usuario.foto_perfil}" alt="${comentario.usuario.nombre_usuario}" class="comment-avatar">
-                    <span class="comment-author-name">${comentario.usuario.nombre_usuario}</span>
+    const comments = card.comments || [];
+    commentsContainer.innerHTML = listarComentarios(comments);
+    commentsCount.textContent = `${comments.length} comentario${comments.length !== 1 ? 's' : ''}`;
+    
+    if (card.width && card.height) {
+        const aspectRatio = card.width / card.height;
+        modalImage.style.aspectRatio = aspectRatio;
+        modalImage.style.maxWidth = '100%';
+        modalImage.style.objectFit = 'cover';
+        
+        const modalImageSection = modal.querySelector('.modal-image-section');
+        const modalCommentsSection = modal.querySelector('.modal-comments-section');
+        
+        if (aspectRatio > 1) {
+            modalImageSection.style.maxWidth = '60%';
+            modalCommentsSection.style.flex = '1';
+        } else {
+            modalImageSection.style.maxWidth = '50%';
+            modalCommentsSection.style.flex = '1';
+        }
+    } else {
+        modalImage.style.aspectRatio = '';
+        modalImage.style.maxWidth = '';
+        modalImage.style.objectFit = 'contain';
+        
+        const modalImageSection = modal.querySelector('.modal-image-section');
+        const modalCommentsSection = modal.querySelector('.modal-comments-section');
+        
+        modalImageSection.style.maxWidth = '70vw';
+        modalCommentsSection.style.flex = '1';
+    }
+}
+
+
+
+//  Math.floor() función que redondea un número hacia abajo al entero más cercano.
+function calcularFecha(dateString) {
+    if (!dateString) return 'Fecha no disponible';
+    
+    const date = new Date(dateString);
+    const now = new Date();
+    const diffTime = Math.abs(now - date);
+    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+
+    if (diffDays === 0) return 'Hoy';
+    if (diffDays === 1) return 'Hace 1 día';
+    if (diffDays < 7) return `Hace ${diffDays} días`;
+    if (diffDays < 30) return `Hace ${Math.floor(diffDays / 7)} semanas`;
+    if (diffDays < 365) return `Hace ${Math.floor(diffDays / 30)} meses`;
+    return `Hace ${Math.floor(diffDays / 365)} años`;
+}
+
+
+
+
+function listarHashtags(hashtags) {
+    if (!hashtags || !Array.isArray(hashtags)) return '';
+    
+    return hashtags.map(tag => {
+        const cleanTag = tag.startsWith('#') ? tag.substring(1) : tag;
+        return `<span class="hashtag" data-tag="${cleanTag}">#${cleanTag}</span>`;
+    }).join('');
+}
+
+
+
+function listarComentarios(comments) {
+    if (!comments || comments.length === 0) {
+        return '<p class="no-comments">Aún no hay comentarios. ¡Sé el primero en comentar!</p>';
+    }
+    
+    return comments.map(comment => `
+        <div class="comment-item">
+            <div class="comment-author">
+                <img src="${comment.avatar || '/default-avatar.png'}" alt="Avatar" class="comment-avatar">
+                <div class="comment-content">
+                    <span class="comment-author-name">${comment.author}</span>
+                    <p class="comment-text">${comment.text}</p>
+                    <span class="comment-date">${calcularFecha(comment.date)}</span>
                 </div>
-                <p class="comment-content">${comentario.contenido}</p>
-                <span class="comment-date">${formatearFecha(comentario.fecha_publicacion)}</span>
             </div>
-        `).join('') : 
-        '<p class="no-comments">Aún no hay comentarios. ¡Sé el primero en comentar!</p>';
+        </div>
+    `).join('');
+    
 }
 
-// Función para formatear fechas
-function formatearFecha(fechaString) {
-    const fecha = new Date(fechaString);
-    return fecha.toLocaleDateString('es-ES', {
-        year: 'numeric',
-        month: 'long',
-        day: 'numeric',
-        hour: '2-digit',
-        minute: '2-digit'
+
+
+// temporal, correguir despues de tener la API
+function publicarComentario(card, commentInput) {
+    const commentText = commentInput.value.trim();
+    
+    if (!commentText) {
+        commentInput.focus();
+        return;
+    }
+    
+    console.log('Nuevo comentario:', { //imprime por consola el comentario
+        cardId: card.id,
+        comment: commentText
     });
+    
+    const newComment = {
+        author: 'Tú',
+        text: commentText,
+        date: new Date().toISOString(),
+        avatar: card.authorAvatar 
+    };
+    if (!card.comments) card.comments = [];
+    card.comments.push(newComment);
+    
+    const modal = document.getElementById('card-modal');
+    if (modal) {
+        actualizarModal(modal, card);
+    }
+    
+    commentInput.value = '';
+    
+    showCommentSuccess();
 }
 
-// Función para cerrar el modal
+
+// se muestra por consola que el comentario fue enviado
+function showCommentSuccess() {
+    console.log('Comentario publicado exitosamente');
+}
+
+
+
+//oculto el modal
 function closeCardModal() {
     const modal = document.getElementById('card-modal');
     if (modal) {
         modal.style.display = 'none';
-        document.body.style.overflow = ''; // Restaurar scroll
+        document.body.style.overflow = '';
     }
 }
 
+
+// funcion que irfomar si algo salio mal con el json
 function jsonError() {
     const container = document.getElementById('cards-container');
     if (!container) return;
     
-    console.log('Problema con la carga de pines');
-    container.innerHTML = `
-        <div class="error-message">
-            <p>No se pudieron cargar los pines. Intenta nuevamente más tarde.</p>
-        </div>
-    `;
+    console.log('Problema con el json');
+    
 }
 
-// Función para ordenar los cards
+
+
+
+
+// funcion para ordenaar las cards, todavia falta solucionar el problema de que estan ordenadas verticalmente
 function sortCards(orderType) {
     const container = document.getElementById('cards-container');
     if (!container) return;
@@ -243,35 +381,31 @@ function sortCards(orderType) {
     const cards = Array.from(container.getElementsByClassName('card'));
     
     cards.sort((a, b) => {
-        const aId = parseInt(a.getAttribute('data-id'));
-        const bId = parseInt(b.getAttribute('data-id'));
-        
-        // Para obtener los datos originales necesitarías guardarlos en una variable global
-        // o modificar la función para trabajar con los datos en memoria
-        const pinA = window.pinesData ? window.pinesData.find(pin => pin.id === aId) : null;
-        const pinB = window.pinesData ? window.pinesData.find(pin => pin.id === bId) : null;
-        
-        if (!pinA || !pinB) return 0;
+        const aLikes = parseInt(a.querySelector('.action-btn span').textContent);
+        const bLikes = parseInt(b.querySelector('.action-btn span').textContent);
+        const aName = a.querySelector('.author-name').textContent;
+        const bName = b.querySelector('.author-name').textContent;
         
         switch (orderType) {
             case 'Alpha':
-                return pinA.titulo.localeCompare(pinB.titulo);
+                return aName.localeCompare(bName);
             case 'date':
-                return new Date(pinB.fecha_publicacion) - new Date(pinA.fecha_publicacion);
+                //falta
+                return 0;
             case 'popular':
-                return pinB.estadisticas.total_likes - pinA.estadisticas.total_likes;
+                return bLikes - aLikes;
             default:
                 return 0;
         }
     });
     
-    // Limpiar y reinsertar cards ordenados
     container.innerHTML = '';
     cards.forEach(card => container.appendChild(card));
 }
 
-// Variable global para almacenar los datos de pines
-window.pinesData = [];
+
+
+
 
 document.addEventListener("DOMContentLoaded", function() {
     console.log('DOM cargado, inicializando pines...');
@@ -285,8 +419,6 @@ document.addEventListener("DOMContentLoaded", function() {
             e.stopPropagation();
             orderMenu.style.display = orderMenu.style.display === "block" ? "none" : "block";
         });
-
-        // Cerrar menú si clicás afuera
         document.addEventListener("click", () => {
             orderMenu.style.display = "none";
         });
@@ -296,31 +428,10 @@ document.addEventListener("DOMContentLoaded", function() {
                 const tipo = e.target.dataset.order;
                 console.log("Orden seleccionado:", tipo);
                 orderMenu.style.display = "none";
-                sortCards(tipo);
+                sortCards(tipo); //tipo de ordenamiento
             });
         });
     } else {
         console.warn('No se encontraron elementos de ordenamiento');
     }
 });
-
-// Modificar la función displayCards para guardar los datos globalmente
-function displayCards(pines) {
-    const container = document.getElementById('cards-container');
-    
-    if (!container) {
-        console.error('No se encontró el contenedor de cards');
-        return;
-    }
-    
-    console.log('Mostrando', pines.length, 'pines');
-    container.innerHTML = ''; // Limpiar contenedor
-    
-    // Guardar datos globalmente para el ordenamiento
-    window.pinesData = pines;
-    
-    pines.forEach(pin => {
-        const cardElement = crearCard(pin);
-        container.appendChild(cardElement);
-    });
-}
