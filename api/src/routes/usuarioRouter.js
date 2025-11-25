@@ -31,6 +31,37 @@ async function intentarConseguirUsuarioPorId(id) {
     return esquemaUsuario.safeParseAsync(result.rows[0])
 }
 
+async function parchearUsuarioPorId(id, nombre?, contrasenia?, email?, icono?) {
+    const sets = []
+    const params = []
+
+    if (nombre !== undefined) {
+        sets.push("[nombre] = ?")
+        params.push(nombre)
+    }
+    if (contrasenia !== undefined) {
+        sets.push("[contrasenia] = ?")
+        params.push(contrasenia)
+    }
+    if (email !== undefined) {
+        sets.push("[email] = ?")
+        params.push(email)
+    }
+    if (icono !== undefined) {
+        sets.push("[icono] = ?")
+        params.push(icono)
+    }
+
+    if (sets.length === 0) {
+        return Promise.reject("No se ha pasado la cantidad de parametros adecuada")
+    }
+
+    params.push(id)
+
+    const query = `UPDATE usuarios SET ${sets.join(", ")} WHERE id = ?`
+    return pool.query(query, params)
+}
+
 const usuarioRouter = express.Router()
 
 usuarioRouter.get('/', async (req, res) => {
@@ -113,15 +144,19 @@ usuarioRouter.post('/', async (req, res) => {
 })
 
 usuarioRouter.patch('/:id', async (req, res) => {
+    // TODO: terminar de implementar patch
     try {
-        intentarConseguirUsuarioPorId(req.params.id)
-            .then( (usuario) => {
-                res.status(200).send(usuario);})
-            .catch( (err) => {
+        parchearUsuarioPorId(req.params.id, req.body.nombre, req.body.contrasenia, req.body.email, req.body.icono)
+            .then( (queryResponse) => {
+                if (queryResponse.rowCount !== 1) {
+                    res.status(404).send({}) // no encontrado
+                } else {
+                    res.status(200).send(queryResponse.rows[0]) // se devuelven los cambios
+                }
+            }).catch( (err) => { // se ha pasado una cantidad invalida de parametros
                 console.error(err);
-                res.status(404).send();})
-
-        // TODO: terminar de implementar patch
+                res.status(400).send();
+            })
     } catch (err) {
         console.error(err);
         res.status(500).send()
