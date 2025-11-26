@@ -1,39 +1,57 @@
+import dotenv from 'dotenv';
+import express from 'express';
+import usuariosRouter from "./routes/usuarios.js";
+import publicacionesRouter from "./routes/publicaciones.js";
+import comentariosRouter from "./routes/comentarios.js";
+import likesRouter from "./routes/likes.js";
+import {logRequest} from "./middlewares/logRequest.js";
+import {logResponse} from "./middlewares/logResponse.js";
+import {dataDiagnostic} from "./routes/diagnostics/dataDiagnostic.js";
+import {healthDiagnostic} from "./routes/diagnostics/healthDiagnostic.js";
+import {testConnectionWithRetry} from "./db.js";
 
 // carga las variables de entorno
-import dotenv from 'dotenv'
-dotenv.config()
+dotenv.config();
 
-console.log(`NODE_ENV: ${process.env.NODE_ENV}`)
-
+const NODE_ENV = process.env.NODE_ENV || "development";
 const PORT = process.env.PORT || 3000;
 
-import express from 'express'
-
-import usuarioRouter from "./routes/usuarioRouter.js";
+console.log('=== INICIANDO APP ===');
+console.log('NODE_ENV:', NODE_ENV);
+console.log('PORT:', PORT);
 
 const app = express()
 
-// parsea a json los cuerpos de las request
-app.use(express.json())
+app
+    .use(express.json())
+    .use(logRequest)
+    .use(logResponse)
+    .use("/usuarios", usuariosRouter)
+    .use("/publicaciones", publicacionesRouter)
+    .use("/comentarios", comentariosRouter)
+    .use("/likes", likesRouter)
 
-// realiza logs al llegar una request y al enviarse una response
-app.use((req, res, next) => {
-    console.debug(`Request: ${req.method} ${req.url}`)
-    console.trace(`Request Body: ${req.body}`)
+if (NODE_ENV === "development") {
+    app
+        .get('/health', healthDiagnostic)
+        .get('/api/data', dataDiagnostic); // Ruta para datos completos (ACTUALIZADA PARA INCLUIR LIKES REALES)
+}
 
-    const start = Date.now();
-    res.on("finish", () => {
-        const duration = Date.now() - start;
-        console.debug(`Response: ${req.method} ${req.url} -> ${res.statusCode} (estimate: ${duration}ms)`);
-        console.debug(`Response Body: ${req.body}`);
-    })
+// Inicializar la aplicación
 
-    next()
-})
+console.log('Probando conexión a la base de datos (con reintentos)...');
 
-app.use("/usuario", usuarioRouter)
-app.use("/usuarios", usuariosRouter)
+const dbConnected = await testConnectionWithRetry(10, 2000);
 
-app.listen(PORT, () => {
-    console.log(`Api escuchando en el puerto ${PORT}`)
-})
+if (!dbConnected) {
+    console.log('Iniciando sin conexión a BD...');
+} else {
+    console.log('Conexión a BD establecida exitosamente!');
+}
+
+app.listen(PORT, '0.0.0.0', () => {
+    console.log(`API escuchando en http://localhost:${PORT}`);
+    console.log(`Health check: http://localhost:${PORT}/health`);
+    console.log(`API Data: http://localhost:${PORT}/api/data`);
+    console.log(`Comentarios API: http://localhost:${PORT}/comentarios`);
+});
