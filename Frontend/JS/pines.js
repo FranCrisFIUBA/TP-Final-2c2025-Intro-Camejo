@@ -91,7 +91,7 @@ function crearCard(card) {
     const authorElement = footer.querySelector('.card-author');
     authorElement.addEventListener("click", (e) => {
         e.stopPropagation(); 
-        irAlPerfil(card.authorName);
+        irAlPerfil(card.id_author);
     });
 
     return cardDiv;
@@ -99,10 +99,9 @@ function crearCard(card) {
 
 
 // Función para redirigir al perfil del usuario
-function irAlPerfil(username) {
-   /* window.location.href = `/perfil.html?usuario=${encodeURIComponent(username)}`;*/
-    window.location.href = `/perfil.html`
-    console.log(`Redirigiendo al perfil de: ${username}`);
+function irAlPerfil(id_author) {
+    window.location.href = `perfil.html?usuario=${encodeURIComponent(id_author)}`;
+    console.log(`Redirigiendo al perfil del autor ID: ${id_author}`);
 }
 
 
@@ -185,14 +184,16 @@ function abrirCardModal(card) {
 
         const modalAuthorName = modal.querySelector('.modal-author-info');
         modalAuthorName.addEventListener('click', (e) => {
-            e.stopPropagation(); // Evitar que afecte otros eventos
-            irAlPerfil(card.authorName);
+            e.stopPropagation();
+            irAlPerfil(card.id_author);
         });
     }
     
     actualizarModal(modal, card);
     modal.style.display = 'block';
     document.body.style.overflow = 'hidden';
+    modalAuthorName.style.cursor = 'pointer';
+    modalAuthorName.style.pointerEvents = 'auto';
 }
 
 

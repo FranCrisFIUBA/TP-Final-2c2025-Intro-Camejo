@@ -33,79 +33,11 @@
             </header>
 
             <section class="pines-section" aria-label="Contenido principal">
-                <div class="card">
-                    <img src="./img/temp/_ (1).jpeg" alt="Imagen de ejemplo 1" class="card-image">
-                    <div class="card-content">
-                        <div class="card-footer">
-                            <div class="card-author">
-                                <img src="./img/[940] avatar 𓂃꙳⋆.jpeg" alt="Avatar de usuario" class="author-avatar">
-                                <span class="author-name">White-bear</span>
-                            </div>
-                            <div class="card-actions">
-                                <button class="action-btn">
-                                    <svg class="action-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                        <path d="M12 21.35L10.55 20.03C5.4 15.36 2 12.28 2 8.5C2 5.42 4.42 3 7.5 3C9.24 3 10.91 3.81 12 5.09C13.09 3.81 14.76 3 16.5 3C19.58 3 22 5.42 22 8.5C22 12.28 18.6 15.36 13.45 20.04L12 21.35Z" fill="currentColor"/>
-                                    </svg>
-                                    <span>124</span>
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                
+                <div id="cards-container" class="cards-container"></div>
             </section>
         </main>
     </div>
-<<<<<<< HEAD
     <script src="./JS/navbar.js"></script>
-=======
-    <script> //para que funcionen los iconos del nav
-        document.addEventListener("DOMContentLoaded", () => {
-            const homeBtn = document.querySelector(".icon-bar.home");
-            const searchBtn = document.querySelector(".icon-bar.search");
-            const addBtn = document.querySelector(".icon-bar.add");
-            const imgUser = document.querySelector(".user-avatar")
-
-            homeBtn.addEventListener("click", () => {
-                window.location.href = "index.html"; 
-            });
-
-            searchBtn.addEventListener("click", () => {
-                window.location.href = ".html";
-            });
-
-            addBtn.addEventListener("click", () => {
-                window.location.href = "create-pin.html";
-            });
-
-        });
-    </script>
->>>>>>> origin/develop-frontend
-    <script> //para que funcione el boton de ordenar
-        document.addEventListener("DOMContentLoaded", () => {
-            const orderBtn = document.querySelector(".order-by");
-            const orderMenu = document.querySelector(".order-menu");
-
-            orderBtn.addEventListener("click", (e) => {
-                e.stopPropagation();
-                orderMenu.style.display = orderMenu.style.display === "block" ? "none" : "block";
-            });
-
-            // Cerrar menú si clicás afuera
-            document.addEventListener("click", () => {
-                orderMenu.style.display = "none";
-            });
-
-            orderMenu.querySelectorAll("li").forEach(item => {
-                item.addEventListener("click", (e) => {
-                const tipo = e.target.dataset.order;
-                console.log("Orden seleccionado:", tipo);
-                orderMenu.style.display = "none";
-                // acá se ejecutara la función de ordenamiento elegida por el usuario
-                });
-            });
-        });
-    </script>
-
+    <script src="./JS/pines.js"></script>
 </body>
 </html>
