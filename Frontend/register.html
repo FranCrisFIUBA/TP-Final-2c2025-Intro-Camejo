@@ -9,7 +9,7 @@
 </head>
 <body>
     <div>
-        <form>
+        <form id="form-registro">
             <div class="top-logo">
                 <div class="logo">
                     <img src="./img/face_24dp_47413E_FILL0_wght400_GRAD0_opsz24.svg" alt="Logo de la página">
@@ -18,9 +18,9 @@
             <h1>
                 ¡Bienvenido a Imago!
             </h1>
-            <input type="text" placeholder="Nombre de usuario" > <br>
-            <input type="password" placeholder="Contraseña"> <br>
-            <input type="password" placeholder="Repetir contraseña"> <br>
+            <input type="text" name="usuario" placeholder="Nombre de usuario" > <br>
+            <input type="password" name="contraseña" placeholder="Contraseña"> <br>
+            <input type="password" name="repetir_contraseña" placeholder="Repetir contraseña"> <br>
             <input type="date" name="fecha"> <br>
             <input type="submit" class="campo-registrarse" value="Registrarse" >
             <p>
@@ -29,5 +29,6 @@
             </p>
         </form>
     </div>
+    <script src="register.js"></script>
 </body>
 </html>
