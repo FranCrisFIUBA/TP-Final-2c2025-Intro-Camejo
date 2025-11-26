@@ -6,7 +6,7 @@ async function cargarCards() {
     try {
         console.log('Cargando cards desde la API...');
         
-        const response = await fetch('/api/data');
+        const response = await fetch('localhost:3000/api/data');
         
         if (!response.ok) {
             throw new Error(`Error HTTP: ${response.status}`);
