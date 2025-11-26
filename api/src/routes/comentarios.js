@@ -1,4 +1,4 @@
-// routes/comentarioRouter.js
+// routes/comentarios.js
 import express from 'express';
 import { pool } from "../db/connection.js";
 
