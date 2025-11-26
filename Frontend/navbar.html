@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="./css/navbar.css">
+</head>
+<body>
+    <nav class="sidebar">
+        <div class="sidebar-top">
+            <div class="logo">
+                <img src="./img/logo (4).png" alt="Logo de la página">
+            </div>
+        </div>
+        <div class="sidebar-middle">
+            <button class="icon-bar home" aria-label="Inicio">
+                <div class="hover-effect"></div>
+                <img src="./img/home_app_logo_24dp_47413E_FILL0_wght400_GRAD0_opsz24.svg" alt="Inicio">
+            </button>
+            <button class="icon-bar add" aria-label="Agregar" id="add-button">
+                <div class="hover-effect"></div>
+                <img src="./img/add_box_24dp_47413E_FILL0_wght400_GRAD0_opsz24.svg" alt="Agregar">
+            </button>
+            <button class="icon-bar search" aria-label="Buscar">
+                <div class="hover-effect"></div>
+                <img src="./img/explore_24dp_47413E_FILL0_wght400_GRAD0_opsz24.svg" alt="Buscar">
+            </button>
+            
+            <div class="dropdown-menu" id="dropdown-menu">
+                <p>Crear</p>
+                <a href="create-pin.html" class="dropdown-item">
+                    <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIj48cGF0aCBkPSJNMTIgMTJWNU0xMiAxMk0xMiAxMlYxOU0xMiAxMkg1TTEyIDEySDE5IiBzdHJva2U9IiMzMzMiIHN0cm9rZS13aWR0aD0iMiIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIi8+PC9zdmc+" alt="Nueva Publicación">
+                    Nueva Publicación
+                </a>
+                <a href="create-board.html" class="dropdown-item">
+                    <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIj48cmVjdCB4PSIzIiB5PSIzIiB3aWR0aD0iMTgiIGhlaWdodD0iMTgiIHJ4PSIyIiBzdHJva2U9IiMzMzMiIHN0cm9rZS13aWR0aD0iMiIvPjwvc3ZnPg==" alt="Crear Tablero">
+                    Crear Tablero
+                </a>
+            </div>
+        </div>
+        <div class="sidebar-bottom">
+            <button class="user-avatar" aria-label="Perfil de usuario" id="profile-button">
+                <img src="./img/[940] avatar 𓂃꙳⋆.jpeg" alt="Foto de usuario">
+            </button>
+        </div>
+    </nav>
+    <div class="overlay" id="overlay"></div>
+    <script src="./JS/navbar.js"></script>
+</body>
+</html>
