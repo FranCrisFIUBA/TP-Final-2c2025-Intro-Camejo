@@ -1,21 +1,38 @@
+const API_BASE_URL = '';
+//temporl
+let usuarioActual = 1; 
+
 async function cargarCards() {
     try {
-        console.log('Cargando cards desde JSON...');
-        const response = await fetch('./data.json');
+        console.log('Cargando cards desde la API...');
+        
+        const response = await fetch('/api/data');
+        
         if (!response.ok) {
-            throw new Error('No se pudo cargar el JSON');
+            throw new Error(`Error HTTP: ${response.status}`);
         }
+        
         const data = await response.json();
-        console.log('Datos cargados:', data);
-        listarPublicaciones(data.cards);
+        console.log('Datos cargados desde API:', data);
+        
+        // Verificar likes del usuario actual para cada card
+        const cardsConLikes = await Promise.all(
+            data.cards.map(async (card) => {
+                const userLiked = await verificarLikeUsuario(card.id, usuarioActual);
+                return {
+                    ...card,
+                    userLiked: userLiked
+                };
+            })
+        );
+        
+        listarPublicaciones(cardsConLikes);
+        
     } catch (error) {
-        console.error('Error loading cards:', error);
+        console.error('Error cargando datos:', error);
         jsonError();
     }
 }
-
-
-
 
 function listarPublicaciones(cards) {
     const container = document.getElementById('cards-container');
@@ -30,10 +47,9 @@ function listarPublicaciones(cards) {
     
     cards.forEach(card => {
         const cardElement = crearCard(card);
-        container.appendChild(cardElement); //agreganos las cards al container
+        container.appendChild(cardElement); 
     });
 }
-
 
 function crearCard(card) {
     const cardDiv = document.createElement("div");
@@ -59,21 +75,25 @@ function crearCard(card) {
     const footer = document.createElement("div");
     footer.className = "card-footer";
 
+    const svgFill = card.userLiked ? 'currentColor' : 'none';
+    const strokeWidth = card.userLiked ? '' : 'stroke-width="1.5"';
+    
     footer.innerHTML = `
         <div class="card-author">
             <img src="${card.authorAvatar}" alt="Avatar" class="author-avatar">
             <span class="author-name">${card.authorName}</span>
         </div>
         <div class="card-actions">
-            <button class="action-btn">
-                <svg class="action-icon" viewBox="0 0 24 24">
+            <button class="action-btn like-btn ${card.userLiked ? 'liked' : ''}" data-card-id="${card.id}">
+                <svg class="action-icon" viewBox="0 0 24 24" fill="${svgFill}" stroke="currentColor">
                     <path d="M12 21.35L10.55 20.03C5.4 15.36 2 12.28
                     2 8.5C2 5.42 4.42 3 7.5 3c1.74 0 3.41.81
                     4.5 2.09C13.09 3.81 14.76 3 16.5 3
                     C19.58 3 22 5.42 22 8.5c0 3.78-3.4
-                    6.86-8.55 11.54L12 21.35Z" fill="currentColor"/>
+                    6.86-8.55 11.54L12 21.35Z" 
+                    ${strokeWidth}/>
                 </svg>
-                <span>${card.likes}</span>
+                <span class="like-count">${card.likes}</span>
             </button>
         </div>
     `;
@@ -83,7 +103,7 @@ function crearCard(card) {
     cardDiv.appendChild(content);
     
     cardDiv.addEventListener("click", (e) => {
-        if (!e.target.closest('.card-author')) {
+        if (!e.target.closest('.card-author') && !e.target.closest('.like-btn')) {
             abrirCardModal(card);
         }
     });
@@ -94,7 +114,189 @@ function crearCard(card) {
         irAlPerfil(card.id_author);
     });
 
+    const likeBtn = footer.querySelector('.like-btn');
+    likeBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        toggleLike(card.id, likeBtn, card);
+    });
+
     return cardDiv;
+}
+
+// Función para manejar likes
+async function toggleLike(cardId, likeBtn, card) {
+    try {
+        const likeCountElement = likeBtn.querySelector('.like-count') || likeBtn.querySelector('span');
+        const isLiked = likeBtn.classList.contains('liked');
+        const currentLikes = parseInt(likeCountElement.textContent);
+        
+        console.log('=== TOGGLE LIKE INICIADO ===');
+        console.log('Card ID:', cardId);
+        console.log('Usuario actual:', usuarioActual);
+        console.log('Estado actual:', isLiked ? 'LIKED' : 'NOT LIKED');
+        console.log('Likes actuales:', currentLikes);
+        
+        if (isLiked) {
+            // Quitar like
+            console.log('Eliminando like...');
+            const response = await fetch(`/likes/publicacion/${cardId}/usuario/${usuarioActual}`, {
+                method: 'DELETE'
+            });
+            
+            console.log('Respuesta DELETE:', response.status, response.statusText);
+            
+            if (response.ok) {
+                const result = await response.json();
+                console.log('Like eliminado exitosamente:', result);
+                
+                likeBtn.classList.remove('liked');
+                const svg = likeBtn.querySelector('svg');
+                svg.setAttribute('fill', 'none');
+                svg.setAttribute('stroke-width', '1.5');
+                likeCountElement.textContent = result.totalLikes;
+                
+                // Actualizar el objeto card
+                if (card) {
+                    card.userLiked = false;
+                    card.likes = result.totalLikes;
+                }
+                                
+                // Actualizar el like count en todas las instancias de esta card
+                actualizarLikeCountEnTodasLasCards(cardId, result.totalLikes, false);
+                
+            } else {
+                const errorText = await response.text();
+                console.error('Error al eliminar like:', response.status, errorText);
+                alert('Error al quitar like: ' + errorText);
+            }
+        } else {
+            // Dar like
+            console.log('Agregando like...');
+            const likeData = {
+                usuario_id: usuarioActual,
+                publicacion_id: cardId
+            };
+            
+            console.log('Enviando datos:', likeData);
+            
+            const response = await fetch('/likes', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(likeData)
+            });
+            
+            console.log('Respuesta POST:', response.status, response.statusText);
+            
+            if (response.ok) {
+                const result = await response.json();
+                console.log('Like agregado exitosamente:', result);
+                
+                likeBtn.classList.add('liked');
+                const svg = likeBtn.querySelector('svg');
+                svg.setAttribute('fill', 'currentColor');
+                svg.removeAttribute('stroke-width');
+                likeCountElement.textContent = result.totalLikes;
+                
+                // Actualizar el objeto card
+                if (card) {
+                    card.userLiked = true;
+                    card.likes = result.totalLikes;
+                }
+                
+                // Actualizar el like count en todas las instancias de esta card
+                actualizarLikeCountEnTodasLasCards(cardId, result.totalLikes, true);
+                
+            } else {
+                const errorData = await response.json().catch(() => ({ error: 'Error desconocido' }));
+                console.error('Error al dar like:', errorData);
+                    
+                if (errorData.error && errorData.error.includes("Ya diste like")) {
+                    console.log('Like ya existía, sincronizando estado...');
+                    likeBtn.classList.add('liked');
+                    const svg = likeBtn.querySelector('svg');
+                    svg.setAttribute('fill', 'currentColor');
+                    svg.removeAttribute('stroke-width');
+                    
+                    // Actualizar el conteo desde la base de datos
+                    const countResponse = await fetch(`/likes/publicacion/${cardId}/count`);
+                    if (countResponse.ok) {
+                        const countData = await countResponse.json();
+                        likeCountElement.textContent = countData.likes;
+                    }
+                } else {
+                    alert('Error al dar like: ' + (errorData.error || 'Error desconocido'));
+                }
+            }
+        }
+        
+        console.log('=== TOGGLE LIKE FINALIZADO ===');
+    } catch (error) {
+        console.error('Error crítico en toggle like:', error);
+        alert('Error crítico: ' + error.message);
+    }
+}
+
+
+// Función para actualizar like count en todas las instancias de una card
+function actualizarLikeCountEnTodasLasCards(cardId, newCount, isLiked) {
+    const allLikeButtons = document.querySelectorAll(`.like-btn[data-card-id="${cardId}"]`);
+    allLikeButtons.forEach(btn => {
+        const countElement = btn.querySelector('.like-count');
+        if (countElement) {
+            countElement.textContent = newCount;
+        }
+        
+        const svg = btn.querySelector('svg');
+        if (isLiked) {
+            btn.classList.add('liked');
+            svg.setAttribute('fill', 'currentColor');
+            svg.removeAttribute('stroke-width');
+        } else {
+            btn.classList.remove('liked');
+            svg.setAttribute('fill', 'none');
+            svg.setAttribute('stroke-width', '1.5');
+        }
+    });
+    
+    // Actualizar en el modal si está abierto
+    const modal = document.getElementById('card-modal');
+    if (modal) {
+        const modalLikeBtn = modal.querySelector('.modal-like-btn');
+        const modalLikeCount = modal.querySelector('.modal-likes span');
+        
+        if (modalLikeBtn && modalLikeCount) {
+            modalLikeCount.textContent = newCount;
+            const modalSvg = modalLikeBtn.querySelector('svg');
+            
+            if (isLiked) {
+                modalLikeBtn.classList.add('liked');
+                modalSvg.setAttribute('fill', 'currentColor');
+                modalSvg.removeAttribute('stroke-width');
+            } else {
+                modalLikeBtn.classList.remove('liked');
+                modalSvg.setAttribute('fill', 'none');
+                modalSvg.setAttribute('stroke-width', '1.5');
+            }
+        }
+    }
+}
+
+
+// Función para verificar si el usuario actual dio like a una publicación
+async function verificarLikeUsuario(publicacionId, usuarioId) {
+    try {
+        const response = await fetch(`/likes/publicacion/${publicacionId}/usuario/${usuarioId}`);
+        if (response.ok) {
+            const data = await response.json();
+            return data.liked;
+        }
+        return false;
+    } catch (error) {
+        console.error('Error verificando like:', error);
+        return false;
+    }
 }
 
 
@@ -103,7 +305,6 @@ function irAlPerfil(id_author) {
     window.location.href = `perfil.html?usuario=${encodeURIComponent(id_author)}`;
     console.log(`Redirigiendo al perfil del autor ID: ${id_author}`);
 }
-
 
 
 function abrirCardModal(card) {
@@ -128,10 +329,13 @@ function abrirCardModal(card) {
                                 <span class="modal-publish-date">${calcularFecha(card.publishDate)}</span>
                             </div>
                             <div class="modal-likes">
-                                <svg class="like-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                    <path d="M12 21.35L10.55 20.03C5.4 15.36 2 12.28 2 8.5C2 5.42 4.42 3 7.5 3C9.24 3 10.91 3.81 12 5.09C13.09 3.81 14.76 3 16.5 3C19.58 3 22 5.42 22 8.5C22 12.28 18.6 15.36 13.45 20.04L12 21.35Z" fill="currentColor"/>
-                                </svg>
-                                <span>${card.likes}</span>
+                                <button class="modal-like-btn ${card.userLiked ? 'liked' : ''}" data-card-id="${card.id}">
+                                    <svg class="like-icon" viewBox="0 0 24 24" fill="${card.userLiked ? 'currentColor' : 'none'}" stroke="currentColor">
+                                        <path d="M12 21.35L10.55 20.03C5.4 15.36 2 12.28 2 8.5C2 5.42 4.42 3 7.5 3C9.24 3 10.91 3.81 12 5.09C13.09 3.81 14.76 3 16.5 3C19.58 3 22 5.42 22 8.5C22 12.28 18.6 15.36 13.45 20.04L12 21.35Z" 
+                                        ${card.userLiked ? '' : 'stroke-width="1.5"'}/>
+                                    </svg>
+                                    <span>${card.likes}</span>
+                                </button>
                             </div>
                         </div>
                     </div>
@@ -170,10 +374,22 @@ function abrirCardModal(card) {
         const overlay = modal.querySelector('.modal-overlay');
         const commentSubmitBtn = modal.querySelector('.comment-submit-btn');
         const commentInput = modal.querySelector('.comment-input');
+        const modalLikeBtn = modal.querySelector('.modal-like-btn');
+        const modalAuthorInfo = modal.querySelector('.modal-author-info');
         
         closeBtn.addEventListener('click', closeCardModal);
         overlay.addEventListener('click', closeCardModal);
         commentSubmitBtn.addEventListener('click', () => publicarComentario(card, commentInput));
+        
+        modalLikeBtn.addEventListener('click', (e) => {
+            e.stopPropagation();    
+            toggleLike(card.id, modalLikeBtn, card);
+        });
+        
+        modalAuthorInfo.addEventListener('click', (e) => {
+            e.stopPropagation();
+            irAlPerfil(card.id_author);
+        });
         
         commentInput.addEventListener('keydown', (e) => {
             if (e.key === 'Enter' && !e.shiftKey) {
@@ -182,18 +398,29 @@ function abrirCardModal(card) {
             }
         });
 
-        const modalAuthorName = modal.querySelector('.modal-author-info');
-        modalAuthorName.addEventListener('click', (e) => {
-            e.stopPropagation();
-            irAlPerfil(card.id_author);
-        });
+    } else {
+        actualizarModal(modal, card);
     }
     
-    actualizarModal(modal, card);
     modal.style.display = 'block';
     document.body.style.overflow = 'hidden';
-    modalAuthorName.style.cursor = 'pointer';
-    modalAuthorName.style.pointerEvents = 'auto';
+}
+
+
+// Resto de tus funciones permanecen igual...
+function actualizarModal(modal, card) {
+    const modalLikeBtn = modal.querySelector('.modal-like-btn');
+    if (modalLikeBtn) {
+        modalLikeBtn.setAttribute('data-card-id', card.id);
+        modalLikeBtn.classList.toggle('liked', card.userLiked || false);
+        const likeSvg = modalLikeBtn.querySelector('svg');
+        likeSvg.setAttribute('fill', card.userLiked ? 'currentColor' : 'none');
+        if (card.userLiked) {
+            likeSvg.removeAttribute('stroke-width');
+        } else {
+            likeSvg.setAttribute('stroke-width', '1.5');
+        }
+    }
 }
 
 
@@ -319,7 +546,7 @@ function publicarComentario(card, commentInput) {
         return;
     }
     
-    console.log('Nuevo comentario:', { //imprime por consola el comentario
+    console.log('Nuevo comentario:', { 
         cardId: card.id,
         comment: commentText
     });
@@ -366,8 +593,13 @@ function jsonError() {
     const container = document.getElementById('cards-container');
     if (!container) return;
     
-    console.log('Problema con el json');
-    
+    console.log('Error al cargar datos de la API');
+    container.innerHTML = `
+        <div class="error-message">
+            <h3>Error al cargar las publicaciones</h3>
+            <p>No se pudieron cargar los datos desde el servidor.</p>
+        </div>
+    `;
 }
 
 

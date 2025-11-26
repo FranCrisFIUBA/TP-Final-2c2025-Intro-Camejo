@@ -30,7 +30,8 @@ body {
     align-items: center;
     justify-content: center;
     padding: 20px;
-}/* Contenedor principal de la imagen */
+}
+/* Contenedor principal de la imagen */
 .pin-container {
     width: 400px;
     height: 550px;
@@ -123,7 +124,7 @@ body {
   font-size: 14px;
   resize: none;
   background: var(--gris);
-}/*  Tamaño (ancho x alto) */
+}
 .size-inputs {
   display: flex;
   align-items:flex-start;
@@ -142,7 +143,9 @@ body {
   display: flex;
   width: 300px;
   gap: 20px;
-}/* Etiquetas */
+}
+
+/* Etiquetas */
 .tags {
   display: flex;
   justify-content: flex-start;

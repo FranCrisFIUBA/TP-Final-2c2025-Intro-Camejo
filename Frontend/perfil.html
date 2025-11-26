@@ -14,17 +14,23 @@
         <div id="navbar-container"></div>
         <div class="izq-section">
             <div class="navigation-options">
-                <div class="nav-option active">Tableros</div>
+                <div class="nav-option active">Mis publicaciones</div>
+                <div class="nav-option">Tableros</div>
                 <div class="nav-option">Búsquedas personalizadas</div>
             </div>
             
-            <div class="tableros-content">
-                <h2 class="section-title">Tus tableros</h2>
+            <!-- CONTENIDO DE MIS PUBLICACIONES -->
+            <div class="publicaciones-content">
+                <div class="publicaciones-container" id="publicaciones-container"></div>
+            </div>
+
+            <!-- CONTENIDO DE TABLEROS -->
+            <div class="tableros-content" style="display: none;">
                 <div class="tableros-container" id="tableros-container"></div>
             </div>
 
+            <!-- CONTENIDO DE BÚSQUEDAS -->
             <div class="searches-content" style="display: none;">
-                <h2 class="section-title">Búsquedas personalizadas</h2>
                 <div id="lista-busquedas"></div>
             </div>
         </div>
@@ -51,7 +57,7 @@
                     </div>
 
                     <div class="estadistica estadistica-likes">
-                        <i class="fas fa-bookmark"></i>
+                        <i class="fas fa-heart estadistica-icon"></i>
                         <span class="estadistica-number" id="estadistica-likes">0</span>
                         <span class="estadistica-label">Likes</span>
                     </div>
@@ -67,4 +73,4 @@
     <script src="./JS/navbar.js"></script>
     <script src="./JS/perfil.js"></script> 
 </body>
-</html>+
+</html>
