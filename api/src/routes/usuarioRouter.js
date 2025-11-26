@@ -144,7 +144,6 @@ usuarioRouter.post('/', async (req, res) => {
 })
 
 usuarioRouter.patch('/:id', async (req, res) => {
-    // TODO: terminar de implementar patch
     try {
         parchearUsuarioPorId(req.params.id, req.body.nombre, req.body.contrasenia, req.body.email, req.body.icono)
             .then( (queryResponse) => {
