@@ -9,20 +9,21 @@
 </head>
 <body>
     <div>
-        <form>
+        <form id="form-login">
             <h1>Iniciar Sesión</h1>
             <div id="caja-usuario">
             <label class="label-usuario">Usuario</label> <br>
-            <input type="text" required> <br>
+            <input type="text" name="usuario" required> <br>
             </div>
             <div id="caja-contraseña">
             <label class="label-contraseña">Contraseña</label> <br>
-            <input type="password" required> <br>
+            <input type="password" name="contraseña" required> <br>
             </div>
             <button type="submit" id="campo-loguearse">entrar</button> <br>
             <p>¿No tienes una cuenta?<br><a href="register.html">Registrate</a></p>
 
         </form>
     </div>
+    <script src="login.js"></script>
 </body>
 </html>
