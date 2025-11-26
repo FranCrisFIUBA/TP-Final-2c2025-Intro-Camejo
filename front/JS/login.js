@@ -3,11 +3,11 @@ document.getElementById("form-login").addEventListener("submit", async (e) => {
 
     const datos = {
         usuario: e.target.usuario.value,
-        contraseña: e.target.contraseña.value
+        contrasenia: e.target.contraseña.value // enviar contrasenia, no contraseña
     };
 
     try {
-        const respuesta = await fetch("http://localhost:3000/usuario/", {
+        const respuesta = await fetch("http://localhost:3000/usuarios/", {
             method: "POST",
             headers: {
                 "Content-Type" : "aplication/json"
