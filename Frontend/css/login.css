@@ -16,18 +16,20 @@ input {
     margin-left: 8px;
     margin-right: 8px ;
     border-radius: 5px;
-    border: 1px solid black;
+    border: 2px solid var(--negro);
     background-color: transparent;
 }
 
 .label-usuario {
     margin-right: 205px;
-    font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif
+    font-family: var(--nunito-bold);
+    color: var(--negro);
 }
 
 .label-contraseña {
     margin-right: 179px;
-    font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+    font-family: var(--nunito-bold);
+    color: var(--negro);
 }
 
 #caja-usuario {
@@ -38,20 +40,28 @@ input {
     width: 15%;
     height: 10%;
     font-size: 16px;
-    font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+    font-family: var(--nunito-bold);
+    color: var(--negro);
     border-radius: 8px;
-    border: 1px solid #555;
+    border: 2px solid #555;
     background-color: var(--amarillo);
 }
 
 p {
     color: red;
-    font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+    font-family: var(--nunito-bold);
 }
 
 p a {
     color: red;
     text-decoration: none;
+}
+
+p a:hover {
+    color: var(--morado-oscuro);
+    text-decoration: underline;
+    text-underline-offset: 4px;
+    text-decoration-thickness: 2px;
 }
 
 
@@ -60,11 +70,12 @@ body {
     display: flex;
     justify-content: center;
     align-items: center;
-    background-color: var(--blanco);
+    background: url("../img/registro-fondo.png") no-repeat center center fixed ;
 }
 
 
 h1 {
-    font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+    font-family:var(--nunito-bold);
+    color: var(--negro);
     font-size: 45px;
 }
