@@ -1,5 +1,7 @@
 
 // Ruta para datos completos (ACTUALIZADA PARA INCLUIR LIKES REALES)
+import {pool} from "../../db.js";
+
 export async function dataDiagnostic(req, res) {
     try {
         console.log('Solicitando datos completos...');
