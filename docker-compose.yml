@@ -53,3 +53,10 @@ services:
       DATABASE_PORT: "5432"
       NODE_ENV: "development"
       PORT: "3000"
+  front:
+    image: nginx:stable-alpine
+    restart: always
+    ports:
+      - "80:80"
+    volumes:
+      - ./front:/usr/share/nginx/html:ro
