@@ -28,7 +28,7 @@ export async function intentarConseguirUsuarioPorEmail(email) {
     return esquemaUsuario.safeParseAsync(result.rows[0])
 }
 
-export async function actualizarUsuarioPorId(id, nombre?, contrasenia?, email?, icono?) {
+export async function actualizarUsuarioPorId(id, nombre, contrasenia, email, icono) {
     const sets = []
     const params = []
 
