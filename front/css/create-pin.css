@@ -1,0 +1,156 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+body {
+  font-family: var(--nunito-bold);
+  background: url("../img/fondo-crear-pin.png") no-repeat center center fixed;
+  background-size: cover;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  margin: 0;
+  overflow: hidden;
+}
+.container {
+    display: flex;
+    background: var(--blanco);
+    border-radius: 12px;
+    width: 1500px;
+    min-height: 800px;
+    overflow: hidden;
+    border: 1px solid var(--negro);
+}
+.contend-left {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+}
+/* Contenedor principal de la imagen */
+.pin-container {
+    width: 400px;
+    height: 550px;
+    background: var(--verde);
+    border-radius: var(--border-radius);
+    border: var(--border-estandar);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: background 0.3s;
+    font-size: 20px;
+}
+.imagen-small {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  color: #47413E;
+  text-decoration: none;
+  font-weight: 500;
+  gap: 10px;
+}
+.pin {
+  width: 80px;
+  height: 80px;
+  opacity: 0.7;
+}
+.pin-container:hover {
+  background: var(--verde-oscuro);
+}
+.btn-left {
+  width: 100%;
+  padding: 20px;
+}
+.btn-left hr {
+  width: 100%;
+  border: none;
+  border-top: 1px solid var(--negro);
+  margin: 0 0 15px 0;
+}
+
+.btn-addURL {
+  cursor: pointer;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+}
+.contend-rigth {
+  flex: 2;
+  padding-top: 35px;
+  padding-left: 20px;
+  padding-right: 35px;
+  display: flex;
+  flex-direction: column;
+  gap: 25px;
+}
+.top-btns {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+}
+.cancel-btn, 
+.publish-btn {
+  border: none;
+  padding: 8px 14px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 500;
+}
+.cancel-btn {
+  background: #ddd;
+}
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.form-group label {
+  font-size: 17px;
+  color: var(--negro);
+}
+.form-group input[type="text"],
+.form-group textarea,.add-tag {
+  width: 100%;
+  padding: 18px;
+  border-radius: 13px;
+  border: 1px solid var(--negro);
+  font-size: 14px;
+  resize: none;
+  background: var(--gris);
+}
+.size-inputs {
+  display: flex;
+  align-items:flex-start;
+  gap: 8px;
+}
+.size-inputs input {
+  flex: 1;
+  text-align: center;
+}
+.btn-f{
+  background: transparent;
+  border: none;
+}
+.bloque{
+  padding: auto;
+  display: flex;
+  width: 300px;
+  gap: 20px;
+}
+
+/* Etiquetas */
+.tags {
+  display: flex;
+  justify-content: flex-start;
+}
+.add-tag {
+  width: 120px;
+  cursor: pointer;
+}
