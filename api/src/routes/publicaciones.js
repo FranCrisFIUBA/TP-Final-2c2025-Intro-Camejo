@@ -14,11 +14,10 @@ const publicaciones = express.Router();
 publicaciones.get('/', async (req, res) => {
     try {
         const result = await pool.query(`
-            SELECT p.*, u.nombre as usuario_nombre, u.icono as usuario_icono 
-            FROM publicaciones p 
-            JOIN usuarios u ON p.usuario_id = u.id 
-            ORDER BY p.fecha_publicacion DESC
+            SELECT * FROM publicaciones
+            ORDER BY fecha_publicacion DESC
         `);
+
         res.status(200).json(result.rows);
     } catch (err) {
         console.error(err);
