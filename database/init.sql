@@ -1,7 +1,7 @@
 -- Esta query tiene como objetivo generar las tablas necesarias al iniciar la base de datos.
 
 CREATE TABLE usuarios (
-    id INT PRIMARY KEY,
+    id SERIAL PRIMARY KEY,
     nombre VARCHAR NOT NULL, -- de 5 a 25 caracteres
     contrasenia VARCHAR NOT NULL, -- de 5 a 25 caracteres
     email VARCHAR NOT NULL,
@@ -11,7 +11,7 @@ CREATE TABLE usuarios (
 );
 
 CREATE TABLE publicaciones (
-    id INT PRIMARY KEY,
+    id SERIAL PRIMARY KEY,
     usuario_id INT NOT NULL,
     titulo VARCHAR NOT NULL, -- maximo de 100 caracteres
     etiquetas VARCHAR NOT NULL,
@@ -27,7 +27,7 @@ CREATE TABLE publicaciones (
 );
 
 CREATE TABLE comentarios (
-    id INT PRIMARY KEY,
+    id SERIAL PRIMARY KEY,
     usuario_id INT NOT NULL,
     publicacion_id INT NOT NULL,
     contenido VARCHAR NOT NULL,
@@ -44,7 +44,7 @@ CREATE TABLE comentarios (
 );
 
 CREATE TABLE listas (
-    id INT PRIMARY KEY,
+    id SERIAL PRIMARY KEY,
     usuario_id INT NOT NULL,
     titulo VARCHAR NOT NULL,
     etiquetas VARCHAR,
@@ -57,7 +57,7 @@ CREATE TABLE listas (
 );
 
 CREATE TABLE tableros (
-    id INT PRIMARY KEY,
+    id SERIAL PRIMARY KEY,
     usuario_id INT NOT NULL,
     titulo VARCHAR NOT NULL,
     etiquetas VARCHAR,
@@ -70,7 +70,7 @@ CREATE TABLE tableros (
 );
 
 CREATE TABLE suscripciones_a_usuarios (
-    id INT PRIMARY KEY,
+    id SERIAL PRIMARY KEY,
     usuario_id INT NOT NULL,
     susciptor_id INT NOT NULL,
 
@@ -84,7 +84,7 @@ CREATE TABLE suscripciones_a_usuarios (
 );
 
 CREATE TABLE listas_guardadas (
-    id INT PRIMARY KEY,
+    id SERIAL PRIMARY KEY,
     usuario_id INT NOT NULL,
     lista_id INT NOT NULL,
 
@@ -98,7 +98,7 @@ CREATE TABLE listas_guardadas (
 );
 
 CREATE TABLE tableros_guardados (
-    id INT PRIMARY KEY,
+    id SERIAL PRIMARY KEY,
     usuario_id INT NOT NULL,
     tablero_id INT NOT NULL,
 
