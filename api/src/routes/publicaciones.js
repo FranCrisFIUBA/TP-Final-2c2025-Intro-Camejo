@@ -3,6 +3,7 @@ import { pool } from "../db.js";
 import {esquemaActualizacionPublicacion, esquemaPublicacion} from "../utils/esquemas/publicaciones.js";
 import {intentarConseguirPublicacionPorId} from "../utils/database/publicaciones.js"
 import {existeUsuarioConId} from "../utils/database/usuarios.js";
+import {imagenPublicacionUpload} from "../middlewares/storage.js";
 
 const publicaciones = express.Router();
 
@@ -67,30 +68,41 @@ publicaciones.get('/usuario/:usuarioId', async (req, res) => {
     }
 });
 
-// POST /publicaciones - Crear nueva publicación
-publicaciones.post('/', async (req, res) => {
+// POST /publicaciones - Crear nueva publicación con imagen
+publicaciones.post('/', imagenPublicacionUpload.single('imagen'), async (req, res) => {
+    // TODO: testear
+
     try {
-        const parsedPublicacion = esquemaPublicacion.safeParse(req.body);
-        
+        if (!req.file) {
+            return res.status(400).json({ error: "Imagen requerida" });
+        }
+
+        const parsedPublicacion = esquemaPublicacion.safeParse({
+            ...req.body,
+            url_imagen: req.file.filename
+        });
+
         if (!parsedPublicacion.success) {
             return res.status(400).json({ errors: parsedPublicacion.error.issues });
         }
 
-        // Verificar que el usuario existe
         const usuarioExiste = await existeUsuarioConId(parsedPublicacion.data.usuario_id);
         if (!usuarioExiste) {
             return res.status(404).json({ error: "Usuario no encontrado" });
         }
 
+        const urlImagen = `/imagenes/${req.file.filename}`;
+
         const result = await pool.query(
             `INSERT INTO publicaciones 
             (usuario_id, titulo, etiquetas, url_imagen, alto_imagen, ancho_imagen) 
-            VALUES ($1, $2, $3, $4, $5, $6) RETURNING *`,
+            VALUES ($1, $2, $3, $4, $5, $6)
+            RETURNING *`,
             [
                 parsedPublicacion.data.usuario_id,
                 parsedPublicacion.data.titulo,
                 parsedPublicacion.data.etiquetas,
-                parsedPublicacion.data.url_imagen,
+                urlImagen,
                 parsedPublicacion.data.alto_imagen || null,
                 parsedPublicacion.data.ancho_imagen || null
             ]
