@@ -12,6 +12,8 @@ const publicaciones = express.Router();
 
 // GET /publicaciones - Obtener todas las publicaciones
 publicaciones.get('/', async (req, res) => {
+    // TODO: Permitir solicitar el orden de las publicaciones, ascendente o descendente; por fecha de publicacion o likes.
+
     try {
         const result = await pool.query(`
             SELECT * FROM publicaciones
