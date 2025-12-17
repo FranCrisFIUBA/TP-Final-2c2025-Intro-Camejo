@@ -9,6 +9,7 @@ import {logResponse} from "./middlewares/logResponse.js";
 import {dataDiagnostic} from "./routes/diagnostics/dataDiagnostic.js";
 import {healthDiagnostic} from "./routes/diagnostics/healthDiagnostic.js";
 import {testConnectionWithRetry} from "./db.js";
+import cors from "cors";
 
 // carga las variables de entorno
 dotenv.config();
@@ -23,6 +24,7 @@ console.log('PORT:', PORT);
 const app = express()
 
 app
+    .use(cors())
     .use(express.json())
     .use(logRequest)
     .use(logResponse)
