@@ -42,58 +42,50 @@ usuarios.get('/:id',  async (req, res) => {
 
 // POST /usuarios
 
-usuarios.post('/', async (req, res) => {
+usuarios.post('/', uploadUsuario.single('icono'), async (req, res) => {
     try {
-        // TODO:
-        //  - validar la validez de la url del icono como imagen
-        //  - validar que la fecha de nacimiento sea pasada
-        //  - validar la edad del usuario
+        const usuarioData = {
+            ...req.body,
+            fecha_nacimiento: new Date(req.body.fecha_nacimiento),
+            fecha_registro: new Date(),
+            icono: req.file ? `/iconos/${req.file.filename}` : null
+        };
 
-        const usuario = await esquemaUsuario.safeParseAsync({ ...req.body, fecha_registro: Date.now() })
+        const usuario = await esquemaUsuario.safeParseAsync(usuarioData);
         if (!usuario.success) {
-            // hay errores en la request, ya sea por falta de campos o malformacion de los mismos
-            console.error("error.issues:" + usuario.error.issues)
-            res.status(400).json({ errors: usuario.error.issues })
-            return;
+            return res.status(400).json({ errors: usuario.error.issues });
         }
 
-        // Validar unicidad del nombre y email
-
-        const existeNombre = existeUsuarioConNombre(usuario.data.nombre);
-        const existeEmail = existeUsuarioConEmail(usuario.data.email);
-
-        if (await existeNombre) {
-            console.error(`ya existe un usuario con el nombre ${usuario.data.nombre}`)
-            res.status(409).json({ error: "El nombre de usuario ya existe" });
-            return;
+        // Validar unicidad
+        if (await existeUsuarioConNombre(usuario.data.nombre)) {
+            return res.status(409).json({ error: "El nombre de usuario ya existe" });
         }
-
-        if (await existeEmail) {
-            console.error(`Ya existe un usuario con el email ${existeEmail}`)
-            res.status(409).json({ error: "El email ya está registrado" });
-            return;
+        if (await existeUsuarioConEmail(usuario.data.email)) {
+            return res.status(409).json({ error: "El email ya está registrado" });
         }
 
         const result = await pool.query(
-            "INSERT INTO usuarios (nombre, contrasenia, email, icono, fecha_nacimiento, fecha_registro) VALUES (?, ?, ?, ?, ?, ?) RETURNING *",
-            usuario.data.nombre,
-            usuario.data.contrasenia,
-            usuario.data.email,
-            usuario.data.icono || null,
-            usuario.data.fecha_nacimiento,
-            usuario.data.fecha_registro,
-            usuario.data.fecha_registro,
-        ).then(() => {
-            res.status(200).json(result.rows[0]);
-        }).catch((err) => {
-            console.error(err);
-            res.status(404).json({})
-        })
+            `INSERT INTO usuarios 
+            (nombre, contrasenia, email, icono, fecha_nacimiento, fecha_registro)
+            VALUES ($1, $2, $3, $4, $5, $6)
+            RETURNING *`,
+            [
+                usuario.data.nombre,
+                usuario.data.contrasenia,
+                usuario.data.email,
+                usuario.data.icono,
+                usuario.data.fecha_nacimiento,
+                usuario.data.fecha_registro
+            ]
+        );
+
+        res.status(201).json(result.rows[0]);
     } catch (err) {
         console.error(err);
         res.status(500).json({ error: "Error al crear usuario" });
     }
-})
+});
+
 
 // PATCH /usuarios/:id
 
