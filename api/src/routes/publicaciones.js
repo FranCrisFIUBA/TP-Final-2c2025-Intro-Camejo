@@ -27,20 +27,18 @@ publicaciones.get('/', async (req, res) => {
     }
 });
 
-// GET /publicaciones/:id - Obtener publicación específica
+// GET /publicaciones/:id - Obtener publicaciones por usuario
 publicaciones.get('/:id', async (req, res) => {
     try {
         const publicacion = await intentarConseguirPublicacionPorId(req.params.id);
         if (!publicacion) {
             return res.status(404).json({ error: "Publicación no encontrada" });
         }
-        
-        // Incluir información del usuario
+
         const result = await pool.query(`
-            SELECT p.*, u.nombre as usuario_nombre, u.icono as usuario_icono 
-            FROM publicaciones p 
-            JOIN usuarios u ON p.usuario_id = u.id 
-            WHERE p.id = $1
+            SELECT * FROM publicaciones
+                     WHERE p.id = $1
+            ORDER BY fecha_publicacion DESC
         `, [req.params.id]);
         
         res.status(200).json(result.rows[0]);
