@@ -1,6 +1,10 @@
 import express from 'express';
 import { pool } from "../db.js";
-import {esquemaActualizacionPublicacion, esquemaPublicacion} from "../utils/esquemas/publicaciones.js";
+import {
+    esquemaActualizacionPublicacion,
+    esquemaPostPublicacion,
+    esquemaPublicacion
+} from "../utils/esquemas/publicaciones.js";
 import {intentarConseguirPublicacionPorId} from "../utils/database/publicaciones.js"
 import {existeUsuarioConId} from "../utils/database/usuarios.js";
 import {imagenPublicacionUpload} from "../middlewares/storage.js";
@@ -77,7 +81,7 @@ publicaciones.post('/', imagenPublicacionUpload.single('imagen'), async (req, re
             return res.status(400).json({ error: "Imagen requerida" });
         }
 
-        const parsedPublicacion = esquemaPublicacion.safeParse({
+        const parsedPublicacion = esquemaPostPublicacion.safeParse({
             ...req.body,
             url_imagen: req.file.filename
         });
