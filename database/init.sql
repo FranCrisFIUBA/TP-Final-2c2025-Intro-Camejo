@@ -21,7 +21,9 @@ CREATE TABLE publicaciones (
     fecha_publicacion TIMESTAMP NOT NULL,
     fecha_edicion TIMESTAMP NOT NULL,
 
-    FOREIGN KEY (usuario_id) REFERENCES usuarios(id)
+    FOREIGN KEY (usuario_id)
+        REFERENCES usuarios(id)
+        ON DELETE CASCADE
 );
 
 CREATE TABLE comentarios (
@@ -32,30 +34,39 @@ CREATE TABLE comentarios (
     fecha_publicacion TIMESTAMP NOT NULL,
     fecha_edicion TIMESTAMP NOT NULL,
 
-    FOREIGN KEY (usuario_id) REFERENCES usuarios(id),
-    FOREIGN KEY (publicacion_id) REFERENCES publicaciones(id)
+    FOREIGN KEY (usuario_id)
+        REFERENCES usuarios(id)
+        ON DELETE CASCADE,
+
+    FOREIGN KEY (publicacion_id)
+        REFERENCES publicaciones(id)
+        ON DELETE CASCADE
 );
 
 CREATE TABLE listas (
     id INT PRIMARY KEY,
-    usuario_id INT NOT NULL, -- autor
+    usuario_id INT NOT NULL,
     titulo VARCHAR NOT NULL,
     etiquetas VARCHAR,
     fecha_publicacion_min TIMESTAMP,
     fecha_publicacion_max TIMESTAMP,
 
-    FOREIGN KEY (usuario_id) REFERENCES usuarios(id)
+    FOREIGN KEY (usuario_id)
+        REFERENCES usuarios(id)
+        ON DELETE CASCADE
 );
 
 CREATE TABLE tableros (
     id INT PRIMARY KEY,
-    usuario_id INT NOT NULL, -- autor
+    usuario_id INT NOT NULL,
     titulo VARCHAR NOT NULL,
     etiquetas VARCHAR,
     fecha_publicacion TIMESTAMP NOT NULL,
     fecha_edicion TIMESTAMP NOT NULL,
 
-    FOREIGN KEY (usuario_id) REFERENCES usuarios(id)
+    FOREIGN KEY (usuario_id)
+        REFERENCES usuarios(id)
+        ON DELETE CASCADE
 );
 
 CREATE TABLE suscripciones_a_usuarios (
@@ -63,8 +74,13 @@ CREATE TABLE suscripciones_a_usuarios (
     usuario_id INT NOT NULL,
     susciptor_id INT NOT NULL,
 
-    FOREIGN KEY (usuario_id) REFERENCES usuarios(id),
-    FOREIGN KEY (susciptor_id) REFERENCES usuarios(id)
+    FOREIGN KEY (usuario_id)
+        REFERENCES usuarios(id)
+        ON DELETE CASCADE,
+
+    FOREIGN KEY (susciptor_id)
+        REFERENCES usuarios(id)
+        ON DELETE CASCADE
 );
 
 CREATE TABLE listas_guardadas (
@@ -72,8 +88,13 @@ CREATE TABLE listas_guardadas (
     usuario_id INT NOT NULL,
     lista_id INT NOT NULL,
 
-    FOREIGN KEY (usuario_id) REFERENCES usuarios(id),
-    FOREIGN KEY (lista_id) REFERENCES listas(id)
+    FOREIGN KEY (usuario_id)
+        REFERENCES usuarios(id)
+        ON DELETE CASCADE,
+
+    FOREIGN KEY (lista_id)
+        REFERENCES listas(id)
+        ON DELETE CASCADE
 );
 
 CREATE TABLE tableros_guardados (
@@ -81,6 +102,11 @@ CREATE TABLE tableros_guardados (
     usuario_id INT NOT NULL,
     tablero_id INT NOT NULL,
 
-    FOREIGN KEY (usuario_id) REFERENCES usuarios(id),
-    FOREIGN KEY (tablero_id) REFERENCES tableros(id)
+    FOREIGN KEY (usuario_id)
+        REFERENCES usuarios(id)
+        ON DELETE CASCADE,
+
+    FOREIGN KEY (tablero_id)
+        REFERENCES tableros(id)
+        ON DELETE CASCADE
 );
