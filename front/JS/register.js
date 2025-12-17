@@ -1,27 +1,43 @@
 document.getElementById("form-registro").addEventListener("submit", async (e) =>{
     e.preventDefault();
-    const datos = {
-        usario: e.target.usuario.value,
-        email: e.target.email.value,
-        contraseña: e.target.contraseña.value,
-        repetir_contraseña: e.target.repetir_contraseña.value
-    };
 
-    if (datos.contraseña !== datos.repetir_contraseña) {
-        alert("las contraseñas no coinciden");
-        return;
-    }
+    const mensajesError = document.getElementById("mensaje-error");
+    mensajesError.innerHTML = "";
+    mensajesError.style.color = "red";
+    
+    const datos = {
+        nombre: e.target.usuario.value,
+        contrasenia: e.target.contrasena.value,
+        repetir_contrasenia: e.target.repetir_contrasena.value,
+        email: e.target.email.value,
+        fecha_nacimiento: e.target.fecha.value
+    };
     
     try {
-        const respuesta = await fetch("http://localhost:3000/usuario/", {
+        const respuesta = await fetch("http://localhost:3000/usuarios/", {
             method: "POST",
             headers: {
-                "Content-Type" : "aplication/json"
+                "Content-Type" : "application/json"
             },
             body: JSON.stringify(datos)
         });
 
         const resultado = await respuesta.json();
+
+        if (!respuesta.ok) {
+            if (resultado.errors && Array.isArray(resultado.errors)) {
+                mensajesError.textContent = resultado.errors[0].message;
+                return;
+            }
+
+            if (resultado.error) {
+                mensajesError.textContent = resultado.error;
+                return;
+            }
+
+            mensajesError.textContent = "Error al registrar usuario";
+            return;
+        }
 
         console.log("respuesta del backend:",resultado);
 
