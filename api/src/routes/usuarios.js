@@ -2,12 +2,13 @@
 import express from 'express'
 import {pool} from "../db.js";
 import {
-    actualizarUsuarioPorId, intentarConseguirUsuarioPorEmail,
-    intentarConseguirUsuarioPorId,
+    actualizarUsuarioPorId, intentarConseguirUsuarioPorId,
     intentarConseguirUsuarioPorNombre, existeUsuarioConEmail,
     existeUsuarioConId, existeUsuarioConNombre
 } from "../utils/database/usuarios.js";
-import {esquemaActualizacionUsuario, esquemaUsuario} from "../utils/esquemas/usuarios.js";
+import {esquemaActualizacionUsuario, esquemaPostUsuario} from "../utils/esquemas/usuarios.js";
+import {iconoUsuarioUpload} from "../middlewares/storage.js";
+import multer from "multer";
 
 const usuarios = express.Router()
 
@@ -42,21 +43,34 @@ usuarios.get('/:id',  async (req, res) => {
 
 // POST /usuarios
 
-usuarios.post('/', uploadUsuario.single('icono'), async (req, res) => {
+usuarios.post('/',
+    (req, res, next) => {
+        iconoUsuarioUpload.single('icono')(req, res, function(err) {
+            if (err instanceof multer.MulterError ) {
+                return res.status(400).json({ error: err.message });
+            } else if (err) {
+                return res.status(500).json({ error: "Error en la subida de archivo" });
+            }
+            next();
+        });
+    },
+
+    async (req, res) => {
     try {
         const usuarioData = {
-            ...req.body,
+            nombre: req.body.nombre,
+            contrasenia: req.body.contrasenia,
+            email: req.body.email,
             fecha_nacimiento: new Date(req.body.fecha_nacimiento),
             fecha_registro: new Date(),
-            icono: req.file ? `/iconos/${req.file.filename}` : null
+            icono: req.file ? `${req.file.filename}` : null
         };
 
-        const usuario = await esquemaUsuario.safeParseAsync(usuarioData);
+        const usuario = await esquemaPostUsuario.safeParseAsync(usuarioData);
         if (!usuario.success) {
             return res.status(400).json({ errors: usuario.error.issues });
         }
 
-        // Validar unicidad
         if (await existeUsuarioConNombre(usuario.data.nombre)) {
             return res.status(409).json({ error: "El nombre de usuario ya existe" });
         }
@@ -65,10 +79,10 @@ usuarios.post('/', uploadUsuario.single('icono'), async (req, res) => {
         }
 
         const result = await pool.query(
-            `INSERT INTO usuarios 
-            (nombre, contrasenia, email, icono, fecha_nacimiento, fecha_registro)
-            VALUES ($1, $2, $3, $4, $5, $6)
-            RETURNING *`,
+            `INSERT INTO usuarios
+                 (nombre, contrasenia, email, icono, fecha_nacimiento, fecha_registro)
+             VALUES ($1, $2, $3, $4, $5, $6)
+                 RETURNING *`,
             [
                 usuario.data.nombre,
                 usuario.data.contrasenia,
@@ -85,7 +99,6 @@ usuarios.post('/', uploadUsuario.single('icono'), async (req, res) => {
         res.status(500).json({ error: "Error al crear usuario" });
     }
 });
-
 
 // PATCH /usuarios/:id
 
