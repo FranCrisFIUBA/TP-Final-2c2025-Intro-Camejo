@@ -2,6 +2,7 @@ import express from 'express';
 import { pool } from "../db.js";
 import {esquemaActualizacionPublicacion, esquemaPublicacion} from "../utils/esquemas/publicaciones.js";
 import {intentarConseguirPublicacionPorId} from "../utils/database/publicaciones.js"
+import {existeUsuarioConId} from "../utils/database/usuarios.js";
 
 const publicaciones = express.Router();
 
