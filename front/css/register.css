@@ -16,23 +16,24 @@ body {
 
 form {
     width: 580px;
-    height: 530px;
+    max-height: 95vh;
     margin: 50px,auto;
     border: var(--border-estandar);
     border-radius: 30px;
     text-align: center;
     background: var(--blanco);
+    padding-bottom: 60px;
 }
 
 .top-logo {
-    margin-top: 20px;
+    margin-top: 10px;
     display: flex;
     justify-content: center;
 }
 
 .logo {
     width: 60px;
-    height: 60px;
+    height: 50px;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -61,8 +62,10 @@ input[type="date"] {
 
 .campo-registrarse {
     width: 120px;
-    height: 50px;
-    margin: 10px;
+    height: 40px;
+    padding-top: 10px;
+    margin-top: 20px;
+    margin-bottom: 5px;
     background-color: var(--amarillo);
     font-family: var(--nunito);
     color: var(--negro);
@@ -71,6 +74,7 @@ input[type="date"] {
 p {
     color: var(--naranja);
     font-family: var(--nunito-bold); 
+    margin-top: 1px;
 }
 
 p a{
@@ -88,4 +92,6 @@ p a:hover {
 h1 {
     font-family:var(--nunito-bold);
     color: var(--negro);
+    margin-top: 3px;
+    margin-bottom: 15px;
 }
