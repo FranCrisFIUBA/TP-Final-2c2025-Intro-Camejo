@@ -29,6 +29,8 @@ publicaciones.get('/', async (req, res) => {
 
 // GET /publicaciones/:id - Obtener publicaciones por usuario
 publicaciones.get('/:id', async (req, res) => {
+    // TODO: Permitir solicitar el orden de las publicaciones, ascendente o descendente; por fecha de publicacion o likes.
+
     try {
         const publicacion = await intentarConseguirPublicacionPorId(req.params.id);
         if (!publicacion) {
