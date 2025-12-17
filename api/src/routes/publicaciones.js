@@ -1,12 +1,7 @@
 import express from 'express';
 import { pool } from "../db.js";
 import {esquemaActualizacionPublicacion, esquemaPublicacion} from "../utils/esquemas/publicaciones.js";
-
-// Funciones auxiliares
-async function intentarConseguirPublicacionPorId(id) {
-    const result = await pool.query("SELECT * FROM publicaciones WHERE id = $1", [id]);
-    return result.rowCount === 0 ? null : result.rows[0];
-}
+import {intentarConseguirPublicacionPorId} from "../utils/database/publicaciones.js"
 
 const publicaciones = express.Router();
 
@@ -27,23 +22,21 @@ publicaciones.get('/', async (req, res) => {
     }
 });
 
-// GET /publicaciones/:id - Obtener publicaciones por usuario
+// GET /publicaciones/:id - Obtener publicacion por id
 publicaciones.get('/:id', async (req, res) => {
     // TODO: Permitir solicitar el orden de las publicaciones, ascendente o descendente; por fecha de publicacion o likes.
 
     try {
-        const publicacion = await intentarConseguirPublicacionPorId(req.params.id);
-        if (!publicacion) {
-            return res.status(404).json({ error: "Publicación no encontrada" });
-        }
-
-        const result = await pool.query(`
-            SELECT * FROM publicaciones
-                     WHERE p.id = $1
-            ORDER BY fecha_publicacion DESC
-        `, [req.params.id]);
+        intentarConseguirPublicacionPorId(req.params.id)
+            .then( (publicacion) => {
+                res.status(200).json(publicacion)
+            })
+            .catch( (err) => {
+                console.error(err)
+                res.status(404).json({ error: "Publicación no encontrada" })
+            })
         
-        res.status(200).json(result.rows[0]);
+
     } catch (err) {
         console.error(err);
         res.status(500).json({ error: "Error al obtener publicación" });
