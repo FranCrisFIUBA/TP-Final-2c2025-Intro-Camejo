@@ -10,7 +10,7 @@ import {dataDiagnostic} from "./routes/diagnostics/dataDiagnostic.js";
 import {healthDiagnostic} from "./routes/diagnostics/healthDiagnostic.js";
 import {testConnectionWithRetry} from "./db.js";
 import cors from "cors";
-import {IMAGENES_PATH} from "./middlewares/storage.js";
+import {ICONOS_PATH, IMAGENES_PATH} from "./middlewares/storage.js";
 
 // carga las variables de entorno
 dotenv.config();
@@ -22,6 +22,7 @@ console.log('=== INICIANDO APP ===');
 console.log('NODE_ENV:', NODE_ENV);
 console.log('PORT:', PORT);
 console.log('IMAGENES_PATH:', IMAGENES_PATH);
+console.log('ICONOS_PATH:', ICONOS_PATH);
 
 const app = express()
 
@@ -34,7 +35,8 @@ app
     .use("/publicaciones", publicacionesRouter)
     .use("/comentarios", comentariosRouter)
     .use("/likes", likesRouter)
-    .use("/imagenes", express.static(IMAGENES_PATH));
+    .use("/imagenes", express.static(IMAGENES_PATH))
+    .use('/iconos', express.static(ICONOS_PATH));
 
 if (NODE_ENV === "development") {
     app
