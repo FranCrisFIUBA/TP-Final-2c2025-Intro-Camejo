@@ -9,14 +9,10 @@ function cargarNavbar() {
 }
 
 function inicializarNavbar() {
-    console.log('Inicializando navbar...'); 
-    
     const addButton = document.getElementById('add-button');
     const dropdownMenu = document.getElementById('dropdown-menu');
     const overlay = document.getElementById('overlay');
     const profileButton = document.getElementById('profile-button');
-    
-    console.log('Elementos encontrados:', { addButton, dropdownMenu, overlay, profileButton }); 
     
     // Función para mostrar y ocultar el menú desplegable
     function toggleDropdown() {

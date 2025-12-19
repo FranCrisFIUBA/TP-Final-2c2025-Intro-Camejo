@@ -1,133 +1,172 @@
-// perfil.js - Manejo dinámico del perfil de usuario con API
+const API_BASE_URL = 'http://127.0.0.1:3000';
 
-// Función para obtener parámetros de la URL
-function obtenerParametroURL(nombre) {
-    const urlParams = new URLSearchParams(window.location.search);
-    return urlParams.get(nombre);
+function obtenerUsuarioId() {
+    const params = new URLSearchParams(window.location.search);
+    return params.get('id'); 
+    
 }
 
-// Función para cargar datos del usuario
+
 async function cargarPerfilUsuario() {
-    const usuarioId = obtenerParametroURL('usuario');
-    
-    console.log('ID de usuario desde URL:', usuarioId);
+    const usuarioId = obtenerUsuarioId();
     
     if (!usuarioId) {
-        console.error('No se proporcionó ID de usuario en la URL');
-        mostrarError('Usuario no encontrado');
+        console.error('No se proporcionó ID de usuario');
         return;
     }
 
     try {
-        // Cargar datos desde la API
-        const response = await fetch('/api/data');
-        if (!response.ok) {
-            throw new Error('No se pudo cargar datos de la API');
-        }
-        const data = await response.json();
+        const response = await fetch(`${API_BASE_URL}/usuarios/${usuarioId}`);
         
-        // Buscar usuario en data.usuarios
-        const usuario = data.usuarios.find(user => 
-            user.id.toString() === usuarioId.toString()
-        );
+        if (!response.ok) throw new Error('Usuario no encontrado en la base de datos');
+        
+        const usuario = await response.json();
+        
+        mostrarDatosUsuario(usuario);
+        cargarPublicacionesDeUsuario(usuarioId);
 
-        console.log('Usuario encontrado:', usuario);
-
-        if (usuario) {
-            mostrarDatosUsuario(usuario);
-            cargarMisPublicaciones(usuario.id, data);
-        } else {
-            mostrarError('Usuario no encontrado');
-        }
     } catch (error) {
-        console.error('Error cargando datos:', error);
-        mostrarError('Error al cargar el perfil: ' + error.message);
+        console.error('Error:', error);
+        const container = document.querySelector('.profile-container');
+        if (container) container.innerHTML = `<h2>Error: ${error.message}</h2>`;
     }
 }
 
-// Función para cargar MIS PUBLICACIONES
-function cargarMisPublicaciones(usuarioId, data) {
+
+function actualizarInterfazUsuario(usuario) {
+    const nombreElem = document.getElementById('user-name');
+    const iconoElem = document.getElementById('user-avatar');
+    const bioElem = document.getElementById('user-bio');
+
+    if (nombreElem) nombreElem.textContent = usuario.nombre;
+    if (iconoElem) iconoElem.src = usuario.icono || './img/avatar-default.jpg';
+    if (bioElem) bioElem.textContent = usuario.fecha_registro;
+}
+
+
+async function cargarPublicacionesDeUsuario(usuarioId) {
     const publicacionesContainer = document.getElementById('publicaciones-container');
-    
-    if (!publicacionesContainer) {
-        console.error(' No se encontró el contenedor de publicaciones');
-        return;
-    }
-    
-    // Filtrar publicaciones del usuario
-    const publicacionesUsuario = data.cards ? data.cards.filter(publicacion => 
-        publicacion.id_author && publicacion.id_author.toString() === usuarioId.toString()
-    ) : [];
-    
-    calcularEstadisticas(usuarioId, data);
-    
-    if (publicacionesUsuario.length === 0) {
-        console.log('ℹNo hay publicaciones para este usuario');
-        publicacionesContainer.innerHTML = `
-            <div class="no-content">
-                <i class="fa-solid fa-images" style="font-size: 48px; margin-bottom: 20px; color: #ccc;"></i>
-                <p>Este usuario aún no tiene publicaciones</p>
-            </div>
-        `;
-        return;
-    }
-    
-    // Generar HTML de publicaciones
-    const html = publicacionesUsuario.map(publicacion => {
-        return `
-        <div class="publicacion-item" data-publicacion-id="${publicacion.id}">
-            <div class="publicacion-header">
-                <h3 class="publicacion-title">${publicacion.title || 'Publicación sin título'}</h3>
-                <span class="publicacion-likes"><i class="fas fa-heart"></i> ${publicacion.likes || 0}</span>
-            </div>
-            <div class="publicacion-preview">
-                <img src="${publicacion.image}" 
-                     alt="${publicacion.title || 'Publicación'}" 
-                     class="publicacion-image" 
-                     onerror="this.src='./img/placeholder.jpg'"
-                     onclick="abrirPublicacionModal(${publicacion.id})">
-            </div>
-            <div class="publicacion-info">
-                <div class="publicacion-hashtags">
-                    ${publicacion.hashtags ? publicacion.hashtags.map(tag => 
-                        `<span class="hashtag">${tag}</span>`
-                    ).join('') : ''}
+    if (!publicacionesContainer) return;
+
+    try {
+        console.log(`Intentando cargar publicaciones para el ID: ${usuarioId}`);
+        const response = await fetch(`${API_BASE_URL}/publicaciones/usuario/${usuarioId}`);
+        
+        if (!response.ok) {
+            const errorTexto = await response.text(); 
+            throw new Error(`Error ${response.status}: ${errorTexto}`);
+        }
+        
+        const publicaciones = await response.json();
+        console.log("Publicaciones recibidas:", publicaciones);
+
+        // 1. Manejo de caso sin publicaciones
+        if (!publicaciones || publicaciones.length === 0) {
+            publicacionesContainer.innerHTML = `
+                <div class="no-content">
+                    <i class="fa-solid fa-images" style="font-size: 48px; margin-bottom: 20px; color: #ccc;"></i>
+                    <p>Este usuario aún no tiene publicaciones</p>
                 </div>
-                <p class="publicacion-fecha"><i class="fa-regular fa-calendar"></i> ${formatearFecha(publicacion.publishDate)}</p>
+            `;
+            return;
+        }
+
+        // 2. Renderizado de las cards
+        const html = publicaciones.map(p => {
+            // Convertimos el objeto a string para pasarlo al modal de forma segura
+            const publicacionJSON = JSON.stringify(p).replace(/'/g, "&apos;");
+
+            return `
+            <div class="publicacion-item" data-publicacion-id="${p.id}">
+                <div class="publicacion-header">
+                    <h3 class="publicacion-title">${p.titulo || 'Sin título'}</h3>
+                    <span class="publicacion-likes">
+                        <i class="fas fa-heart"></i> ${p.likes || 0}
+                    </span>
+                </div>
+                <div class="publicacion-preview">
+                    <img src="${p.url_imagen || './img/placeholder.jpg'}" 
+                         alt="${p.titulo}" 
+                         class="publicacion-image" 
+                         onerror="this.src='./img/placeholder.jpg'"
+                         onclick='abrirCardModal(${publicacionJSON})'>
+                </div>
+                <div class="publicacion-info">
+                    <div class="publicacion-hashtags">
+                        ${listarHashtags(p.etiquetas)}
+                    </div>
+                    <p class="publicacion-fecha">
+                        <i class="fa-regular fa-calendar"></i> ${calcularFecha(p.fecha_publicacion)}
+                    </p>
+                </div>
             </div>
-        </div>
-        `;
-    }).join('');
-    publicacionesContainer.innerHTML = html;
+            `;
+        }).join('');
+
+        publicacionesContainer.innerHTML = html;
+
+    } catch (error) {
+        console.error('Error detallado:', error);
+        publicacionesContainer.innerHTML = `<p class="error-msg">Error: No se pudieron cargar las publicaciones.</p>`;
+    }
 }
 
-// Función para cargar TABLEROS (para implementar después)
-function cargarTablerosUsuario(usuarioId, data) {
-    console.log('Cargando TABLEROS para usuario ID:', usuarioId);
-    
-    const tablerosContainer = document.getElementById('tableros-container');
-    
-    if (!tablerosContainer) {
-        console.error('No se encontró el contenedor de tableros');
-        return;
-    }
-    
-    // falta
+document.addEventListener('DOMContentLoaded', cargarPerfilUsuario);
+
+
+
+function listarHashtags(etiquetas) {
+    if (!etiquetas) return '';
+    return etiquetas.split(',')
+        .map(tag => `<span class="hashtag">#${tag.trim()}</span>`)
+        .join('');
 }
 
-// Función para cargar BÚSQUEDAS PERSONALIZADAS
-function cargarBusquedasUsuario(usuarioId, data) {
-    console.log('Cargando BÚSQUEDAS para usuario ID:', usuarioId);
-    
-    const listaBusquedas = document.getElementById('lista-busquedas');
-    
-    if (!listaBusquedas) {
-        console.error('No se encontró el contenedor de búsquedas');
-        return;
+function calcularFecha(fechaInput) {
+    const fechaPublicacion = new Date(fechaInput);
+    const ahora = new Date();
+    const diferenciaEnSegundos = Math.floor((ahora - fechaPublicacion) / 1000);
+
+    // Definimos los intervalos en segundos
+    const intervalos = {
+        año: 31536000,
+        mes: 2592000,
+        día: 86400,
+        hora: 3600,
+        minuto: 60
+    };
+
+    let unidad = Math.floor(diferenciaEnSegundos / intervalos.año);
+    if (unidad >= 1) {
+        return unidad === 1 ? "hace 1 año" : `hace ${unidad} años`;
     }
-    
-    // falta
+    unidad = Math.floor(diferenciaEnSegundos / intervalos.mes);
+    if (unidad >= 1) {
+        return unidad === 1 ? "hace 1 mes" : `hace ${unidad} meses`;
+    }
+    unidad = Math.floor(diferenciaEnSegundos / intervalos.día);
+    if (unidad >= 1) {
+        return unidad === 1 ? "hace 1 día" : `hace ${unidad} días`;
+    }
+    unidad = Math.floor(diferenciaEnSegundos / intervalos.hora);
+    if (unidad >= 1) {
+        return unidad === 1 ? "hace 1 hora" : `hace ${unidad} horas`;
+    }
+    unidad = Math.floor(diferenciaEnSegundos / intervalos.minuto);
+    if (unidad >= 1) {
+        return unidad === 1 ? "hace 1 minuto" : `hace ${unidad} minutos`;
+    }
+
+    return "hace un momento";
 }
+
+
+
+
+
+
+
+
 
 // Función para abrir modal de publicación
 function abrirPublicacionModal(publicacionId) {
@@ -141,16 +180,12 @@ function mostrarDatosUsuario(usuario) {
     console.log('Mostrando datos para:', usuario);
     
     try {
-        const pageTitle = document.getElementById('page-title');
-        if (pageTitle) {
-            pageTitle.textContent = `${usuario.username}`;
-        }
         
         // Actualizar imagen de perfil
         const profileImage = document.getElementById('profile-image');
         if (profileImage) {
-            profileImage.src = usuario.avatar;
-            profileImage.alt = `Foto de ${usuario.username}`;
+            profileImage.src = usuario.icono;
+            profileImage.alt = `Foto de ${usuario.nombre}`;
             profileImage.onerror = function() {
                 this.src = './img/avatar-default.jpg';
             };
@@ -159,7 +194,7 @@ function mostrarDatosUsuario(usuario) {
         // Actualizar nombre
         const profileName = document.getElementById('profile-name');
         if (profileName) {
-            profileName.textContent = usuario.username;
+            profileName.textContent = usuario.nombre;
         }
         
         // Actualizar fecha
@@ -177,50 +212,6 @@ function mostrarDatosUsuario(usuario) {
     }
 }
 
-// Función para calcular estadísticas 
-function calcularEstadisticas(usuarioId, data) {
-    try {
-        const publicacionesUsuario = data.cards ? data.cards.filter(publicacion => 
-            publicacion.id_author && publicacion.id_author.toString() === usuarioId.toString()
-        ) : [];
-        
-        const totalLikes = publicacionesUsuario.reduce((sum, publicacion) => sum + (publicacion.likes || 0), 0);
-        const busquedasSimuladas = Math.floor(Math.random() * 50) + 5;
-        
-        console.log('Estadísticas:', { 
-            totalLikes, 
-            totalPublicaciones: publicacionesUsuario.length,
-            busquedas: busquedasSimuladas
-        });
-        const elementos = {
-            likes: document.getElementById('estadistica-likes'),
-            tableros: document.getElementById('estadistica-tableros'),
-            busquedas: document.getElementById('estadistica-busquedas')
-        };
-        
-        console.log('🔍 Elementos encontrados:', elementos);
-        if (elementos.likes) {
-            elementos.likes.textContent = formatearNumero(totalLikes);
-        } else {
-            console.error('No se encontró el elemento estadistica-likes');
-        }
-        
-        if (elementos.tableros) {
-            elementos.tableros.textContent = publicacionesUsuario.length;
-        } else {
-            console.error('No se encontró el elemento estadistica-tableros');
-        }
-        
-        if (elementos.busquedas) {
-            elementos.busquedas.textContent = busquedasSimuladas;
-        } else {
-            console.error('No se encontró el elemento estadistica-busquedas');
-        }
-        
-    } catch (error) {
-        console.error('Error en calcularEstadisticas:', error);
-    }
-}
 
 // Funciones utilitarias
 function formatearFecha(fechaString) {
@@ -271,49 +262,30 @@ function mostrarError(mensaje) {
 
 // Función para manejar la navegación entre pestañas
 function configurarNavegacion() {
+    const usuarioId = obtenerUsuarioId();
+    
     document.querySelectorAll('.nav-option').forEach(option => {
-        option.addEventListener('click', function() {
-            const opcionSeleccionada = this.textContent;
-            
-            document.querySelectorAll('.nav-option').forEach(opt => {
-                opt.classList.remove('active');
-            });
+        option.addEventListener('click', async function() { 
+            document.querySelectorAll('.nav-option').forEach(opt => opt.classList.remove('active'));
             this.classList.add('active');
-            document.querySelectorAll('.publicaciones-content, .tableros-content, .searches-content').forEach(content => {
-                content.style.display = 'none';
-            });
-            
+            document.querySelector('.publicaciones-content').style.display = 'none';
+            document.querySelector('.tableros-content').style.display = 'none';
+            document.querySelector('.searches-content').style.display = 'none';
+            const opcionSeleccionada = this.textContent.trim();
             switch(opcionSeleccionada) {
-                case 'Mis publicaciones':
+                case 'Publicaciones': 
                     document.querySelector('.publicaciones-content').style.display = 'block';
-                    const usuarioId = obtenerParametroURL('usuario');
                     if (usuarioId) {
-                        fetch('/api/data')
-                            .then(response => response.json())
-                            .then(data => cargarMisPublicaciones(usuarioId, data));
+                        await cargarPublicacionesDeUsuarioAPI(usuarioId);
                     }
                     break;
                     
                 case 'Tableros':
                     document.querySelector('.tableros-content').style.display = 'block';
-                    // Cargar tableros
-                    const usuarioIdTableros = obtenerParametroURL('usuario');
-                    if (usuarioIdTableros) {
-                        fetch('/api/data')
-                            .then(response => response.json())
-                            .then(data => cargarTablerosUsuario(usuarioIdTableros, data));
-                    }
                     break;
                     
                 case 'Búsquedas personalizadas':
                     document.querySelector('.searches-content').style.display = 'block';
-                    // Cargar búsquedas
-                    const usuarioIdBusquedas = obtenerParametroURL('usuario');
-                    if (usuarioIdBusquedas) {
-                        fetch('/api/data')
-                            .then(response => response.json())
-                            .then(data => cargarBusquedasUsuario(usuarioIdBusquedas, data));
-                    }
                     break;
             }
         });

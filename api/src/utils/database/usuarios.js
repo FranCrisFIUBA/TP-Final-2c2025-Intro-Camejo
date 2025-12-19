@@ -1,14 +1,14 @@
 import {pool} from "../../db.js";
 import {esquemaUsuario} from "../esquemas/usuarios.js";
 
-export async function intentarConseguirUsuarioPorId(id) {
-    const result = await pool.query("SELECT * FROM usuarios WHERE id = ?", [id])
-
-    if (result.rowCount !== 0)
-        return Promise.reject(`No existe usuario con la id ${id}`)
-
-    return esquemaUsuario.safeParseAsync(result.rows[0])
-}
+export const intentarConseguirUsuarioPorId = async (id) => {
+    // Usamos $1 en lugar de ?
+    const query = 'SELECT * FROM usuarios WHERE id = $1';
+    const result = await pool.query(query, [id]);
+    
+    // Retornamos el primer usuario encontrado o null
+    return result.rows.length > 0 ? result.rows[0] : null;
+};
 
 export async function intentarConseguirUsuarioPorNombre(nombre) {
     const result = await pool.query("SELECT * FROM usuarios WHERE nombre = ?", [nombre])

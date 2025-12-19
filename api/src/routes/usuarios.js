@@ -25,20 +25,25 @@ usuarios.get('/', async (req, res) => {
 
 // GET /usuarios/:id
 
-usuarios.get('/:id',  async (req, res) => {
+usuarios.get('/:id', async (req, res) => {
+    const { id } = req.params; // Extraemos el ID de la URL
+    
     try {
-        intentarConseguirUsuarioPorId(req.params.id)
-            .then( (usuario) => {
-                res.status(200).send(usuario)})
-            .catch( (err) => {
-                console.error(err)
-                res.status(404).json({ error: "Usuario no encontrado" });})
+        // Usamos await para esperar el resultado de tu función de búsqueda
+        const usuario = await intentarConseguirUsuarioPorId(id);
+
+        if (!usuario) {
+            return res.status(404).json({ error: "Usuario no encontrado" });
+        }
+
+        // Si el usuario existe, lo enviamos
+        res.status(200).json(usuario);
 
     } catch (err) {
-        console.error(err);
+        console.error("Error al obtener usuario por ID:", err);
         res.status(500).json({ error: "Error del servidor al obtener usuario" });
     }
-})
+});
 
 // POST /usuarios
 

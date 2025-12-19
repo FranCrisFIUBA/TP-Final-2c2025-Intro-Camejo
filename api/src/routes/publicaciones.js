@@ -52,26 +52,35 @@ publicaciones.get('/:id', async (req, res) => {
 // GET /publicaciones/usuario/:usuarioId - Obtener publicaciones por usuario
 publicaciones.get('/usuario/:usuarioId', async (req, res) => {
     try {
-        const usuarioExiste = await existeUsuarioConId(req.params.usuarioId);
-        if (!usuarioExiste) {
-            return res.status(404).json({ error: "Usuario no encontrado" });
-        }
-
-        const result = await pool.query(`
-            SELECT p.*, u.nombre as usuario_nombre, u.icono as usuario_icono 
-            FROM publicaciones p 
-            JOIN usuarios u ON p.usuario_id = u.id 
-            WHERE p.usuario_id = $1 
-            ORDER BY p.fecha_publicacion DESC
-        `, [req.params.usuarioId]);
+        const { usuarioId } = req.params;
         
-        res.status(200).json(result.rows);
-    } catch (err) {
-        console.error(err);
+        // Es vital que los nombres de las columnas coincidan con tu tabla
+        // Usamos un JOIN con usuarios para que el modal tenga el nombre y icono del autor
+        const result = await pool.query(`
+            SELECT 
+                p.id,
+                p.usuario_id,
+                p.titulo,
+                p.etiquetas,
+                p.url_imagen,
+                p.alto_imagen,
+                p.ancho_imagen,
+                p.fecha_publicacion,
+                u.nombre AS usuario_nombre,
+                u.icono AS usuario_icono
+            FROM publicaciones p
+            JOIN usuarios u ON p.usuario_id = u.id
+            WHERE p.usuario_id = $1
+            ORDER BY p.fecha_publicacion DESC
+        `, [usuarioId]);
+
+        res.json(result.rows);
+    } catch (error) {
+        // Esto imprimirá el error real en tu consola de Docker/Node
+        console.error('ERROR SQL:', error.message); 
         res.status(500).json({ error: "Error al obtener publicaciones del usuario" });
     }
 });
-
 // POST /publicaciones - Crear nueva publicación
 publicaciones.post('/', async (req, res) => {
     try {
