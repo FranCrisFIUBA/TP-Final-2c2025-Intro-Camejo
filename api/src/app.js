@@ -11,6 +11,7 @@ import {healthDiagnostic} from "./routes/diagnostics/healthDiagnostic.js";
 import {testConnectionWithRetry} from "./db.js";
 import cors from "cors";
 import {ICONOS_PATH, IMAGENES_PATH} from "./middlewares/storage.js";
+import noCache from "./middlewares/noCache.js";
 
 // carga las variables de entorno
 dotenv.config();
@@ -31,6 +32,7 @@ app
     .use(express.json())
     .use(logRequest)
     .use(logResponse)
+    .use(noCache)
     .use("/usuarios", usuariosRouter)
     .use("/publicaciones", publicacionesRouter)
     .use("/comentarios", comentariosRouter)
