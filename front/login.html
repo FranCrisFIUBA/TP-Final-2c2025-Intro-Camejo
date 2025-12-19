@@ -3,13 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="./css/login.css">
-    <link rel="stylesheet" href="./css/variables.css">
+    <link rel="stylesheet" href="css/login.css">
+    <link rel="stylesheet" href="css/variables.css">
     <title>Iniciar Sesión</title>
 </head>
 <body>
     <div>
-        <form id="form-login">
+        <form id="form-login" novalidate>
             <h1>Iniciar Sesión</h1>
             <div id="caja-usuario">
             <label class="label-usuario">Usuario</label> <br>
@@ -19,11 +19,13 @@
             <label class="label-contraseña">Contraseña</label> <br>
             <input type="password" name="contraseña" required> <br>
             </div>
+            <div id="mensaje-login">
+            </div>
             <button type="submit" id="campo-loguearse">entrar</button> <br>
             <p>¿No tienes una cuenta?<br><a href="register.html">Registrate</a></p>
 
         </form>
     </div>
-    <script src="login.js"></script>
+    <script src="JS/login.js"></script>
 </body>
 </html>

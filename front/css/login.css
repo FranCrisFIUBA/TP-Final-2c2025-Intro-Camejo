@@ -39,6 +39,7 @@ input {
 #campo-loguearse {
     width: 15%;
     height: 10%;
+    margin-top: 10px;
     font-size: 16px;
     font-family: var(--nunito-bold);
     color: var(--negro);
@@ -71,6 +72,7 @@ body {
     justify-content: center;
     align-items: center;
     background: url("../img/registro-fondo.png") no-repeat center center fixed ;
+    font-family: var(--nunito-bold);
 }
 
 
