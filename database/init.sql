@@ -13,17 +13,17 @@ CREATE TABLE usuarios (
 CREATE TABLE publicaciones (
     id SERIAL PRIMARY KEY,
     usuario_id INT NOT NULL,
-    titulo VARCHAR NOT NULL, -- maximo de 100 caracteres
-    etiquetas VARCHAR NOT NULL,
-    url_imagen VARCHAR NOT NULL, -- url que indica donde se encuentra la imagen, apunta a un archivo publico del servidor
-    alto_imagen INT, -- alto arreglado (fixed) opcional de la imagen
-    ancho_imagen INT, -- ancho arreglado (fixed) opcional de la imagen
-    fecha_publicacion TIMESTAMP NOT NULL,
-    fecha_edicion TIMESTAMP NOT NULL,
+    titulo VARCHAR(100) NOT NULL,
+    etiquetas VARCHAR(200) NOT NULL,
+    imagen VARCHAR(255) NOT NULL, -- nombre del archivo
+    alto_imagen INT,
+    ancho_imagen INT,
+    fecha_publicacion TIMESTAMP NOT NULL DEFAULT now(),
+    fecha_edicion TIMESTAMP NOT NULL DEFAULT now(),
 
     FOREIGN KEY (usuario_id)
-        REFERENCES usuarios(id)
-        ON DELETE CASCADE
+       REFERENCES usuarios(id)
+       ON DELETE CASCADE
 );
 
 CREATE TABLE comentarios (
