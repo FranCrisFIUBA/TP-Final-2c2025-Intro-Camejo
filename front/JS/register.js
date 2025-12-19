@@ -1,9 +1,9 @@
 document.getElementById("form-registro").addEventListener("submit", async (e) =>{
     e.preventDefault();
 
-    const mensajesError = document.getElementById("mensaje-error");
-    mensajesError.innerHTML = "";
-    mensajesError.style.color = "red";
+    const mensajes_error_aviso = document.getElementById("mensaje-error-aviso");
+    mensajes_error_aviso.innerHTML = "";
+    mensajes_error_aviso.style.color = "red";
     
     const datos = {
         nombre: e.target.usuario.value,
@@ -26,22 +26,24 @@ document.getElementById("form-registro").addEventListener("submit", async (e) =>
 
         if (!respuesta.ok) {
             if (resultado.errors && Array.isArray(resultado.errors)) {
-                mensajesError.textContent = resultado.errors[0].message;
+                mensajes_error_aviso.textContent = resultado.errors[0].message;
                 return;
             }
 
             if (resultado.error) {
-                mensajesError.textContent = resultado.error;
+                mensajes_error_aviso.textContent = resultado.error;
                 return;
             }
 
-            mensajesError.textContent = "Error al registrar usuario";
+            mensajes_error_aviso.textContent = "Error al registrar usuario";
+            console.log("respuesta del backend:",resultado);
             return;
         }
 
+        mensajes_error_aviso.style.color = "green";
+        mensajes_error_aviso.textContent = "Registro enviado exitosamente";
         console.log("respuesta del backend:",resultado);
-
-        alert("Registro enviado exitosamente");
+        
     } catch (error) {
         console.error("error al enviar datos:",error);
         alert("Ocurrió un error al enviar los datos");
