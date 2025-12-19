@@ -60,13 +60,25 @@ export async function actualizarUsuarioPorId(id, nombre, contrasenia, email, ico
 }
 
 export async function existeUsuarioConId(id) {
-    return (await intentarConseguirUsuarioPorId(id)).success;
+    const result = await pool.query(
+        "SELECT 1 FROM usuarios WHERE id = $1",
+        [id]
+    );
+    return result.rowCount > 0;
 }
 
 export async function existeUsuarioConNombre(nombre) {
-    return (await intentarConseguirUsuarioPorNombre(nombre)).success;
+    const result = await pool.query(
+        "SELECT 1 FROM usuarios WHERE nombre = $1",
+        [nombre]
+    );
+    return result.rowCount > 0;
 }
 
 export async function existeUsuarioConEmail(email) {
-    return (await intentarConseguirUsuarioPorEmail(email)).success;
+    const result = await pool.query(
+        "SELECT 1 FROM usuarios WHERE email = $1",
+        [email]
+    );
+    return result.rowCount > 0;
 }
