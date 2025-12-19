@@ -16,7 +16,7 @@ if (!fs.existsSync(ICONOS_PATH)) {
 
 const iconoUsuarioStorage = multer.diskStorage({
     destination: (req, file, cb) => {
-        cb(null, 'public/iconos'); // carpeta donde se guardarán los iconos
+        cb(null, ICONOS_PATH); // carpeta donde se guardarán los iconos
     },
     filename: (req, file, cb) => {
         const ext = path.extname(file.originalname);
@@ -45,7 +45,9 @@ if (!fs.existsSync(IMAGENES_PATH)) {
 }
 
 const imagenPublicacionStorage = multer.diskStorage({
-    destination: IMAGENES_PATH,
+    destination: (req, file, cb) => {
+        cb(null, IMAGENES_PATH);
+    },
     filename: (req, file, cb) => {
         const ext = path.extname(file.originalname);
         const nombre = crypto.randomUUID() + ext;

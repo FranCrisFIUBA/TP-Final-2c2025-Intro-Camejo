@@ -1,6 +1,6 @@
-import * as zod from 'zod';
-import {generarEsquemaId} from "./comun.js";
-import {esquemaUsuario} from "./usuarios.js";
+import * as zod from "zod";
+import { generarEsquemaId } from "./comun.js";
+import { esquemaUsuario } from "./usuarios.js";
 
 export const esquemaPublicacion = zod.object({
     id: generarEsquemaId("publicacion"),
@@ -8,39 +8,43 @@ export const esquemaPublicacion = zod.object({
     usuario_id: esquemaUsuario.shape.id,
 
     titulo: zod.string()
-        .nonempty("El título no puede estar vacío")
-        .max(100, "El título no puede tener más de 100 caracteres"),
+        .min(1)
+        .max(100),
 
     etiquetas: zod.string()
-        .nonempty("Las etiquetas no pueden estar vacías")
-        .max(200, "Las etiquetas no pueden tener más de 200 caracteres"),
+        .min(1)
+        .max(200),
 
-    url_imagen: zod.url("URL de imagen inválida")
-        .nonempty("La URL de la imagen no puede estar vacía")
-        .max(500, "La URL es demasiado larga"),
+    // solo nombre de archivo
+    imagen: zod.string()
+        .min(1)
+        .max(255),
 
-    alto_imagen: zod.int()
-        .positive("El alto debe ser un número positivo")
+    alto_imagen: zod.number()
+        .int()
+        .positive()
         .optional(),
 
-    ancho_imagen: zod.int()
-        .positive("El ancho debe ser un número positivo")
+    ancho_imagen: zod.number()
+        .int()
+        .positive()
         .optional(),
 });
 
-export const esquemaActualizacionPublicacion = esquemaPublicacion
-    .clone() // clona el esquema
-    .omit({ usuario_id: true }) // omite usuario_id ya que este no es necesario en la actualizacion
-    .partial()// vuelve a todos los campos opcionales
-    .extend({ id: esquemaPublicacion.shape.id }) // resetea id para que sea obligatorio
-    .refine( data => Object.keys(data).length > 1, // valida que se haya pasado almenos un campo ademas de id
-        "Al menos un campo debe ser proporcionado para actualizar")
+export const esquemaPostPublicacion = zod.object({
+    usuario_id: zod.coerce.number().int().positive(),
+    titulo: zod.string().min(1).max(100),
+    etiquetas: zod.string().min(1).max(200),
+    imagen: zod.string(),
+    alto_imagen: zod.coerce.number().int().positive().optional(),
+    ancho_imagen: zod.coerce.number().int().positive().optional()
+});
 
-export const esquemaPostPublicacion = esquemaPublicacion
-    .clone()
-    .omit({ id: true })
-    .extend({
-        usuario_id: esquemaUsuario.shape.id
-            .transform(val => Number(val)),   // convierte string a number
-        url_imagen: zod.string().url().optional()
-    });
+export const esquemaActualizacionPublicacion = esquemaPublicacion
+    .omit({ usuario_id: true })
+    .partial()
+    .extend({ id: esquemaPublicacion.shape.id })
+    .refine(
+        data => Object.keys(data).length > 1,
+        "Debe enviarse al menos un campo además del id"
+    );
