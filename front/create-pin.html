@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="css/create-pin.css">
+    <link rel="stylesheet" href="css/variables.css">
+    <title></title>
+</head>
+<body>
+    <div class="container">
+        <div class="contend-left">
+            <div class="add-pin upload-container">
+                <div class="pin-container">
+                    <a class="imagen-small">
+                        <img src="img/add_photo_alternate_24dp_47413E_FILL0_wght400_GRAD0_opsz24.svg" class="pin">
+                        <span>Eligue una imagen</span>
+                    </a>
+                    <input type="file" accept="image/*" class="file-input" style="display: none;">
+                </div>
+            </div>
+            <div class="btn-left">
+                <hr>
+                <button class="btn-amarillo btn-addURL" aria-label="subir url">
+                    <p>Guardar desde la url</p>
+                </button>
+            </div>
+        </div>
+        <div class="contend-rigth">
+            <div class="top-btns">
+                <button class="cancel-btn">cancelar</button>
+                <button class="btn-amarillo publish-btn">Publicar</button>
+            </div>
+            <div class="form-group">
+                <label>Titulo</label>
+                <input type="text" placeholder="Agrega un título">
+            </div>
+            <div class="form-group">
+                <label>Descripción</label>
+                <textarea placeholder="Agrega una descripción detallada"></textarea>
+            </div>
+
+            <div class="form-group size-inputs">
+                <label>Tamaño</label>  
+                <div class="bloque">
+                    <input type="text" placeholder="ancho">
+                    <button class="btn-f">x</button>
+                    <input type="text" placeholder="alto">
+                </div>
+                
+            </div>
+
+            <div class="form-group tags">
+                <label>Etiquetas</label>
+                <button class="add-tag">+ agregar</button>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
