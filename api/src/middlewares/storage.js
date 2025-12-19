@@ -54,7 +54,7 @@ const imagenPublicacionStorage = multer.diskStorage({
 })
 
 export const imagenPublicacionUpload = multer({
-    imagenPublicacionStorage,
+    storage: imagenPublicacionStorage,
     limits: { fileSize: 10 * 1024 * 1024 }, // 10MB
     fileFilter: (req, file, cb) => {
         if (!file.mimetype.startsWith('image/')) {
