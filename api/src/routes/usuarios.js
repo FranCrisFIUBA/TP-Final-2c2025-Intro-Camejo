@@ -2,12 +2,13 @@
 import express from 'express'
 import {pool} from "../db.js";
 import {
-    actualizarUsuarioPorId, intentarConseguirUsuarioPorEmail,
-    intentarConseguirUsuarioPorId,
+    actualizarUsuarioPorId, intentarConseguirUsuarioPorId,
     intentarConseguirUsuarioPorNombre, existeUsuarioConEmail,
     existeUsuarioConId, existeUsuarioConNombre
 } from "../utils/database/usuarios.js";
-import {esquemaActualizacionUsuario, esquemaUsuario} from "../utils/esquemas/usuarios.js";
+import {esquemaActualizacionUsuario, esquemaPostUsuario} from "../utils/esquemas/usuarios.js";
+import {iconoUsuarioUpload} from "../middlewares/storage.js";
+import multer from "multer";
 
 const usuarios = express.Router()
 
@@ -42,58 +43,62 @@ usuarios.get('/:id',  async (req, res) => {
 
 // POST /usuarios
 
-usuarios.post('/', async (req, res) => {
+usuarios.post('/',
+    (req, res, next) => {
+        iconoUsuarioUpload.single('icono')(req, res, function(err) {
+            if (err instanceof multer.MulterError ) {
+                return res.status(400).json({ error: err.message });
+            } else if (err) {
+                return res.status(500).json({ error: "Error en la subida de archivo" });
+            }
+            next();
+        });
+    },
+
+    async (req, res) => {
     try {
-        // TODO:
-        //  - validar la validez de la url del icono como imagen
-        //  - validar que la fecha de nacimiento sea pasada
-        //  - validar la edad del usuario
+        const usuarioData = {
+            nombre: req.body.nombre,
+            contrasenia: req.body.contrasenia,
+            email: req.body.email,
+            fecha_nacimiento: new Date(req.body.fecha_nacimiento),
+            fecha_registro: new Date(),
+            icono: req.file ? `${req.file.filename}` : null
+        };
 
-        const usuario = await esquemaUsuario.safeParseAsync({ ...req.body, fecha_registro: Date.now() })
+        const usuario = await esquemaPostUsuario.safeParseAsync(usuarioData);
         if (!usuario.success) {
-            // hay errores en la request, ya sea por falta de campos o malformacion de los mismos
-            console.error("error.issues:" + usuario.error.issues)
-            res.status(400).json({ errors: usuario.error.issues })
-            return;
+            return res.status(400).json({ errors: usuario.error.issues });
         }
 
-        // Validar unicidad del nombre y email
-
-        const existeNombre = existeUsuarioConNombre(usuario.data.nombre);
-        const existeEmail = existeUsuarioConEmail(usuario.data.email);
-
-        if (await existeNombre) {
-            console.error(`ya existe un usuario con el nombre ${usuario.data.nombre}`)
-            res.status(409).json({ error: "El nombre de usuario ya existe" });
-            return;
+        if (await existeUsuarioConNombre(usuario.data.nombre)) {
+            return res.status(409).json({ error: "El nombre de usuario ya existe" });
         }
-
-        if (await existeEmail) {
-            console.error(`Ya existe un usuario con el email ${existeEmail}`)
-            res.status(409).json({ error: "El email ya está registrado" });
-            return;
+        if (await existeUsuarioConEmail(usuario.data.email)) {
+            return res.status(409).json({ error: "El email ya está registrado" });
         }
 
         const result = await pool.query(
-            "INSERT INTO usuarios (nombre, contrasenia, email, icono, fecha_nacimiento, fecha_registro) VALUES (?, ?, ?, ?, ?, ?) RETURNING *",
-            usuario.data.nombre,
-            usuario.data.contrasenia,
-            usuario.data.email,
-            usuario.data.icono || null,
-            usuario.data.fecha_nacimiento,
-            usuario.data.fecha_registro,
-            usuario.data.fecha_registro,
-        ).then(() => {
-            res.status(200).json(result.rows[0]);
-        }).catch((err) => {
-            console.error(err);
-            res.status(404).json({})
-        })
+            `INSERT INTO usuarios
+                 (nombre, contrasenia, email, icono, fecha_nacimiento, fecha_registro)
+             VALUES ($1, $2, $3, $4, $5, $6)
+                 RETURNING *`,
+            [
+                usuario.data.nombre,
+                usuario.data.contrasenia,
+                usuario.data.email,
+                usuario.data.icono,
+                usuario.data.fecha_nacimiento,
+                usuario.data.fecha_registro
+            ]
+        );
+
+        res.status(201).json(result.rows[0]);
     } catch (err) {
         console.error(err);
         res.status(500).json({ error: "Error al crear usuario" });
     }
-})
+});
 
 // PATCH /usuarios/:id
 

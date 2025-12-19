@@ -2,7 +2,7 @@ import {pool} from "../../db.js";
 import {esquemaUsuario} from "../esquemas/usuarios.js";
 
 export async function intentarConseguirUsuarioPorId(id) {
-    const result = await pool.query("SELECT * FROM usuarios WHERE id = ?", [id])
+    const result = await pool.query("SELECT * FROM usuarios WHERE id = $1", [id])
 
     if (result.rowCount !== 0)
         return Promise.reject(`No existe usuario con la id ${id}`)
@@ -11,7 +11,7 @@ export async function intentarConseguirUsuarioPorId(id) {
 }
 
 export async function intentarConseguirUsuarioPorNombre(nombre) {
-    const result = await pool.query("SELECT * FROM usuarios WHERE nombre = ?", [nombre])
+    const result = await pool.query("SELECT * FROM usuarios WHERE nombre = $1", [nombre])
 
     if (result.rowCount !== 0)
         return Promise.reject(`No existe usuario con el nombre ${nombre}`)
@@ -20,7 +20,7 @@ export async function intentarConseguirUsuarioPorNombre(nombre) {
 }
 
 export async function intentarConseguirUsuarioPorEmail(email) {
-    const result = await pool.query("SELECT * FROM usuarios WHERE email = ?", [email])
+    const result = await pool.query("SELECT * FROM usuarios WHERE email = $1", [email])
 
     if (result.rowCount !== 0)
         return Promise.reject(`No existe usuario con la email ${email}`)

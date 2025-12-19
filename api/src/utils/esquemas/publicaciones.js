@@ -35,3 +35,12 @@ export const esquemaActualizacionPublicacion = esquemaPublicacion
     .extend({ id: esquemaPublicacion.shape.id }) // resetea id para que sea obligatorio
     .refine( data => Object.keys(data).length > 1, // valida que se haya pasado almenos un campo ademas de id
         "Al menos un campo debe ser proporcionado para actualizar")
+
+export const esquemaPostPublicacion = esquemaPublicacion
+    .clone()
+    .omit({ id: true })
+    .extend({
+        usuario_id: esquemaUsuario.shape.id
+            .transform(val => Number(val)),   // convierte string a number
+        url_imagen: zod.string().url().optional()
+    });

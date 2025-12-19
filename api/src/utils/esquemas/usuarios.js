@@ -13,13 +13,18 @@ export const esquemaUsuario = zod.object({
 
     email: zod.email("Email de usuario inválido"),
 
-    icono: zod.url("URL de icono inválida")
+    icono: zod.string("URL de icono inválida")
+        .nullable()
         .optional(),
 
     fecha_nacimiento: zod.date("Fecha de nacimiento invalida"),
 
     fecha_registro: zod.date("Fecha de registro invalida")
 })
+
+export const esquemaPostUsuario = esquemaUsuario
+    .clone()
+    .omit({ id: true });
 
 export const esquemaActualizacionUsuario = esquemaUsuario
     .clone()
