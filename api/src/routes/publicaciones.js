@@ -7,7 +7,8 @@ import {
 } from "../utils/esquemas/publicaciones.js";
 import {intentarConseguirPublicacionPorId} from "../utils/database/publicaciones.js"
 import {existeUsuarioConId} from "../utils/database/usuarios.js";
-import {imagenPublicacionUpload} from "../middlewares/storage.js";
+import {iconoUsuarioUpload, imagenPublicacionUpload} from "../middlewares/storage.js";
+import multer from "multer";
 
 const publicaciones = express.Router();
 
@@ -41,8 +42,6 @@ publicaciones.get('/:id', async (req, res) => {
                 console.error(err)
                 res.status(404).json({ error: "Publicación no encontrada" })
             })
-        
-
     } catch (err) {
         console.error(err);
         res.status(500).json({ error: "Error al obtener publicación" });
@@ -73,51 +72,86 @@ publicaciones.get('/usuario/:usuarioId', async (req, res) => {
 });
 
 // POST /publicaciones - Crear nueva publicación con imagen
-publicaciones.post('/', imagenPublicacionUpload.single('imagen'), async (req, res) => {
-    // TODO: testear
-
-    try {
-        if (!req.file) {
-            return res.status(400).json({ error: "Imagen requerida" });
-        }
-
-        const parsedPublicacion = esquemaPostPublicacion.safeParse({
-            ...req.body,
-            url_imagen: req.file.filename
+publicaciones.post(
+    '/',
+    (req, res, next) => {
+        imagenPublicacionUpload.single('imagen')(req, res, function (err) {
+            if (err instanceof multer.MulterError) {
+                return res.status(400).json({ error: err.message });
+            } else if (err) {
+                return res.status(500).json({ error: "Error en la subida de archivo" });
+            }
+            next();
         });
+    },
+    async (req, res) => {
+        try {
+            console.log("req.file:", req.file);
+            console.log("req.body:", req.body);
 
-        if (!parsedPublicacion.success) {
-            return res.status(400).json({ errors: parsedPublicacion.error.issues });
+            // Imagen obligatoria
+            if (!req.file) {
+                return res.status(400).json({ error: "Imagen requerida" });
+            }
+
+            // Parseo y normalización (multipart => strings)
+            const parsedPublicacion = esquemaPostPublicacion.safeParse({
+                usuario_id: Number(req.body.usuario_id),
+                titulo: req.body.titulo,
+                etiquetas: req.body.etiquetas,
+                imagen: req.file.filename,
+                alto_imagen: req.body.alto_imagen
+                    ? Number(req.body.alto_imagen)
+                    : undefined,
+                ancho_imagen: req.body.ancho_imagen
+                    ? Number(req.body.ancho_imagen)
+                    : undefined
+            });
+
+            if (!parsedPublicacion.success) {
+                return res.status(400).json({
+                    errors: parsedPublicacion.error.issues
+                });
+            }
+
+            // Verificar usuario
+            const usuarioExiste = await existeUsuarioConId(
+                parsedPublicacion.data.usuario_id
+            );
+
+            if (!usuarioExiste) {
+                return res.status(404).json({ error: "Usuario no encontrado" });
+            }
+
+            const ahora = new Date();
+
+            // Insertar publicación
+            const result = await pool.query(
+                `INSERT INTO publicaciones
+                    (usuario_id, titulo, etiquetas, imagen,
+                     alto_imagen, ancho_imagen,
+                     fecha_publicacion, fecha_edicion)
+                 VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
+                 RETURNING *`,
+                [
+                    parsedPublicacion.data.usuario_id,
+                    parsedPublicacion.data.titulo,
+                    parsedPublicacion.data.etiquetas,
+                    parsedPublicacion.data.imagen,
+                    parsedPublicacion.data.alto_imagen ?? null,
+                    parsedPublicacion.data.ancho_imagen ?? null,
+                    ahora,
+                    ahora
+                ]
+            );
+
+            res.status(201).json(result.rows[0]);
+        } catch (err) {
+            console.error(err);
+            res.status(500).json({ error: "Error al crear publicación" });
         }
-
-        const usuarioExiste = await existeUsuarioConId(parsedPublicacion.data.usuario_id);
-        if (!usuarioExiste) {
-            return res.status(404).json({ error: "Usuario no encontrado" });
-        }
-
-        const urlImagen = `/imagenes/${req.file.filename}`;
-
-        const result = await pool.query(
-            `INSERT INTO publicaciones 
-            (usuario_id, titulo, etiquetas, url_imagen, alto_imagen, ancho_imagen) 
-            VALUES ($1, $2, $3, $4, $5, $6)
-            RETURNING *`,
-            [
-                parsedPublicacion.data.usuario_id,
-                parsedPublicacion.data.titulo,
-                parsedPublicacion.data.etiquetas,
-                urlImagen,
-                parsedPublicacion.data.alto_imagen || null,
-                parsedPublicacion.data.ancho_imagen || null
-            ]
-        );
-
-        res.status(201).json(result.rows[0]);
-    } catch (err) {
-        console.error(err);
-        res.status(500).json({ error: "Error al crear publicación" });
     }
-});
+);
 
 // PATCH /publicaciones/:id - Actualizar publicación
 publicaciones.patch('/:id', async (req, res) => {
