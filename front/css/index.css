@@ -16,6 +16,14 @@ body, html {
   gap: var(--gap-max);
   margin: 5px;
 }
+.container.con-navbar .main-content {
+  margin-left: calc(67px + var(--gap-max));
+}
+
+.container.sin-navbar .main-content {
+  margin-left: 0;
+}
+
 .sidebar-top {
   display: flex;
   justify-content: center;

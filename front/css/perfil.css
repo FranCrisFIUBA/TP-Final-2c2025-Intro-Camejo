@@ -17,7 +17,14 @@ body, html {
     gap: 20px;
     padding: 20px;
 }
+.container.con-navbar {
+    grid-template-columns: 80px 1fr 300px;
+}
 
+/* ===== GRID SIN NAVBAR ===== */
+.container.sin-navbar {
+    grid-template-columns: 1fr 300px;
+}
 /* Sección izquierda */ 
 .izq-section {
     flex: 3;

@@ -72,27 +72,22 @@ function inicializarNavbar() {
     });
 }
 
-/* =========================
-   CONTROL DE LOGIN GLOBAL
-========================= */
-
 document.addEventListener('DOMContentLoaded', () => {
     const estaLogeado = localStorage.getItem('usuarioLogeado') === 'true';
 
     const navbarContainer = document.getElementById('navbar-container');
-    const mainContent = document.querySelector('.main-content');
+    const container = document.querySelector('.container');
 
     if (!estaLogeado) {
         console.log('Usuario NO logeado → navbar oculto');
 
-        // Ocultar completamente el navbar
         if (navbarContainer) {
             navbarContainer.style.display = 'none';
         }
 
-        // Quitar margen reservado al sidebar
-        if (mainContent) {
-            mainContent.style.marginLeft = '0';
+        if (container) {
+            container.classList.remove('con-navbar');
+            container.classList.add('sin-navbar');
         }
 
         return;
@@ -100,13 +95,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
     console.log('Usuario logeado → navbar visible');
 
-    // Restaurar estilos por si venís de otra página
     if (navbarContainer) {
         navbarContainer.style.display = 'block';
     }
 
-    if (mainContent) {
-        mainContent.style.marginLeft = 'calc(67px + var(--gap-max))';
+    if (container) {
+        container.classList.remove('sin-navbar');
+        container.classList.add('con-navbar');
     }
 
     cargarNavbar();
