@@ -87,8 +87,7 @@ async function cargarPublicacionesDeUsuario(usuarioId) {
                 <div class="publicacion-preview">
                     <img src="${p.url_imagen || './img/placeholder.jpg'}" 
                          alt="${p.titulo}" 
-                         class="publicacion-image" 
-                         onerror="this.src='./img/placeholder.jpg'"
+                         class="publicacion-image" "
                          onclick='abrirCardModal(${publicacionJSON})'>
                 </div>
                 <div class="publicacion-info">
@@ -306,3 +305,40 @@ document.addEventListener('DOMContentLoaded', function() {
         configurarNavegacion();
     }, 100);
 });
+
+
+
+function abrirModalPerfil() {
+  const modal = document.getElementById('modal-editar');
+  if (!modal) return;
+  modal.style.display = 'flex';
+}
+
+function cerrarModalPerfil() {
+  const modal = document.getElementById('modal-editar');
+  if (!modal) return;
+  modal.style.display = 'none';
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  console.log('perfil.js cargado');
+
+  // Delegación de eventos (funciona con HTML dinámico)
+  document.addEventListener('click', (e) => {
+
+    // Abrir modal
+    if (e.target.closest('.btn-edit')) {
+      e.preventDefault();
+      abrirModalPerfil();
+    }
+
+    // Cerrar modal
+    if (e.target.closest('#cancel-edit')) {
+      e.preventDefault();
+      cerrarModalPerfil();
+    }
+
+  });
+});
+
+
