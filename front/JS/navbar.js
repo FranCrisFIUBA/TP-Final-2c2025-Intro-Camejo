@@ -2,8 +2,13 @@ function cargarNavbar() {
     fetch('./navbar.html')
         .then(response => response.text())
         .then(data => {
-            document.getElementById('navbar-container').innerHTML = data;
-            setTimeout(inicializarNavbar, 100);
+            const container = document.getElementById('navbar-container');
+            if (!container) return;
+
+            container.innerHTML = data;
+
+            // Esperar a que el DOM inyectado exista
+            setTimeout(inicializarNavbar, 50);
         })
         .catch(error => console.error('Error loading navbar:', error));
 }
@@ -13,79 +18,96 @@ function inicializarNavbar() {
     const dropdownMenu = document.getElementById('dropdown-menu');
     const overlay = document.getElementById('overlay');
     const profileButton = document.getElementById('profile-button');
-    
-    // Función para mostrar y ocultar el menú desplegable
+
     function toggleDropdown() {
-        if (dropdownMenu && overlay) {
-            const isShowing = dropdownMenu.classList.contains('show');
-            dropdownMenu.classList.toggle('show');
-            overlay.classList.toggle('show');
-            console.log('Dropdown toggled. Showing:', !isShowing); 
-        }
+        if (!dropdownMenu || !overlay) return;
+
+        dropdownMenu.classList.toggle('show');
+        overlay.classList.toggle('show');
     }
-    
-    // botón "Agregar"
+
     if (addButton) {
-        addButton.addEventListener('click', function(e) {
+        addButton.addEventListener('click', (e) => {
             e.preventDefault();
             e.stopPropagation();
-            console.log('Add button clicked'); 
             toggleDropdown();
         });
-    } else {
-        console.error('Add button not found');
     }
-    
-    // Cerrar el menú al hacer clic fuera
+
     if (overlay) {
-        overlay.addEventListener('click', function() {
-            console.log('Overlay clicked - closing dropdown'); 
-            dropdownMenu.classList.remove('show');
+        overlay.addEventListener('click', () => {
+            dropdownMenu?.classList.remove('show');
             overlay.classList.remove('show');
         });
     }
-    
-    // Cerrar el menú al hacer clic en una opción
-    const dropdownItems = document.querySelectorAll('.dropdown-item');
-    dropdownItems.forEach(item => {
-        item.addEventListener('click', function(e) {
-            console.log('Dropdown item clicked'); 
-            dropdownMenu.classList.remove('show');
-            overlay.classList.remove('show');
+
+    document.querySelectorAll('.dropdown-item').forEach(item => {
+        item.addEventListener('click', () => {
+            dropdownMenu?.classList.remove('show');
+            overlay?.classList.remove('show');
         });
     });
-    
-    // Cerrar menú al hacer clic en cualquier parte del documento
-    document.addEventListener('click', function(e) {
-        if (dropdownMenu && dropdownMenu.classList.contains('show') && 
-            !dropdownMenu.contains(e.target) && 
-            e.target !== addButton) {
-            console.log('Click outside - closing dropdown'); 
+
+    document.addEventListener('click', (e) => {
+        if (
+            dropdownMenu?.classList.contains('show') &&
+            !dropdownMenu.contains(e.target) &&
+            e.target !== addButton
+        ) {
             dropdownMenu.classList.remove('show');
-            overlay.classList.remove('show');
+            overlay?.classList.remove('show');
         }
     });
-    
-    const homeBtn = document.querySelector(".icon-bar.home");
-    const searchBtn = document.querySelector(".icon-bar.search");
 
-    if (homeBtn) {
-        homeBtn.addEventListener("click", () => {
-            window.location.href = "index.html"; 
-        });
-    }
+    document.querySelector(".icon-bar.home")?.addEventListener("click", () => {
+        window.location.href = "index.html";
+    });
 
-    if (searchBtn) {
-        searchBtn.addEventListener("click", () => {
-            window.location.href = "search.html";
-        });
-    }
+    document.querySelector(".icon-bar.search")?.addEventListener("click", () => {
+        window.location.href = "search.html";
+    });
 
-    if (profileButton) {
-        profileButton.addEventListener("click", () => {
-            window.location.href = "perfil.html";
-        });
-    }
+    profileButton?.addEventListener("click", () => {
+        window.location.href = "perfil.html";
+    });
 }
 
-document.addEventListener('DOMContentLoaded', cargarNavbar);
+/* =========================
+   CONTROL DE LOGIN GLOBAL
+========================= */
+
+document.addEventListener('DOMContentLoaded', () => {
+    const estaLogeado = localStorage.getItem('usuarioLogeado') === 'true';
+
+    const navbarContainer = document.getElementById('navbar-container');
+    const mainContent = document.querySelector('.main-content');
+
+    if (!estaLogeado) {
+        console.log('Usuario NO logeado → navbar oculto');
+
+        // Ocultar completamente el navbar
+        if (navbarContainer) {
+            navbarContainer.style.display = 'none';
+        }
+
+        // Quitar margen reservado al sidebar
+        if (mainContent) {
+            mainContent.style.marginLeft = '0';
+        }
+
+        return;
+    }
+
+    console.log('Usuario logeado → navbar visible');
+
+    // Restaurar estilos por si venís de otra página
+    if (navbarContainer) {
+        navbarContainer.style.display = 'block';
+    }
+
+    if (mainContent) {
+        mainContent.style.marginLeft = 'calc(67px + var(--gap-max))';
+    }
+
+    cargarNavbar();
+});
