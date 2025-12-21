@@ -136,6 +136,8 @@ body, html {
   gap: var(--gap-max);
   z-index: 10;
   padding-top: var(--padding-pag-6px);
+  margin-left: 10px;
+  margin-right: 10px;
 }
 
 .search-bar {
@@ -158,55 +160,47 @@ body, html {
   width: 100%;
 }
 
-.order-by {
+
+.top-section .auth-buttons {
   display: flex;
+  gap: 10px;
   align-items: center;
-  padding: var(--padding-pag-6px);
-  border-radius: var(--border-radius);
+  font-family: var(--nunito);
+}
+
+.top-section .auth-buttons .btn-auth {
+  padding: 8px 18px;
+  border-radius: 6px;
+  font-size: 17px;
+  text-decoration: none;
+  cursor: pointer;
+  transition: background 0.2s ease, color 0.2s ease;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.top-section .auth-buttons .btn-login {
   background: transparent;
-  cursor: pointer;
-  border: var(--border-estandar);
-}
-
-.order-by:hover {
-  background-color: var(--amarillo);
-  transition: opacity 0.3s ease;
-}
-
-.order img {
-  transform: rotate(90deg);
-}
-
-.order-by p {
-  font-family: var(--nunito);
-  font-size: 16px; 
   color: var(--negro);
-  margin-right: 5px;
-}
-.order-menu {
-  position: absolute;
-  top: 49px; /* ajustá según tu diseño */
-  right: 0px;
-  background: var(--blanco);
   border: var(--border-estandar);
-  border-radius: var(--border-radius);
-  box-shadow: 0 2px 6px rgba(0,0,0,0.15);
-  list-style: none;
-  padding: 5px 0;
-  display: none; /* oculto por defecto */
-  z-index: 50;
 }
 
-.order-menu li {
-  padding: 8px 15px;
-  cursor: pointer;
-  font-family: var(--nunito);
+.top-section .auth-buttons .btn-login:hover {
+  background: rgba(0, 0, 0, 0.05);
 }
 
-.order-menu li:hover {
-  background-color: var(--amarillo);
-  border-radius: var(--border-radius);
+.top-section .auth-buttons .btn-register {
+  background: var(--negro);
+  color: var(--blanco);
+  border: none;
 }
+
+.top-section .auth-buttons .btn-register:hover {
+  opacity: 0.9;
+}
+
+
 
 
 
