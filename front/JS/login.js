@@ -30,6 +30,7 @@ document.getElementById("form-login").addEventListener("submit", async (e) => {
             mensaje.style.color = "green";
             mensaje.textContent = "Login exitoso";
             console.log("Usuario logueado", usuario_ingresado);
+            irAlPerfil(usuario_ingresado.id);
         } else {
             mensaje.style.color = "red";
             mensaje.textContent = "Usuario o contraseña incorrectos";
