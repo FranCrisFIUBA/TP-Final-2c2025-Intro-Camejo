@@ -43,6 +43,7 @@ document.getElementById("form-registro").addEventListener("submit", async (e) =>
         mensajes_error_aviso.style.color = "green";
         mensajes_error_aviso.textContent = "Registro enviado exitosamente";
         console.log("respuesta del backend:",resultado);
+        irAlPerfil(resultado.id);
         
     } catch (error) {
         console.error("error al enviar datos:",error);
