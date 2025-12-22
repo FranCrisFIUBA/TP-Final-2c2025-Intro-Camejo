@@ -16,23 +16,23 @@ document.getElementById("form-login").addEventListener("submit", async (e) => {
     }
 
     try {
-        const respuesta = await fetch("http://localhost:3000/usuarios/", {
-            method: "POST",
-            headers: {
-                "Content-Type" : "application/json"
-            },
-            body: JSON.stringify(datos)
-        });
-
+        const respuesta = await fetch("http://localhost:3000/usuarios/");
+        if (!respuesta.ok) {
+            mensaje.textContent = "No se pudo obtener usuarios";
+            return;
+        }
         const resultado = await respuesta.json();
-        console.log("respuesta del backend:",resultado);
+        const usuario_ingresado = resultado.find(u =>
+            u.nombre === datos.usuario && u.contrasenia === datos.contrasenia
+        );
 
-        if (respuesta.ok) {
+        if (usuario_ingresado) {
             mensaje.style.color = "green";
             mensaje.textContent = "Login exitoso";
+            console.log("Usuario logueado", usuario_ingresado);
         } else {
             mensaje.style.color = "red";
-            mensaje.textContent = resultado.error || "Usuario o contraseña incorrectos";
+            mensaje.textContent = "Usuario o contraseña incorrectos";
             return;
         }
     } catch (error) {
