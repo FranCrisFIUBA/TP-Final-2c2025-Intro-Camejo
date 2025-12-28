@@ -68,9 +68,27 @@ INSERT INTO publicaciones (usuario_id, titulo, etiquetas, url_imagen, alto_image
 (8, 'Wallpaper captura', 'wallpaper, captura, anime', 'https://i.pinimg.com/736x/5e/2f/b8/5e2fb88c3c7da194c43183f7d216f8f7.jpg', NULL, NULL, '2024-01-12 10:00:00', '2024-01-12 10:00:00'),
 (4, 'Hora de aventura - Marceline', 'Marceline, horaDeAventura, fanArt, dibujo', 'https://i.pinimg.com/736x/a7/1c/0d/a71c0d96f4a498a23f27dbc673496d4c.jpg', NULL, NULL, '2023-12-24 20:00:00', '2023-12-25 10:00:00'),
 (10, 'Stardew Valley', 'stardewValley, captura, mods', 'https://i.pinimg.com/1200x/8b/8f/1a/8b8f1a06bc2f37b5e5847263820c6415.jpg', NULL, NULL, '2024-03-30 14:00:00', '2024-03-30 14:00:00'),
-(14, 'Uzumaki', 'junjiIto, uzumaki, manga, horrorCosmico, espirales', 'https://i.pinimg.com/736x/01/ed/13/01ed130ab6db007810c3ca8f0a43068f.jpg', NULL, NULL, '2024-03-30 14:00:00', '2024-03-30 14:00:00')
+(14, 'Uzumaki', 'junjiIto, uzumaki, manga, horrorCosmico, espirales', 'https://i.pinimg.com/736x/01/ed/13/01ed130ab6db007810c3ca8f0a43068f.jpg', NULL, NULL, '2024-03-30 14:00:00', '2024-03-30 14:00:00'),
+(5, 'Bingo y su dibujo', 'bluey, bingo, dibujo, auto, animacion', 'https://i.pinimg.com/1200x/b9/f0/11/b9f011093049bc0dc2218d7bf4a08529.jpg', NULL, NULL, '2024-04-20 10:00:00', '2024-04-20 10:00:00'),
+(11, 'Fondo de estrellas', 'estrellas, cielo, nocturno, fondoDePantalla', 'https://i.pinimg.com/736x/24/11/5c/24115ccdb618808c7a6b6ef58167a102.jpg', NULL, NULL, '2024-04-21 22:30:00', '2024-04-21 22:30:00'),
+(14, 'Tomie - Fanart', 'tomie, junjiIto, manga, horror, ilustracion', 'https://i.pinimg.com/1200x/d4/d6/38/d4d6381ffae0f1298326afc2ba501f32.jpg', NULL, NULL, '2024-04-22 15:00:00', '2024-04-22 15:00:00'),
+(2, 'Batman y el Acertijo', 'batman, riddler, dc, comics, villano', 'https://i.pinimg.com/736x/c0/76/bc/c076bc9f5a8c841dcd3c192b17d8678d.jpg', NULL, NULL, '2024-04-23 11:15:00', '2024-04-23 11:15:00'),
+(7, 'Marnie en el bosque', 'estudioGhibli, marnie, bosque, pelicula, naturaleza', 'https://i.pinimg.com/1200x/b9/ed/9c/b9ed9cfa14c7cd13018fd1323d822584.jpg', NULL, NULL, '2024-04-24 09:40:00', '2024-04-24 09:40:00'),
+(12, 'Ponyo sobre el mar', 'ponyo, estudioGhibli, mar, oceano, fondoDePantalla', 'https://i.pinimg.com/736x/d3/cf/57/d3cf576caa9a6da25246a2175ac9ee11.jpg', NULL, NULL, '2024-04-25 14:20:00', '2024-04-25 14:20:00'),
+(9, 'Snoopy lector', 'snoopy, lectura, libros, tierno, ilustracion', 'https://i.pinimg.com/736x/64/45/af/6445af29a61f7eacd4408ebc9a70b748.jpg', NULL, NULL, '2024-04-26 17:00:00', '2024-04-26 17:00:00'),
+(7, 'Jiro leyendo - Se levanta el viento', 'estudioGhibli, lectura, pelicula, anime, libros', 'https://i.pinimg.com/736x/3d/a5/5c/3da55cf732598cdfa972c8d364154ab0.jpg', NULL, NULL, '2024-04-27 12:00:00', '2024-04-27 12:00:00'),
+(13, 'Sophie cosiendo', 'elCastilloVagabundo, sophie, ghibli, costura, anime', 'https://i.pinimg.com/1200x/d9/9c/61/d99c61372c7a349c7c8e25bb25c044f3.jpg', NULL, NULL, '2024-04-28 10:30:00', '2024-04-28 10:30:00'),
+(7, 'Sombras del mercado - Chihiro', 'elViajeDeChihiro, ghibli, fantasmas, mercado, arte', 'https://i.pinimg.com/1200x/0f/f0/1b/0ff01b83ccc2733c768282bdafe602ec.jpg', NULL, NULL, '2024-04-29 20:15:00', '2024-04-29 20:15:00'),
+(4, 'BMO Vaquero', 'horaDeAventura, bmo, vaquero, guitarra, tierno', 'https://i.pinimg.com/736x/4d/21/c4/4d21c4a518dbb597cf2de0cd036b137f.jpg', NULL, NULL, '2024-04-30 08:00:00', '2024-04-30 08:00:00'),
+(6, 'Greg y su rana', 'masAllaDelJardin, greg, rana, animacion, bosque', 'https://i.pinimg.com/1200x/24/fb/ad/24fbad47cb4b5bfcc0f949d0ef059440.jpg', NULL, NULL, '2024-05-01 13:00:00', '2024-05-01 13:00:00'),
+(2, 'Isha - Arcane', 'arcane, isha, fanArt, serie, netflix', 'https://i.pinimg.com/736x/72/3f/2c/723f2c4922c08298a65fb073ab2f67e5.jpg', NULL, NULL, '2024-05-02 21:00:00', '2024-05-02 21:00:00'),
+(2, 'Mural Japonés Arcane', 'arcane, mural, japon, arteUrbano, jinx', 'https://i.pinimg.com/736x/75/cb/43/75cb435ec7141b657f37965304038f8a.jpg', NULL, NULL, '2024-05-03 11:00:00', '2024-05-03 11:00:00'),
+(1, 'Bodegón cotidiano', 'gato, converse, jugo, cotidiano, ilustracion', 'https://i.pinimg.com/736x/8a/51/08/8a5108bffdcbfc508907a513656f7d6f.jpg', NULL, NULL, '2024-05-04 16:45:00', '2024-05-04 16:45:00'),
+(8, 'Trapnest - NANA', 'nana, trapnest, anime, banda, personajes', 'https://i.pinimg.com/1200x/61/5e/bd/615ebd50e06539bc3570b3c421711f9d.jpg', NULL, NULL, '2024-05-05 23:00:00', '2024-05-05 23:00:00'),
+(11, 'Clara y el Cascanueces', 'ballet, cascanueces, navidad, baile, clasico', 'https://i.pinimg.com/736x/1e/52/0c/1e520cb8248a7ff9e50cf9743477f3b5.jpg', NULL, NULL, '2024-05-06 19:30:00', '2024-05-06 19:30:00'),
+(11, 'Copo de Nieve - Ballet', 'cascanueces, ballet, nieve, danza, arte', 'https://i.pinimg.com/1200x/b9/2d/14/b92d14c1df681e0d736d3e1800a17612.jpg', NULL, NULL, '2024-05-07 20:00:00', '2024-05-07 20:00:00'),
+(3, 'Sensatez y Sentimientos', 'libros, literatura, portada, clasico, janeAusten', 'https://i.pinimg.com/736x/27/4b/25/274b25afdad975ccf5f8da75c9351d16.jpg', NULL, NULL, '2024-05-08 10:00:00', '2024-05-08 10:00:00');
 
-;
 
 CREATE TABLE comentarios (
     id SERIAL PRIMARY KEY,
