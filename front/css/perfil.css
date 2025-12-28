@@ -791,7 +791,6 @@ body, html {
   z-index: 1000;
 }
 
-/* TARJETA */
 .modal-card {
   background: #fff;
   width: 700px;
@@ -800,7 +799,6 @@ body, html {
   box-shadow: 0 20px 40px rgba(0,0,0,0.2);
 }
 
-/* HEADER */
 .modal-top {
   display: flex;
   justify-content: space-between;
@@ -813,37 +811,45 @@ body, html {
   font-size: 22px;
 }
 
-/* BOTONES HEADER */
 .modal-top-actions {
   display: flex;
   gap: 10px;
 }
 
+.btn-borrar{
+    background: var(--rojo);
+    border: none;
+    padding: 6px 16px;
+    border-radius: 6px;
+    cursor: pointer;
+      font-family: var(--nunito);
+}
+
 .btn-cancelar {
-  background: #e5e2d8;
+  background: var(--gris);
   border: none;
   padding: 6px 14px;
   border-radius: 6px;
   cursor: pointer;
+    font-family: var(--nunito);
 }
 
 .btn-guardar {
-  background: #f2c94c;
+  background: var(--amarillo);
   border: none;
   padding: 6px 16px;
   border-radius: 6px;
   font-weight: bold;
   cursor: pointer;
+    font-family: var(--nunito);
 }
 
-/* CONTENIDO */
 .modal-content {
   display: grid;
   grid-template-columns: 220px 1fr;
   gap: 24px;
 }
 
-/* AVATAR */
 .modal-avatar {
   display: flex;
   justify-content: center;
@@ -856,6 +862,9 @@ body, html {
   background: var(--blanco);
   border: var(--border-estandar);
   box-shadow: 9px 8px 0px var(--negro); 
+  overflow: hidden;       
+  position: relative;
+  margin-bottom: 10px;
 }
 
 .profile-image-edit {
@@ -878,7 +887,6 @@ body, html {
   cursor: pointer;
 }
 
-/* FORMULARIO */
 .modal-form {
   display: flex;
   flex-direction: column;

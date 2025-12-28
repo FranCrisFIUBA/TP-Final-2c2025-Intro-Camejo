@@ -1,45 +1,60 @@
+const usuarioLogueado = JSON.parse(localStorage.getItem("usuarioLogueado"));
+
+document.addEventListener('DOMContentLoaded', () => {
+
+    if (!usuarioLogueado) {
+        return;
+    }
+    cargarNavbar();
+});
+
 function cargarNavbar() {
     fetch('./navbar.html')
         .then(response => response.text())
-        .then(data => {
+        .then(html => {
             const container = document.getElementById('navbar-container');
             if (!container) return;
 
-            container.innerHTML = data;
+            container.innerHTML = html;
+            container.style.display = 'block';
 
-            // Esperar a que el DOM inyectado exista
-            setTimeout(inicializarNavbar, 50);
+            inicializarNavbar();
         })
         .catch(error => console.error('Error loading navbar:', error));
 }
 
 function inicializarNavbar() {
+    const sidebar = document.querySelector(".sidebar");
+    if (!sidebar) return;
+
+    sidebar.style.display = "flex";
+
+    // Avatar
+    const avatarImg = document.querySelector(".user-avatar img");
+    if (avatarImg) {
+        avatarImg.src = usuarioLogueado.icono || "./img/avatar-default.jpg";
+    }
+
     const addButton = document.getElementById('add-button');
     const dropdownMenu = document.getElementById('dropdown-menu');
     const overlay = document.getElementById('overlay');
     const profileButton = document.getElementById('profile-button');
 
     function toggleDropdown() {
-        if (!dropdownMenu || !overlay) return;
-
-        dropdownMenu.classList.toggle('show');
-        overlay.classList.toggle('show');
+        dropdownMenu?.classList.toggle('show');
+        overlay?.classList.toggle('show');
     }
 
-    if (addButton) {
-        addButton.addEventListener('click', (e) => {
-            e.preventDefault();
-            e.stopPropagation();
-            toggleDropdown();
-        });
-    }
+    addButton?.addEventListener('click', (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        toggleDropdown();
+    });
 
-    if (overlay) {
-        overlay.addEventListener('click', () => {
-            dropdownMenu?.classList.remove('show');
-            overlay.classList.remove('show');
-        });
-    }
+    overlay?.addEventListener('click', () => {
+        dropdownMenu?.classList.remove('show');
+        overlay.classList.remove('show');
+    });
 
     document.querySelectorAll('.dropdown-item').forEach(item => {
         item.addEventListener('click', () => {
@@ -48,61 +63,12 @@ function inicializarNavbar() {
         });
     });
 
-    document.addEventListener('click', (e) => {
-        if (
-            dropdownMenu?.classList.contains('show') &&
-            !dropdownMenu.contains(e.target) &&
-            e.target !== addButton
-        ) {
-            dropdownMenu.classList.remove('show');
-            overlay?.classList.remove('show');
-        }
-    });
+    document.querySelector(".icon-bar.home")
+        ?.addEventListener("click", () => location.href = "index.html");
 
-    document.querySelector(".icon-bar.home")?.addEventListener("click", () => {
-        window.location.href = "index.html";
-    });
+    document.querySelector(".icon-bar.search")
+        ?.addEventListener("click", () => location.href = "search.html");
 
-    document.querySelector(".icon-bar.search")?.addEventListener("click", () => {
-        window.location.href = "search.html";
-    });
-
-    profileButton?.addEventListener("click", () => {
-        window.location.href = "perfil.html";
-    });
+    profileButton
+        ?.addEventListener("click", () => location.href = "perfil.html");
 }
-
-document.addEventListener('DOMContentLoaded', () => {
-    const estaLogeado = localStorage.getItem('usuarioLogeado') === 'true';
-
-    const navbarContainer = document.getElementById('navbar-container');
-    const container = document.querySelector('.container');
-
-    if (!estaLogeado) {
-        console.log('Usuario NO logeado → navbar oculto');
-
-        if (navbarContainer) {
-            navbarContainer.style.display = 'none';
-        }
-
-        if (container) {
-            container.classList.remove('con-navbar');
-            container.classList.add('sin-navbar');
-        }
-
-        return;
-    }
-
-    console.log('Usuario logeado → navbar visible');
-
-    if (navbarContainer) {
-        navbarContainer.style.display = 'block';
-    }
-
-    if (container) {
-        container.classList.remove('sin-navbar');
-        container.classList.add('con-navbar');
-    }
-
-    cargarNavbar();
-});

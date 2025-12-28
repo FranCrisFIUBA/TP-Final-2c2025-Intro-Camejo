@@ -73,46 +73,40 @@
 
     
     <div class="modal-overlay" id="modal-editar">
-  <div class="modal-card">
-    
-    <!-- HEADER -->
-    <div class="modal-top">
-      <h2>Editar Perfil</h2>
-      <div class="modal-top-actions">
-        <button class="btn-cancelar" id="cancel-edit">cancelar</button>
-        <button class="btn-guardar" form="edit-profile-form">guardar</button>
-      </div>
-    </div>
+        <div class="modal-card">
+            <div class="modal-top">
+            <h2>Editar Perfil</h2>
+            <div class="modal-top-actions">
+                <button class="btn-borrar" id="borrar-edit">Eliminar cuenta</button>
+                <button class="btn-cancelar" id="cancel-edit">Cancelar</button>
+                <button class="btn-guardar" form="perfil-edit">Guardar</button>
+            </div>
+            </div>
 
-    <!-- CONTENIDO -->
-    <div class="modal-content">
-      
-      <!-- COLUMNA IZQUIERDA -->
-      <div class="modal-avatar">
-        <div class="avatar-box">
-          <img src="img/[940] avatar 𓂃꙳⋆.jpeg" alt="Foto de perfil" class="profile-image-edit" id="profile-image-edit">
-          <i class="fa-solid fa-pencil"></i>
+            <div class="modal-content">
+                <div class="modal-avatar">
+                    <div class="avatar-box">
+                    <img src="img/[940] avatar 𓂃꙳⋆.jpeg" alt="Foto de perfil" class="profile-image-edit" id="profile-image-edit">
+                    <i class="fa-solid fa-pencil"></i>
+                    </div>
+                </div>
+
+                <form id="edit-profile-form" class="modal-form">
+                    <label>Nombre de usuario</label>
+                    <input type="text" id="edit-nombre">
+
+                    <label>Contraseña</label>
+                    <input type="password" id="edit-contraseña">
+
+                    <label>Repetir contraseña</label>
+                    <input type="password" id="edit-contraseña-repetida">
+
+                    <label>Fecha de nacimiento</label>
+                    <input type="date" id="edit-fecha">
+                </form>
+            </div>
         </div>
-      </div>
-
-      <!-- COLUMNA DERECHA -->
-      <form id="edit-profile-form" class="modal-form">
-        <label>Nombre de usuario</label>
-        <input type="text" id="edit-nombre">
-
-        <label>Contraseña</label>
-        <input type="password" id="edit-contraseña">
-
-        <label>Repetir contraseña</label>
-        <input type="password" id="edit-contraseña-repetida">
-
-        <label>Fecha de nacimiento</label>
-        <input type="date" id="edit-fecha">
-      </form>
-
     </div>
-  </div>
-</div>
 
     <script src="JS/navbar.js"></script>
     <script src="JS/perfil.js"></script>
