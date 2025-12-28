@@ -308,6 +308,17 @@ document.addEventListener('click', (e) => {
   }
 
 });
+document.addEventListener('click', (e) => {
+  const btnLogout = e.target.closest('.btn-logout');
+  if (!btnLogout) return;
+
+  e.preventDefault();
+
+  if (!confirm('¿Seguro que querés cerrar sesión?')) return;
+  localStorage.removeItem('usuarioLogueado');
+  window.location.href = 'index.html'; 
+});
+
 
 document.addEventListener('DOMContentLoaded', () => {
   cargarPerfilUsuario();

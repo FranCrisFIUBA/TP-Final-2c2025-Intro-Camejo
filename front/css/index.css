@@ -177,9 +177,9 @@ body, html {
 }
 
 .top-section .auth-buttons .btn-auth {
-  padding: 8px 18px;
+  padding: 9px 20px;
   border-radius: 6px;
-  font-size: 17px;
+  font-size: 15px;
   text-decoration: none;
   cursor: pointer;
   transition: background 0.2s ease, color 0.2s ease;

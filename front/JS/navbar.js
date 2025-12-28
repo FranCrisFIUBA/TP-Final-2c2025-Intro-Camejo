@@ -1,12 +1,28 @@
 const usuarioLogueado = JSON.parse(localStorage.getItem("usuarioLogueado"));
 
 document.addEventListener('DOMContentLoaded', () => {
+    const container = document.querySelector('.container');
+    const navbarContainer = document.getElementById('navbar-container');
+
+    if (!container) return;
 
     if (!usuarioLogueado) {
+        container.classList.remove('con-navbar');
+        container.classList.add('sin-navbar');
+
+        if (navbarContainer) {
+            navbarContainer.innerHTML = '';
+            navbarContainer.style.display = 'none';
+        }
+
         return;
     }
+
+    container.classList.remove('sin-navbar');
+    container.classList.add('con-navbar');
     cargarNavbar();
 });
+
 
 function cargarNavbar() {
     fetch('./navbar.html')
