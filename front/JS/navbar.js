@@ -15,12 +15,15 @@ document.addEventListener('DOMContentLoaded', () => {
             navbarContainer.style.display = 'none';
         }
 
+        controlarAuthButtons();
         return;
     }
 
     container.classList.remove('sin-navbar');
     container.classList.add('con-navbar');
+
     cargarNavbar();
+    controlarAuthButtons();
 });
 
 
@@ -38,6 +41,20 @@ function cargarNavbar() {
         })
         .catch(error => console.error('Error loading navbar:', error));
 }
+
+function controlarAuthButtons() {
+    const authButtons = document.querySelector('.auth-buttons');
+    if (!authButtons) return;
+
+    const usuarioLogueado = JSON.parse(localStorage.getItem('usuarioLogueado'));
+
+    if (usuarioLogueado) {
+        authButtons.classList.add('hidden');
+    } else {
+        authButtons.classList.remove('hidden');
+    }
+}
+
 
 function inicializarNavbar() {
     const sidebar = document.querySelector(".sidebar");
