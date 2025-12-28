@@ -56,6 +56,7 @@
   justify-content: center;
   margin-top: auto; /* Empuja hacia abajo */
   padding-top: 20px; /* Espacio arriba del avatar */
+  padding-bottom: 5px;
 }
 
 .user-avatar {
@@ -67,6 +68,7 @@
   cursor: pointer;
   overflow: hidden;
   transition: transform 0.2s ease;
+  border: var(--border-estandar);
 }
 
 .user-avatar:hover {

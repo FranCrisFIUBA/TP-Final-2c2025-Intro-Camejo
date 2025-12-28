@@ -3,41 +3,36 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="css/index.css">
     <link rel="stylesheet" href="css/variables.css">
+    <link rel="stylesheet" href="css/index.css">
     <link rel="icon" href="img/logo%20(4).png" type="image/x-icon" style="border-radius: 50%;">
-    <title>inicio</title>
+    <title>Imago-★</title>
 </head>
 <body>
-    <div class="container">
+    <div class="container con-navbar">
         <div id="navbar-container"></div>
         <main class="main-content">
             <header class="top-section" role="toolbar">
                 <form class="search-bar" role="search"> 
                     <span class="search-icon">
-                        <img src="img/search_24dp_47413E_FILL0_wght400_GRAD0_opsz24.svg" >
+                        <img src="img/search_24dp_47413E_FILL0_wght400_GRAD0_opsz24.svg">
                     </span>
                     <input class="search-input" type="search" aria-label="Buscar contenido"/>
                 </form>
-                
-                <button class="order-by" aria-label="Ordenar por">
-                    <span class="icon order">
-                        <img src="img/compare_arrows_24dp_47413E_FILL0_wght400_GRAD0_opsz24.svg" alt="Ordenar">
-                    </span>
-                    <p>Ordenar por</p>
-                </button>
-                <ul class="order-menu">
-                    <li data-order="Alpha">Alfabéticamente</li>
-                    <li data-order="date">Por fecha</li>
-                    <li data-order="popular">Popularidad</li>
-                </ul>
+
+                <div class="auth-buttons">
+                    <a href="login.html" class="btn-auth btn-login">Iniciar sesión</a>
+                    <a href="register.html" class="btn-auth btn-register">Registrarse</a>
+                </div>
             </header>
+
 
             <section class="pines-section" aria-label="Contenido principal">
                 <div id="cards-container" class="cards-container"></div>
             </section>
         </main>
     </div>
+    <div id="card-modal" class="card-modal" style="display: none;"></div>
     <script src="JS/navbar.js"></script>
     <script src="JS/pines.js"></script>
 </body>

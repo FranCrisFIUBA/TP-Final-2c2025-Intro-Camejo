@@ -14,7 +14,7 @@
         <div id="navbar-container"></div>
         <div class="izq-section">
             <div class="navigation-options">
-                <div class="nav-option active">Mis publicaciones</div>
+                <div class="nav-option active">Publicaciones</div>
                 <div class="nav-option">Tableros</div>
                 <div class="nav-option">Búsquedas personalizadas</div>
             </div>
@@ -70,7 +70,46 @@
             </div>
         </div>
     </div>
+
+    
+    <div class="modal-overlay" id="modal-editar">
+        <div class="modal-card">
+            <div class="modal-top">
+            <h2>Editar Perfil</h2>
+            <div class="modal-top-actions">
+                <button class="btn-borrar" id="borrar-edit">Eliminar cuenta</button>
+                <button class="btn-cancelar" id="cancel-edit">Cancelar</button>
+                <button class="btn-guardar" form="perfil-edit">Guardar</button>
+            </div>
+            </div>
+
+            <div class="modal-content">
+                <div class="modal-avatar">
+                    <div class="avatar-box">
+                    <img src="" alt="Foto de perfil" class="profile-image-edit" id="profile-image-edit">
+                    <i class="fa-solid fa-pencil"></i>
+                    </div>
+                </div>
+
+                <form id="edit-profile-form" class="modal-form">
+                    <label>Nombre de usuario</label>
+                    <input type="text" id="edit-nombre">
+
+                    <label>Contraseña</label>
+                    <input type="password" id="edit-contraseña">
+
+                    <label>Repetir contraseña</label>
+                    <input type="password" id="edit-contraseña-repetida">
+
+                    <label>Fecha de nacimiento</label>
+                    <input type="date" id="edit-fecha">
+                </form>
+            </div>
+        </div>
+    </div>
+
     <script src="JS/navbar.js"></script>
     <script src="JS/perfil.js"></script>
+
 </body>
 </html>
