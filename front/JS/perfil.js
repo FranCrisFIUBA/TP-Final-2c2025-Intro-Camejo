@@ -1,10 +1,38 @@
 const API_BASE_URL = 'http://127.0.0.1:3000';
 let usuarioActual = null;
 
+function obtenerUsuarioLogueado() {
+  const data = localStorage.getItem("usuarioLogueado");
+  return data ? JSON.parse(data) : null;
+}
+
 function obtenerUsuarioId() {
   const params = new URLSearchParams(window.location.search);
   return params.get('id');
 }
+
+function validarAccionesPerfil() {
+  const usuarioLogueado = obtenerUsuarioLogueado();
+  const usuarioPerfilId = obtenerUsuarioId();
+  const acciones = document.querySelector('.profile-actions');
+
+  console.log('Validando acciones:', {
+    usuarioLogueado,
+    usuarioPerfilId,
+    accionesExiste: !!acciones
+  });
+
+  if (!acciones) return;
+
+  acciones.classList.remove('visible');
+
+  if (!usuarioLogueado || !usuarioPerfilId) return;
+
+  if (Number(usuarioLogueado.id) === Number(usuarioPerfilId)) {
+    acciones.classList.add('visible');
+  }
+}
+
 
 function formatearFecha(fechaString) {
   try {
@@ -36,15 +64,18 @@ async function cargarPerfilUsuario() {
     if (!response.ok) throw new Error('Usuario no encontrado');
 
     const usuario = await response.json();
-    usuarioActual = usuario; // ← CLAVE
+    usuarioActual = usuario;
 
     mostrarDatosUsuario(usuario);
     cargarPublicacionesDeUsuario(usuarioId);
+
+    setTimeout(validarAccionesPerfil, 0);
 
   } catch (error) {
     console.error('Error al cargar perfil:', error);
   }
 }
+
 
 function mostrarDatosUsuario(usuario) {
   const profileImage = document.getElementById('profile-image');

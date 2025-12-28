@@ -430,11 +430,14 @@ body, html {
 }
 
 .profile-actions {
-    display: flex;
-    gap: 10px;
-    margin-top: auto;
+  display: none;
+  gap: 10px;
+  margin-top: auto;
 }
 
+.profile-actions.visible {
+  display: flex;
+}
 .btn {
     padding: 10px 5px 10px 5px; /*arriba, derecha, abajo, izquierda*/
     border: 2px solid var(--negro);
@@ -822,25 +825,25 @@ body, html {
     padding: 6px 16px;
     border-radius: 6px;
     cursor: pointer;
-      font-family: var(--nunito);
+    font-family: var(--nunito);
 }
 
 .btn-cancelar {
-  background: var(--gris);
-  border: none;
-  padding: 6px 14px;
-  border-radius: 6px;
-  cursor: pointer;
+    background: var(--gris);
+    border: none;
+    padding: 6px 14px;
+    border-radius: 6px;
+    cursor: pointer;
     font-family: var(--nunito);
 }
 
 .btn-guardar {
-  background: var(--amarillo);
-  border: none;
-  padding: 6px 16px;
-  border-radius: 6px;
-  font-weight: bold;
-  cursor: pointer;
+    background: var(--amarillo);
+    border: none;
+    padding: 6px 16px;
+    border-radius: 6px;
+    font-weight: bold;
+    cursor: pointer;
     font-family: var(--nunito);
 }
 
