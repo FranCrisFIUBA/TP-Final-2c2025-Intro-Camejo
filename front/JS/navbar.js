@@ -69,6 +69,13 @@ function inicializarNavbar() {
     document.querySelector(".icon-bar.search")
         ?.addEventListener("click", () => location.href = "search.html");
 
-    profileButton
-        ?.addEventListener("click", () => location.href = "perfil.html");
+    profileButton?.addEventListener("click", () => {
+        if (!usuarioLogueado || !usuarioLogueado.id) {
+            console.warn("No hay usuario logueado");
+            return;
+        }
+
+        location.href = `perfil.html?id=${usuarioLogueado.id}`;
+    });
+
 }
