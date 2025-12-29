@@ -15,15 +15,15 @@
                 <div class="pin-container">
                     <a class="imagen-small">
                         <img src="img/add_photo_alternate_24dp_47413E_FILL0_wght400_GRAD0_opsz24.svg" class="pin">
-                        <span>Eligue una imagen</span>
+                        <span>Eligí una imagen</span>
                     </a>
-                    <input type="file" accept="image/*" class="file-input" style="display: none;">
+                    <input type="file" accept="image/*" class="file-input" name="imagen" hidden>
                 </div>
             </div>
             <div class="btn-left">
                 <hr>
-                <button class="btn-amarillo btn-addURL" aria-label="subir url">
-                    <p>Guardar desde la url</p>
+                <button type="button" class="btn-amarillo btn-addURL" id="btn-subir-imagen">
+                    <p>Subir imagen</p>
                 </button>
             </div>
         </div>
@@ -34,26 +34,21 @@
             </div>
             <div class="form-group">
                 <label>Titulo</label>
-                <input type="text" placeholder="Agrega un título">
+                <input type="text" name="titulo" placeholder="Agrega un título">
             </div>
-            <div class="form-group">
-                <label>Descripción</label>
-                <textarea placeholder="Agrega una descripción detallada"></textarea>
-            </div>
-
             <div class="form-group size-inputs">
                 <label>Tamaño</label>  
                 <div class="bloque">
-                    <input type="text" placeholder="ancho">
-                    <button class="btn-f">x</button>
-                    <input type="text" placeholder="alto">
+                    <input type="text" name="ancho" placeholder="ancho">
+                    <button type="button" class="btn-f">x</button>
+                    <input type="text" name="alto" placeholder="alto">
                 </div>
                 
             </div>
 
             <div class="form-group tags">
                 <label>Etiquetas</label>
-                <button class="add-tag">+ agregar</button>
+                <input type="text" name="etiquetas" placeholder="Ej: arte, diseño">
             </div>
         </div>
     </div>

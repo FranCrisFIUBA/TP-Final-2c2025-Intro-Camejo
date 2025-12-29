@@ -15,33 +15,28 @@ formRegistro.addEventListener("submit", async (e) => {
     const fecha = formRegistro.fecha.value;
     const icono = formRegistro.icono.files[0];
 
-    // ------------------ VALIDACIONES BÁSICAS ------------------
     if (!usuario || !email || !contrasena || !repetir || !fecha) {
         mensajeError.textContent = "Todos los campos son obligatorios.";
         return;
     }
-
-    // El icono no es obligatorio según tu SQL (icono VARCHAR puede ser NULL)
-    // Pero tu HTML tiene required en el input file, así que lo dejamos como obligatorio
-    
-    if (contrasena !== repetir) {
-        mensajeError.textContent = "Las contraseñas no coinciden.";
-        return;
+    if (contrasena !== repetir) { 
+        mensajeError.textContent = "Las contraseñas no coinciden."; 
+        return; 
     }
-
-    if (contrasena.length < 6) {
-        mensajeError.textContent = "La contraseña debe tener al menos 6 caracteres.";
-        return;
+    if (usuario.length < 6) {    
+        mensajeError.textContent = "El nombre debe tener al menos 6 caracteres."; 
+        return; 
     }
-
-    // ------------------ FORM DATA ------------------
+    if (contrasena.length < 6) {    
+        mensajeError.textContent = "La contraseña debe tener al menos 6 caracteres."; 
+        return; 
+    }
     const formData = new FormData();
     formData.append("nombre", usuario);              
     formData.append("email", email);
     formData.append("contrasenia", contrasena);
     formData.append("fecha_nacimiento", fecha);
     
-    // Solo añadir icono si existe (aunque tu HTML tiene required)
     if (icono) {
         formData.append("icono", icono);
     }
@@ -55,17 +50,13 @@ formRegistro.addEventListener("submit", async (e) => {
         const data = await res.json();
         
         if (!res.ok) {
-            // Manejo específico para el primer código backend
             let mensaje = "Error al registrar usuario.";
             
             if (res.status === 400 && data.error) {
-                // Error de Multer (ej: "File too large", "Unexpected field")
                 mensaje = `Error en la imagen: ${data.error}`;
             } else if (res.status === 400 && data.errors) {
-                // Errores de validación de Zod (errors en plural)
                 mensaje = "Datos inválidos: " + data.errors.map(err => err.message).join(', ');
             } else if (res.status === 409) {
-                // Conflictos: usuario o email ya existe
                 mensaje = data.error;
             } else if (res.status === 500 && data.error === "Error en la subida de archivo") {
                 mensaje = "Error al subir la imagen.";
@@ -75,7 +66,6 @@ formRegistro.addEventListener("submit", async (e) => {
             return;
         }
 
-        // Registro exitoso
         formRegistro.reset();
         alert("Usuario registrado correctamente");
         window.location.href = "login.html";

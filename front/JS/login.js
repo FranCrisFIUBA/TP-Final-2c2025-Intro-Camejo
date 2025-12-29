@@ -10,7 +10,6 @@ document.getElementById("form-login").addEventListener("submit", async (e) => {
     contrasenia: e.target.contrasenia.value
   };
 
-  console.log("Datos ingresados:", datos); // <-- Añade esto
 
   if (!datos.usuario || !datos.contrasenia) {
     mensaje.textContent = "Debes completar todos los campos";
@@ -19,7 +18,6 @@ document.getElementById("form-login").addEventListener("submit", async (e) => {
 
   try {
     const respuesta = await fetch("http://localhost:3000/usuarios");
-    console.log("Respuesta del servidor:", respuesta.status); // <-- Añade esto
     
     if (!respuesta.ok) {
       mensaje.textContent = "No se pudo obtener usuarios";
@@ -27,14 +25,10 @@ document.getElementById("form-login").addEventListener("submit", async (e) => {
     }
 
     const usuarios = await respuesta.json();
-    console.log("Usuarios recibidos:", usuarios); // <-- Añade esto
 
     const usuario_ingresado = usuarios.find(u => {
-      console.log(`Comparando: ${u.nombre} === ${datos.usuario} && ${u.contrasenia} === ${datos.contrasenia}`); // <-- Añade esto
       return u.nombre === datos.usuario && u.contrasenia === datos.contrasenia;
     });
-
-    console.log("Usuario encontrado:", usuario_ingresado); // <-- Añade esto
 
     if (!usuario_ingresado) {
       mensaje.textContent = "Usuario o contraseña incorrectos";
@@ -46,22 +40,18 @@ document.getElementById("form-login").addEventListener("submit", async (e) => {
       JSON.stringify(usuario_ingresado)
     );
 
-    console.log("LocalStorage guardado:", localStorage.getItem("usuarioLogueado")); // <-- Añade esto
-
     mensaje.style.color = "green";
     mensaje.textContent = "Login exitoso";
 
-    // Asegúrate de que esta función existe
     irAlPerfil(usuario_ingresado.id);
 
   } catch (error) {
-    console.error("Error completo:", error); // <-- Mejor logging
+    console.error("Error completo:", error);
     mensaje.textContent = "No se pudo conectar con el servidor";
   }
 });
 
-// Asegúrate de que esta función está definida
 function irAlPerfil(usuarioId) {
-  console.log("Redirigiendo a perfil con ID:", usuarioId); // <-- Añade esto
+  console.log("Redirigiendo a perfil con ID:", usuarioId);
   window.location.href = `perfil.html?id=${usuarioId}`;
 }
