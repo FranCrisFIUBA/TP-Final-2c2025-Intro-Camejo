@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title id="page-title">Perfil de Usuario</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="css/variables.css">
+    <link rel="stylesheet" href="css/perfil.css">
+    <link rel="icon" href="img/logo%20(4).png" type="image/x-icon" style="border-radius: 50%;">
+</head>
+<body>
+    <div class="container">
+        <div id="navbar-container"></div>
+        <div class="izq-section">
+            <div class="navigation-options">
+                <div class="nav-option active">Publicaciones</div>
+                <div class="nav-option">Tableros</div>
+                <div class="nav-option">Búsquedas personalizadas</div>
+            </div>
+            
+            <!-- CONTENIDO DE MIS PUBLICACIONES -->
+            <div class="publicaciones-content">
+                <div class="publicaciones-container" id="publicaciones-container"></div>
+            </div>
+
+            <!-- CONTENIDO DE TABLEROS -->
+            <div class="tableros-content" style="display: none;">
+                <div class="tableros-container" id="tableros-container"></div>
+            </div>
+
+            <!-- CONTENIDO DE BÚSQUEDAS -->
+            <div class="searches-content" style="display: none;">
+                <div id="lista-busquedas"></div>
+            </div>
+        </div>
+        
+        <div class="derecha-section">
+            <div class="profile-card">
+                <div class="profile-photo">
+                    <img src="" alt="Foto de perfil" class="profile-image" id="profile-image">
+                    <div class="profile-name" id="profile-name">Cargando...</div>
+                    <div class="profile-date" id="profile-date"></div>
+                </div>
+
+                <div class="profile-estadisticas">
+                    <div class="estadistica estadistica-tableros">
+                        <i class="fa-solid fa-table estadistica-icon"></i>
+                        <span class="estadistica-number" id="estadistica-tableros">0</span>
+                        <span class="estadistica-label">Tableros</span>
+                    </div>
+
+                    <div class="estadistica estadistica-busquedas">
+                        <i class="fa-solid fa-magnifying-glass estadistica-icon"></i>
+                        <span class="estadistica-number" id="estadistica-busquedas">0</span>
+                        <span class="estadistica-label">Búsquedas personalizadas</span>
+                    </div>
+
+                    <div class="estadistica estadistica-likes">
+                        <i class="fas fa-heart estadistica-icon"></i>
+                        <span class="estadistica-number" id="estadistica-likes">0</span>
+                        <span class="estadistica-label">Likes</span>
+                    </div>
+                </div>
+                
+                <div class="profile-actions">
+                    <button class="btn btn-edit"><i class="fa-solid fa-pencil"></i> Editar perfil</button>
+                    <button class="btn btn-logout">Cerrar sesión</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    
+    <div class="modal-overlay" id="modal-editar">
+        <div class="modal-card">
+            <div class="modal-top">
+            <h2>Editar Perfil</h2>
+            <div class="modal-top-actions">
+                <button class="btn-borrar" id="borrar-edit">Eliminar cuenta</button>
+                <button class="btn-cancelar" id="cancel-edit">Cancelar</button>
+                <button class="btn-guardar" form="perfil-edit">Guardar</button>
+            </div>
+            </div>
+
+            <div class="modal-content">
+                <div class="modal-avatar">
+                    <div class="avatar-box">
+                    <img src="" alt="Foto de perfil" class="profile-image-edit" id="profile-image-edit">
+                    <i class="fa-solid fa-pencil"></i>
+                    </div>
+                </div>
+
+                <form id="edit-profile-form" class="modal-form">
+                    <label>Nombre de usuario</label>
+                    <input type="text" id="edit-nombre">
+
+                    <label>Contraseña</label>
+                    <input type="password" id="edit-contraseña">
+
+                    <label>Repetir contraseña</label>
+                    <input type="password" id="edit-contraseña-repetida">
+
+                    <label>Fecha de nacimiento</label>
+                    <input type="date" id="edit-fecha">
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script src="JS/navbar.js"></script>
+    <script src="JS/perfil.js"></script>
+
+</body>
+</html>
