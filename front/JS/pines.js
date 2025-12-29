@@ -156,23 +156,33 @@ function abrirCardModal(card) {
     const modalAuthorInfo = modal.querySelector('.modal-author-info');
     btnPublicar.onclick = async () => {
         const texto = inputComentario.value.trim();
-        
-        if (!texto) return; // No publicar si está vacío
+        if (!texto) return;
 
-        // Deshabilitamos el botón para evitar múltiples clics
+        const usuarioLogueado = obtenerUsuarioLogueado();
+
+        if (!usuarioLogueado || !usuarioLogueado.id) {
+            alert("Debes iniciar sesión para comentar");
+            return;
+        }
+
         btnPublicar.disabled = true;
         btnPublicar.textContent = "Publicando...";
 
-        const exito = await enviarComentario(card.id, texto);
+        const exito = await enviarComentario(
+            card.id,
+            texto,
+            usuarioLogueado.id
+        );
 
         if (exito) {
-            inputComentario.value = ""; 
-            await cargarComentariosEnModal(card.id); 
+            inputComentario.value = "";
+            await cargarComentariosEnModal(card.id);
         }
 
         btnPublicar.disabled = false;
         btnPublicar.textContent = "Publicar";
     };
+
 
 
     modalAuthorInfo.addEventListener('click', (e) => {
@@ -288,11 +298,15 @@ async function cargarComentariosEnModal(publicacionId) {
 
 
 
+function obtenerUsuarioLogueado() {
+    const data = localStorage.getItem("usuarioLogueado");
+    return data ? JSON.parse(data) : null;
+}
 
 
 
 
-async function enviarComentario(publicacionId, contenido) {
+async function enviarComentario(publicacionId, contenido, usuarioId) {
     try {
         const response = await fetch(`${API_BASE_URL}/comentarios`, {
             method: 'POST',
@@ -300,7 +314,7 @@ async function enviarComentario(publicacionId, contenido) {
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify({
-                usuario_id: 2, //usuario fijo por ahora
+                usuario_id: usuarioId,
                 publicacion_id: publicacionId,
                 contenido: contenido
             })
@@ -318,6 +332,7 @@ async function enviarComentario(publicacionId, contenido) {
         return false;
     }
 }
+
 
 
 cargarPublicaciones();

@@ -13,8 +13,6 @@ body, html {
   display: flex;
   height: 100vh;
   overflow: hidden; 
-  gap: var(--gap-max);
-  margin: 5px;
 }
 .container.con-navbar .main-content {
   margin-left: calc(67px + var(--gap-max));
@@ -27,7 +25,7 @@ body, html {
 .sidebar-top {
   display: flex;
   justify-content: center;
-  margin-bottom: 30px; 
+  margin-bottom: 10px; 
 }
 
 .sidebar-middle {
@@ -43,7 +41,7 @@ body, html {
   display: flex;
   justify-content: center;
   margin-top: auto; 
-  padding-top: 20px; 
+  padding-top: 10px; 
 }
 
 .user-avatar {
@@ -144,8 +142,6 @@ body, html {
   gap: var(--gap-max);
   z-index: 10;
   padding-top: var(--padding-pag-6px);
-  margin-left: 7px;
-  margin-right: 7px;
 }
 
 .search-bar {
@@ -156,6 +152,8 @@ body, html {
   border-radius: var(--border-radius);
   background: var(--amarillo);
   border: var(--border-estandar);
+  margin-left: 7px;
+  margin-right: 2px;
 }
 
 .search-input {
@@ -218,7 +216,7 @@ body, html {
 
 .pines-section {
   column-count: 7; 
-  column-gap: 16px; 
+  column-gap: 10px; 
   padding: var(--padding-estandar);
   width: 100%;
   box-sizing: border-box;
@@ -231,13 +229,12 @@ body, html {
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
   transition: transform 0.3s ease, box-shadow 0.3s ease;
   width: 100%;
-  margin: 0;
-  padding: 8px;
+  padding: 6px;
   cursor: pointer;
   display: flex;
   flex-direction: column;
   font-family: var(--nunito);
-  margin-bottom: 3px;
+  margin-bottom: 8px;
 }
 
 .card:hover {
@@ -250,8 +247,8 @@ body, html {
   width: 100%;
   object-fit: cover;
   display: block;
-  border-top-right-radius: var(--border-radius);
-  border-top-left-radius: var(--border-radius);
+  border-top-right-radius: 5px;
+  border-top-left-radius: 5px;
 }
 
 .card-content {

@@ -1,7 +1,7 @@
 .sidebar {
   position: fixed;          /* fija la barra lateral */
   top: 5px;                 /* coincide con tu margen */
-  left: 5px;
+  left: 10px;
   width: 67px;
   height: calc(100vh - 10px); /* ocupa toda la altura visible */
   background-color: var(--verde);
@@ -23,8 +23,8 @@
 }
 
 .logo {
-  width: 50px;
-  height: 50px;
+  width: 35px;
+  height: 35px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -34,7 +34,7 @@
   width: 100%;
   height: 100%;
   object-fit: contain;
-  margin-top: 5px;
+  margin-top: 25px;
   border-radius: 50%;
   cursor: pointer;
 }

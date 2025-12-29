@@ -95,7 +95,8 @@ function inicializarNavbar() {
             overlay?.classList.remove('show');
         });
     });
-
+    document.querySelector(".logo")
+        ?.addEventListener("click", () => location.href = "index.html");
     document.querySelector(".icon-bar.home")
         ?.addEventListener("click", () => location.href = "index.html");
 
