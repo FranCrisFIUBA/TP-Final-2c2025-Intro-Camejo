@@ -29,14 +29,7 @@ document.getElementById("form-login").addEventListener("submit", async (e) => {
         if (usuario_ingresado) {
             mensaje.style.color = "green";
             mensaje.textContent = "Login exitoso";
-            localStorage.setItem(
-                "usuarioLogueado",
-                JSON.stringify({
-                    id: usuario_ingresado.id,
-                    nombre: usuario_ingresado.nombre,
-                    icono: usuario_ingresado.icono
-                })
-            );
+            console.log("Usuario logueado", usuario_ingresado);
             irAlPerfil(usuario_ingresado.id);
         } else {
             mensaje.style.color = "red";
