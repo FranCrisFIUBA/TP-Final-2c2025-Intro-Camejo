@@ -5,23 +5,29 @@
 }
 body {
   font-family: var(--nunito-bold);
-  background: url("../img/fondo-crear-pin.png") no-repeat center center fixed;
+  background: url("../img/fondo-crear-pin.png") no-repeat center center;
   background-size: cover;
   display: flex;
   justify-content: center;
   align-items: center;
   min-height: 100vh;
   margin: 0;
-  overflow: hidden;
+
+  /* FIX CRÍTICO */
+  overflow-x: hidden;
+  overflow-y: auto;
 }
+
 .container {
-    display: flex;
-    background: var(--blanco);
-    border-radius: 12px;
-    width: 1500px;
-    min-height: 800px;
-    overflow: hidden;
-    border: 1px solid var(--negro);
+  display: flex;
+  background: var(--blanco);
+  border-radius: 12px;
+  width: 1500px;
+  min-height: 800px;
+  border: 1px solid var(--negro);
+
+  /* FIX CRÍTICO */
+  overflow: visible;
 }
 .contend-left {
     flex: 1;

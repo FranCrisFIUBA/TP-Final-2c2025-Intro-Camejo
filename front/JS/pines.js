@@ -1,4 +1,27 @@
 const API_BASE_URL = 'http://127.0.0.1:3000';
+const API_IMAGENES = API_BASE_URL + '/imagenes';
+const API_ICONOS = API_BASE_URL + '/iconos';
+const usuariosCache = new Map();
+
+async function obtenerUsuarioPorId(usuarioId) {
+    if (usuariosCache.has(usuarioId)) {
+        return usuariosCache.get(usuarioId);
+    }
+
+    try {
+        const res = await fetch(`${API_BASE_URL}/usuarios/${usuarioId}`);
+        if (!res.ok) throw new Error('Error obteniendo usuario');
+
+        const json = await res.json();
+        const usuario = json.data;
+
+        usuariosCache.set(usuarioId, usuario);
+        return usuario;
+    } catch (err) {
+        console.error(`Error cargando usuario ${usuarioId}`, err);
+        return null;
+    }
+}
 
 // Función para obtener las publicaciones
 const cargarPublicaciones = async () => {
@@ -13,15 +36,26 @@ const cargarPublicaciones = async () => {
             console.error("No se encontró el contenedor en el HTML");
             return;
         }
+
         contenedor.innerHTML = "";
-        datos.forEach(publicacion => {
+
+        for (const publicacion of datos) {
+            // Obtener usuario desde el frontend
+            const usuario = await obtenerUsuarioPorId(publicacion.usuario_id);
+
+            // Inyectar datos esperados por crearCard
+            publicacion.usuario_nombre = usuario?.nombre || 'Usuario';
+            publicacion.usuario_icono  = usuario?.icono || null;
+
             const nuevaCard = crearCard(publicacion);
             contenedor.appendChild(nuevaCard);
-        });
+        }
+
     } catch (error) {
         console.error('Hubo un error al conectar con la API:', error);
     }
 };
+
 
 function crearCard(card) {
     const AVATAR_DEFAULT = './img/avatar-default.jpg';
@@ -30,9 +64,10 @@ function crearCard(card) {
     cardDiv.setAttribute("data-id", card.id);
 
     const img = document.createElement("img");
-    img.src = card.url_imagen; 
+    img.src = card.imagen ? `${API_IMAGENES}/${card.imagen}` : '';
     img.alt = "Imagen de " + card.usuario_nombre;
     img.className = "card-image";
+
 
     if (card.ancho_imagen && card.alto_imagen) {
         const aspectRatio = card.ancho_imagen / card.alto_imagen;
@@ -48,7 +83,8 @@ function crearCard(card) {
     const footer = document.createElement("div");
     footer.className = "card-footer";
 
-    const avatarSrc = card.usuario_icono && card.usuario_icono !== "" ? card.usuario_icono : AVATAR_DEFAULT;
+    const avatarSrc = card.usuario_icono ? `${API_ICONOS}/${card.usuario_icono}`: AVATAR_DEFAULT;
+
     footer.innerHTML = `
         <div class="card-author">
             <img src="${avatarSrc}" alt="Avatar" class="author-avatar">
@@ -104,12 +140,13 @@ function abrirCardModal(card) {
             <div class="modal-body">
                 <div class="modal-image-section">
                     <img 
-                        src="${card.url_imagen}" 
+                        src="${card.imagen ? `${API_IMAGENES}/${card.imagen}` : ''}" 
                         class="modal-image"
-                        style="width: ${card.ancho_imagen}px; height: ${card.alto_imagen}px; max-width: 100%; object-fit: contain;"
+                        style="max-width: 100%; object-fit: contain;""
                     >
                     <div class="modal-author-info">
-                        <img src="${card.usuario_icono || AVATAR_DEFAULT}" class="modal-author-avatar" onerror="this.src='${AVATAR_DEFAULT}'">
+                        <img src="${card.usuario_icono ? `${API_ICONOS}/${card.usuario_icono}` : AVATAR_DEFAULT}" class="modal-author-avatar"
+  onerror="this.src='${AVATAR_DEFAULT}'">
                         <div class="modal-author-details">
                             <span class="modal-author-name">${card.usuario_nombre}</span>
                             <span class="modal-publish-date">${calcularFecha(card.fecha_edicion)}</span>
@@ -277,7 +314,7 @@ async function cargarComentariosEnModal(publicacionId) {
         container.innerHTML = comentarios.map(com => `
             <div class="comment-item">
                 <div class="comment-author">
-                    <img src="${com.avatar || AVATAR_DEFAULT}" class="comment-avatar" onerror="this.src='${AVATAR_DEFAULT}'">
+                    <img src="${com.avatar ? `${API_ICONOS}/${com.avatar}` : AVATAR_DEFAULT}" class="comment-avatar" onerror="this.src='${AVATAR_DEFAULT}'">
                     <div class="comment-content">
                         <span class="comment-author-name">${com.author}</span>
                         <p class="comment-text">${com.text}</p>
