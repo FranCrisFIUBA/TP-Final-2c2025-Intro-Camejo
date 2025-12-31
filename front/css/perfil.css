@@ -599,7 +599,7 @@ body, html {
     padding: 4px 8px;
     border-radius: 12px;
     font-size: 12px;
-}
+} 
 
 .tablero-preview-img {
     width: 100%;
@@ -666,10 +666,11 @@ body, html {
 
 /* Estilos para las publicaciones */
 .publicaciones-container {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-    gap: 25px;
-    padding: 20px;
+  column-count: 6; 
+  column-gap: 10px; 
+  padding: var(--padding-estandar);
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .publicacion-item {

@@ -1,3 +1,5 @@
+import { crearCard } from './componentes/card.js';
+
 const API_BASE_URL = 'http://127.0.0.1:3000';
 const API_IMAGENES = API_BASE_URL + '/imagenes';
 const API_ICONOS = API_BASE_URL + '/iconos';
@@ -30,7 +32,9 @@ const cargarPublicaciones = async () => {
         if (!respuesta.ok) throw new Error(`Error: ${respuesta.status}`);
 
         const datos = await respuesta.json();
-        const contenedor = document.querySelector(".cards-container") || document.querySelector("#cards-container");
+        const contenedor =
+            document.querySelector(".cards-container") ||
+            document.querySelector("#cards-container");
 
         if (!contenedor) {
             console.error("No se encontró el contenedor en el HTML");
@@ -40,14 +44,16 @@ const cargarPublicaciones = async () => {
         contenedor.innerHTML = "";
 
         for (const publicacion of datos) {
-            // Obtener usuario desde el frontend
             const usuario = await obtenerUsuarioPorId(publicacion.usuario_id);
 
-            // Inyectar datos esperados por crearCard
             publicacion.usuario_nombre = usuario?.nombre || 'Usuario';
             publicacion.usuario_icono  = usuario?.icono || null;
 
-            const nuevaCard = crearCard(publicacion);
+            const nuevaCard = crearCard(publicacion, {
+                onOpenModal: abrirCardModal,
+                onGoToProfile: irAlPerfil
+            });
+
             contenedor.appendChild(nuevaCard);
         }
 
@@ -57,69 +63,13 @@ const cargarPublicaciones = async () => {
 };
 
 
-function crearCard(card) {
-    const AVATAR_DEFAULT = './img/avatar-default.jpg';
-    const cardDiv = document.createElement("div");
-    cardDiv.className = "card";
-    cardDiv.setAttribute("data-id", card.id);
 
-    const img = document.createElement("img");
-    img.src = card.imagen ? `${API_IMAGENES}/${card.imagen}` : '';
-    img.alt = "Imagen de " + card.usuario_nombre;
-    img.className = "card-image";
-
-
-    if (card.ancho_imagen && card.alto_imagen) {
-        const aspectRatio = card.ancho_imagen / card.alto_imagen;
-        img.style.aspectRatio = aspectRatio;
-        img.style.maxWidth = "100%"; 
-        img.style.objectFit = "cover";
-        img.style.display = "block";
-    }
-
-    const content = document.createElement("div");
-    content.className = "card-content";
-
-    const footer = document.createElement("div");
-    footer.className = "card-footer";
-
-    const avatarSrc = card.usuario_icono ? `${API_ICONOS}/${card.usuario_icono}`: AVATAR_DEFAULT;
-
-    footer.innerHTML = `
-        <div class="card-author">
-            <img src="${avatarSrc}" alt="Avatar" class="author-avatar">
-            <span class="author-name">${card.usuario_nombre}</span>
-        </div>
-        <div class="card-actions">
-        </div>
-    `;
-
-    content.appendChild(footer);
-    cardDiv.appendChild(img);
-    cardDiv.appendChild(content);
-
-    cardDiv.addEventListener("click", (e) => {
-        if (!e.target.closest('.card-author') && !e.target.closest('.like-btn')) {
-            abrirCardModal(card);
-        }
-    });
-    
-    const authorElement = footer.querySelector('.card-author');
-    authorElement.addEventListener("click", (e) => {
-        e.stopPropagation(); 
-        irAlPerfil(card.usuario_id); 
-    });
-
-    return cardDiv;
-}
 
 
 function irAlPerfil(usuarioId) {
     window.location.href = `perfil.html?id=${usuarioId}`;
     console.log(`Redirigiendo al perfil del usuario ID: ${usuarioId}`);
 }
-
-
 
 
 

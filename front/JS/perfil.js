@@ -1,9 +1,9 @@
-const API_BASE_URL = 'http://127.0.0.1:3000';
-let usuarioActual = null;
+import { crearCard } from './componentes/card.js';
 
-/* ===========================
-   UTILIDADES
-=========================== */
+const API_BASE_URL = 'http://127.0.0.1:3000';
+const API_IMAGENES = API_BASE_URL + '/imagenes';
+const API_ICONOS = API_BASE_URL + '/iconos';
+let usuarioActual = null;
 
 function obtenerUsuarioLogueado() {
   const data = localStorage.getItem("usuarioLogueado");
@@ -17,7 +17,7 @@ function obtenerUsuarioId() {
 
 function resolverIcono(icono) {
   if (!icono) return './img/avatar-default.jpg';
-  return `${API_BASE_URL}/iconos/${icono}`;
+  return `${API_ICONOS}/${icono}`;
 }
 
 function formatearFecha(fechaString) {
@@ -39,9 +39,6 @@ function listarHashtags(etiquetas) {
     .join('');
 }
 
-/* ===========================
-   PERFIL
-=========================== */
 
 async function cargarPerfilUsuario() {
   const usuarioId = obtenerUsuarioId();
@@ -93,10 +90,6 @@ function mostrarDatosUsuario(usuario) {
   }
 }
 
-/* ===========================
-   ACCIONES DE PERFIL
-=========================== */
-
 function validarAccionesPerfil() {
   const usuarioLogueado = obtenerUsuarioLogueado();
   const usuarioPerfilId = obtenerUsuarioId();
@@ -113,9 +106,6 @@ function validarAccionesPerfil() {
   }
 }
 
-/* ===========================
-   PUBLICACIONES
-=========================== */
 
 async function cargarPublicacionesDeUsuario(usuarioId) {
   const container = document.getElementById('publicaciones-container');
@@ -135,13 +125,17 @@ async function cargarPublicacionesDeUsuario(usuarioId) {
       return;
     }
 
-    container.innerHTML = publicaciones.map(p => `
-      <div class="publicacion-item">
-        <h3>${p.titulo || 'Sin título'}</h3>
-        <img src="${p.url_imagen || './img/placeholder.jpg'}" alt="">
-        <div>${listarHashtags(p.etiquetas)}</div>
-      </div>
-    `).join('');
+    container.innerHTML = '';
+
+    publicaciones.forEach(p => {
+      const card = crearCard({
+        ...p,
+        usuario_nombre: usuarioActual.nombre,
+        usuario_icono: usuarioActual.icono
+      });
+
+      container.appendChild(card);
+    });
 
   } catch (error) {
     console.error(error);
@@ -149,9 +143,6 @@ async function cargarPublicacionesDeUsuario(usuarioId) {
   }
 }
 
-/* ===========================
-   MODAL EDICIÓN
-=========================== */
 
 function abrirModalPerfil() {
   const modal = document.getElementById('modal-editar');
@@ -180,10 +171,6 @@ function completarFormularioPerfil(usuario) {
     img.onerror = () => img.src = './img/avatar-default.jpg';
   }
 }
-
-/* ===========================
-   EVENTOS
-=========================== */
 
 document.addEventListener('DOMContentLoaded', () => {
   cargarPerfilUsuario();
