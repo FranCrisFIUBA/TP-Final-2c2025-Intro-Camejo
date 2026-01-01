@@ -7,6 +7,93 @@ const previewImg = document.getElementById("preview-img");
 const textPrompt = document.getElementById("text-prompt");
 
 const usuarioLogueado = JSON.parse(localStorage.getItem("usuarioLogueado"));
+const btnTrigger = document.getElementById("btn-subir-imagen-trigger");
+const pinContainer = document.querySelector(".pin-container");
+
+btnTrigger.addEventListener("click", () => {
+    fileInput.click();
+});
+
+function aplicarRatio(ratio) {
+    // Limpieza total
+    pinContainer.classList.remove(
+        "square",
+        "horizontal",
+        "vertical",
+        "original"
+    );
+
+    // 🔴 CRÍTICO: limpiar estilos inline
+    pinContainer.style.width = "";
+    pinContainer.style.height = "";
+
+    previewImg.style.width = "100%";
+    previewImg.style.height = "100%";
+
+    if (ratio === "1:1") {
+        pinContainer.classList.add("square");
+        previewImg.style.objectFit = "cover";
+    }
+    else if (ratio === "16:9") {
+        pinContainer.classList.add("horizontal");
+        previewImg.style.objectFit = "cover";
+    }
+    else if (ratio === "4:5") {
+        pinContainer.classList.add("vertical");
+        previewImg.style.objectFit = "cover";
+    }
+    else if (ratio === "original") {
+        pinContainer.classList.add("original");
+        previewImg.style.objectFit = "contain";
+
+        if (imagenNatural.width && imagenNatural.height) {
+            pinContainer.style.width = imagenNatural.width + "px";
+            pinContainer.style.height = imagenNatural.height + "px";
+        }
+    }
+}
+
+
+let imagenNatural = { width: 0, height: 0 };
+
+fileInput.addEventListener("change", () => {
+    const file = fileInput.files[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = e => {
+        const img = new Image();
+        img.onload = () => {
+            imagenNatural.width = img.naturalWidth;
+            imagenNatural.height = img.naturalHeight;
+
+            previewImg.src = e.target.result;
+            previewImg.style.display = "block";
+            textPrompt.style.display = "none";
+
+            // ✅ Seleccionar ORIGINAL por defecto
+            const originalInput = document.querySelector(
+                'input[name="aspect_ratio"][value="original"]'
+            );
+            if (originalInput) {
+                originalInput.checked = true;
+                aplicarRatio("original");
+            }
+        };
+        img.src = e.target.result;
+    };
+    reader.readAsDataURL(file);
+});
+
+const ratioInputs = document.querySelectorAll('input[name="aspect_ratio"]');
+
+ratioInputs.forEach(input => {
+    input.addEventListener("change", () => {
+        aplicarRatio(input.value);
+    });
+});
+
+
 
 if (!usuarioLogueado || !usuarioLogueado.id) {
     alert("Debes iniciar sesión para publicar");
@@ -78,22 +165,3 @@ formPublicacion.addEventListener("submit", async (e) => {
     }
 });
 
-
-const form = document.getElementById('form-publicacion');
-
-form.addEventListener('submit', async (e) => {
-    e.preventDefault();
-    
-    const formData = new FormData(form);
-    
-    const selectedRatio = formData.get('aspect_ratio');
-    
-    console.log("Relación de aspecto seleccionada:", selectedRatio);
-
-    let ancho = 0;
-    let alto = 0;
-
-    if (selectedRatio === "1:1") { ancho = 1080; alto = 1080; }
-    else if (selectedRatio === "16:9") { ancho = 1920; alto = 1080; }
-    else if (selectedRatio === "4:5") { ancho = 1080; alto = 1350; }
-});

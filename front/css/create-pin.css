@@ -46,16 +46,76 @@ body {
     transition: background 0.3s;
     font-size: 20px;
 }
+.pin-container {
+    width: 420px;
+    height: 560px;
+    background: var(--verde);
+    border-radius: var(--border-radius);
+    border: var(--border-estandar);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    overflow: hidden;
+}
+
+/* Estados según ratio */
+.pin-container.square {
+    width: 420px;
+    height: 420px;
+}
+
+.pin-container.horizontal {
+    width: 520px;
+    height: 292px; /* 16:9 */
+}
+
+.pin-container.vertical {
+    width: 420px;
+    height: 525px; /* 4:5 */
+}
+
+/* Imagen preview */
+#preview-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: none;
+}
+
+/* Texto inicial */
+#text-prompt {
+    font-size: 18px;
+    font-weight: 500;
+    color: #47413E;
+}
+
+.pin-container.original {
+    width: auto;
+    height: auto;
+    max-width: 420px;  
+    max-height: 560px;
+}
+
+.pin-container.original #preview-img {
+    width: auto;
+    height: auto;
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+}
+
 .imagen-small {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  text-align: center;
-  color: #47413E;
-  text-decoration: none;
-  font-weight: 500;
-  gap: 10px;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+#preview-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;  
 }
 .pin {
   width: 80px;
