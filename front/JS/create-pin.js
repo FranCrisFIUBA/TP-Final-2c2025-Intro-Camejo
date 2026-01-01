@@ -13,7 +13,6 @@ if (!usuarioLogueado || !usuarioLogueado.id) {
     location.href = "login.html";
 }
 
-// Preview imagen
 fileInput.addEventListener("change", () => {
     const file = fileInput.files[0];
     if (!file) return;
@@ -27,7 +26,6 @@ fileInput.addEventListener("change", () => {
     reader.readAsDataURL(file);
 });
 
-// Submit
 formPublicacion.addEventListener("submit", async (e) => {
     e.preventDefault();
 

@@ -12,8 +12,6 @@ body {
   align-items: center;
   min-height: 100vh;
   margin: 0;
-
-  /* FIX CRÍTICO */
   overflow-x: hidden;
   overflow-y: auto;
 }
@@ -25,8 +23,6 @@ body {
   width: 1500px;
   min-height: 800px;
   border: 1px solid var(--negro);
-
-  /* FIX CRÍTICO */
   overflow: visible;
 }
 .contend-left {
@@ -37,7 +33,6 @@ body {
     justify-content: center;
     padding: 20px;
 }
-/* Contenedor principal de la imagen */
 .pin-container {
     width: 400px;
     height: 550px;
@@ -149,14 +144,4 @@ body {
   display: flex;
   width: 300px;
   gap: 20px;
-}
-
-/* Etiquetas */
-.tags {
-  display: flex;
-  justify-content: flex-start;
-}
-.add-tag {
-  width: 120px;
-  cursor: pointer;
 }

@@ -31,6 +31,45 @@ function formatearFecha(fechaString) {
   });
 }
 
+
+function configurarNavegacion() {
+    const usuarioId = obtenerUsuarioId();
+    
+    document.querySelectorAll('.nav-option').forEach(option => {
+        option.addEventListener('click', async function() { 
+            document.querySelectorAll('.nav-option').forEach(opt => opt.classList.remove('active'));
+            this.classList.add('active');
+            document.querySelector('.publicaciones-content').style.display = 'none';
+            document.querySelector('.tableros-content').style.display = 'none';
+            document.querySelector('.searches-content').style.display = 'none';
+            const opcionSeleccionada = this.textContent.trim();
+            switch(opcionSeleccionada) {
+                case 'Publicaciones': 
+                    document.querySelector('.publicaciones-content').style.display = 'block';
+                    if (usuarioId) {
+                        await cargarPublicacionesDeUsuarioAPI(usuarioId);
+                    }
+                    break;
+                    
+                case 'Tableros':
+                    document.querySelector('.tableros-content').style.display = 'block';
+                    break;
+                    
+                case 'Búsquedas personalizadas':
+                    document.querySelector('.searches-content').style.display = 'block';
+                    break;
+            }
+        });
+    });
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+    setTimeout(() => {
+        cargarPerfilUsuario();
+        configurarNavegacion();
+    }, 100);
+});
+
 function listarHashtags(etiquetas) {
   if (!etiquetas) return '';
   return etiquetas
@@ -109,6 +148,7 @@ function validarAccionesPerfil() {
 
 async function cargarPublicacionesDeUsuario(usuarioId) {
   const container = document.getElementById('publicaciones-container');
+  const SINPUBLIC = './img/sinPublicacion.png';
   if (!container) return;
 
   try {
@@ -120,6 +160,7 @@ async function cargarPublicacionesDeUsuario(usuarioId) {
     if (!publicaciones || publicaciones.length === 0) {
       container.innerHTML = `
         <div class="no-content">
+          <img src='${SINPUBLIC}' alt="Sin contenido">
           <p>Este usuario aún no tiene publicaciones</p>
         </div>`;
       return;

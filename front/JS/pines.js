@@ -32,6 +32,7 @@ const cargarPublicaciones = async () => {
         if (!respuesta.ok) throw new Error(`Error: ${respuesta.status}`);
 
         const datos = await respuesta.json();
+        const SINPUBLIC = './img/sinPublicacion.png';
         const contenedor =
             document.querySelector(".cards-container") ||
             document.querySelector("#cards-container");
@@ -42,6 +43,17 @@ const cargarPublicaciones = async () => {
         }
 
         contenedor.innerHTML = "";
+
+        if (!datos || datos.length === 0) {
+            contenedor.innerHTML = `
+                <div class="no-content">
+                    <img src='${SINPUBLIC}' alt="No hay contenido">
+                    <i class="fas fa-folder-open"></i>
+                    <p>Aún no se ha hecho ninguna publicación. ¡Sé el primero en compartir algo!</p>
+                </div>`;
+            return; 
+        }
+
 
         for (const publicacion of datos) {
             const usuario = await obtenerUsuarioPorId(publicacion.usuario_id);
@@ -59,6 +71,10 @@ const cargarPublicaciones = async () => {
 
     } catch (error) {
         console.error('Hubo un error al conectar con la API:', error);
+        const contenedor = document.querySelector(".cards-container");
+        if (contenedor) {
+            contenedor.innerHTML = `<p class="no-content">Error al cargar las publicaciones. Inténtalo más tarde.</p>`;
+        }
     }
 };
 
