@@ -13,21 +13,20 @@
         <div class="contend-left">
             <div class="add-pin upload-container" id="drop-area">
                 <div class="pin-container">
-    <label for="file-input" class="imagen-small">
-        <img src="img/add_photo_alternate_24dp.svg" class="pin" id="preview-img">
-        <span id="text-prompt">Elegí una imagen</span>
-    </label>
+                    <label for="file-input" class="imagen-small">
+                        <img src="./img/add_photo_alternate_24dp_47413E_FILL0_wght400_GRAD0_opsz24.svg" class="pin" id="preview-img">
+                        <span id="text-prompt">Elegí una imagen</span>
+                    </label>
 
-    <input
-        type="file"
-        accept="image/*"
-        class="file-input"
-        name="imagen"
-        id="file-input"
-        hidden
-    >
-</div>
-
+                    <input
+                        type="file"
+                        accept="image/*"
+                        class="file-input"
+                        name="imagen"
+                        id="file-input"
+                        hidden
+                    >
+                </div>
             </div>
             <div class="btn-left">
                 <hr>
@@ -48,14 +47,36 @@
                 <input type="text" name="titulo" placeholder="Agrega un título" required>
             </div>
 
-            <div class="form-group size-inputs">
-                <label>Tamaño</label>  
-                <div class="bloque">
-                    <input type="number" name="ancho" placeholder="ancho">
-                    <span class="btn-f">x</span>
-                    <input type="number" name="alto" placeholder="alto">
-                </div>
+            <div class="form-group size-options-container">
+    <label>Tamaño (Relación de Aspecto)</label>
+    <div class="aspect-ratio-grid">
+        <label class="ratio-option">
+            <input type="radio" name="aspect_ratio" value="original" checked>
+            <div class="ratio-box original">
+                <i class="icon-aspect"></i>
             </div>
+            <span>Original</span>
+        </label>
+
+        <label class="ratio-option">
+            <input type="radio" name="aspect_ratio" value="1:1">
+            <div class="ratio-box square"></div>
+            <span>Cuadrado</span>
+        </label>
+
+        <label class="ratio-option">
+            <input type="radio" name="aspect_ratio" value="4:5">
+            <div class="ratio-box vertical-short"></div>
+            <span>Vertical</span>
+        </label>
+
+        <label class="ratio-option">
+            <input type="radio" name="aspect_ratio" value="16:9">
+            <div class="ratio-box horizontal"></div>
+            <span>Horizontal (16:9)</span>
+        </label>
+    </div>
+</div>
 
             <div class="form-group tags">
                 <label>Etiquetas</label>

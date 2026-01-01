@@ -37,6 +37,27 @@ formPublicacion.addEventListener("submit", async (e) => {
     const formData = new FormData(formPublicacion);
     formData.set("usuario_id", usuarioLogueado.id);
 
+    const selectedRatio = formData.get("aspect_ratio");
+
+    let ancho = null;
+    let alto = null;
+
+    if (selectedRatio === "1:1") {
+        ancho = 1080;
+        alto = 1080;
+    } else if (selectedRatio === "16:9") {
+        ancho = 1920;
+        alto = 1080;
+    } else if (selectedRatio === "4:5") {
+        ancho = 1080;
+        alto = 1350;
+    }
+
+    if (ancho && alto) {
+        formData.set("ancho_imagen", ancho);
+        formData.set("alto_imagen", alto);
+    }
+
     try {
         const res = await fetch(API_PUBLICACIONES, {
             method: "POST",
@@ -55,4 +76,24 @@ formPublicacion.addEventListener("submit", async (e) => {
         console.error(err);
         alert("No se pudo conectar con el servidor");
     }
+});
+
+
+const form = document.getElementById('form-publicacion');
+
+form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    
+    const formData = new FormData(form);
+    
+    const selectedRatio = formData.get('aspect_ratio');
+    
+    console.log("Relación de aspecto seleccionada:", selectedRatio);
+
+    let ancho = 0;
+    let alto = 0;
+
+    if (selectedRatio === "1:1") { ancho = 1080; alto = 1080; }
+    else if (selectedRatio === "16:9") { ancho = 1920; alto = 1080; }
+    else if (selectedRatio === "4:5") { ancho = 1080; alto = 1350; }
 });

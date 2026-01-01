@@ -148,7 +148,7 @@ function validarAccionesPerfil() {
 
 async function cargarPublicacionesDeUsuario(usuarioId) {
   const container = document.getElementById('publicaciones-container');
-  const SINPUBLIC = './img/sinPublicacion.png';
+  const SINPUBLIC = './img/sinPublicaciones1.png';
   if (!container) return;
 
   try {
