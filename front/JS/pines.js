@@ -90,6 +90,25 @@ function irAlPerfil(usuarioId) {
 
 
 
+function obtenerImageRatio(card) {
+    if (card.ancho_imagen == null || card.alto_imagen == null) {
+        return 'original';
+    }
+
+    if (card.ancho_imagen === card.alto_imagen) {
+        return '1-1';
+    }
+
+    if (card.ancho_imagen === 1920 && card.alto_imagen === 1080) {
+        return '16-9';
+    }
+
+    if (card.ancho_imagen === 1080 && card.alto_imagen === 1350) {
+        return '4-5';
+    }
+
+    return 'original';
+}
 
 
 
@@ -98,27 +117,36 @@ function abrirCardModal(card) {
     if (!modal) return;
 
     const AVATAR_DEFAULT = './img/avatar-default.jpg';
+    const imageRatio = obtenerImageRatio(card);
+    const tieneImagen = !!card.imagen;
 
     modal.innerHTML = `
         <div class="modal-overlay"></div>
         <div class="modal-content">
             <button class="modal-close">&times;</button>
             <div class="modal-body">
-                <div class="modal-image-section">
+            ${tieneImagen ? `
+            <div class="modal-image-section">
+                <div class="modal-image-wrapper ratio-${imageRatio}">
                     <img 
-                        src="${card.imagen ? `${API_IMAGENES}/${card.imagen}` : ''}" 
+                        src="${API_IMAGENES}/${card.imagen}" 
                         class="modal-image"
-                        style="max-width: 100%; object-fit: contain;""
+                        alt=""
                     >
-                    <div class="modal-author-info">
-                        <img src="${card.usuario_icono ? `${API_ICONOS}/${card.usuario_icono}` : AVATAR_DEFAULT}" class="modal-author-avatar"
-  onerror="this.src='${AVATAR_DEFAULT}'">
-                        <div class="modal-author-details">
-                            <span class="modal-author-name">${card.usuario_nombre}</span>
-                            <span class="modal-publish-date">${calcularFecha(card.fecha_edicion)}</span>
-                        </div>
+                </div>
+
+                <div class="modal-author-info">
+                    <img src="${card.usuario_icono ? `${API_ICONOS}/${card.usuario_icono}` : AVATAR_DEFAULT}"
+                        class="modal-author-avatar"
+                        onerror="this.src='${AVATAR_DEFAULT}'">
+                    <div class="modal-author-details">
+                        <span class="modal-author-name">${card.usuario_nombre}</span>
+                        <span class="modal-publish-date">${calcularFecha(card.fecha_edicion)}</span>
                     </div>
                 </div>
+            </div>
+            ` : ''}
+
                 <div class="modal-comments-section">
                         <div class="modal-details">
                             <h2 class="modal-title">${card.titulo || 'Sin título'}</h2>
