@@ -7,7 +7,7 @@ CREATE TABLE usuarios (
     email VARCHAR NOT NULL,
     icono VARCHAR NOT NULL, -- URL al icono
     fecha_nacimiento TIMESTAMP NOT NULL,
-    fecha_registro TIMESTAMP NOT NULL
+    fecha_registro TIMESTAMP NOT NULL DEFAULT now()
 );
 
 CREATE TABLE publicaciones (
@@ -31,8 +31,8 @@ CREATE TABLE comentarios (
     usuario_id INT NOT NULL,
     publicacion_id INT NOT NULL,
     contenido VARCHAR NOT NULL,
-    fecha_publicacion TIMESTAMP NOT NULL,
-    fecha_edicion TIMESTAMP NOT NULL,
+    fecha_publicacion TIMESTAMP NOT NULL DEFAULT now(),
+    fecha_edicion TIMESTAMP NOT NULL DEFAULT now(),
 
     FOREIGN KEY (usuario_id)
         REFERENCES usuarios(id)
@@ -61,8 +61,8 @@ CREATE TABLE tableros (
     usuario_id INT NOT NULL,
     titulo VARCHAR NOT NULL,
     etiquetas VARCHAR,
-    fecha_publicacion TIMESTAMP NOT NULL,
-    fecha_edicion TIMESTAMP NOT NULL,
+    fecha_publicacion TIMESTAMP NOT NULL DEFAULT now(),
+    fecha_edicion TIMESTAMP NOT NULL DEFAULT now(),
 
     FOREIGN KEY (usuario_id)
         REFERENCES usuarios(id)
