@@ -59,7 +59,6 @@ body {
     overflow: hidden;
 }
 
-/* Estados según ratio */
 .pin-container.square {
     width: 420px;
     height: 420px;
@@ -67,15 +66,14 @@ body {
 
 .pin-container.horizontal {
     width: 520px;
-    height: 292px; /* 16:9 */
+    height: 292px; 
 }
 
 .pin-container.vertical {
     width: 420px;
-    height: 525px; /* 4:5 */
+    height: 525px; 
 }
 
-/* Imagen preview */
 #preview-img {
     width: 100%;
     height: 100%;
@@ -83,7 +81,6 @@ body {
     display: none;
 }
 
-/* Texto inicial */
 #text-prompt {
     font-size: 18px;
     font-weight: 500;

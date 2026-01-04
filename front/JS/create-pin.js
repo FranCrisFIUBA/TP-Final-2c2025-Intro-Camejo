@@ -15,7 +15,6 @@ btnTrigger.addEventListener("click", () => {
 });
 
 function aplicarRatio(ratio) {
-    // Limpieza total
     pinContainer.classList.remove(
         "square",
         "horizontal",
@@ -23,7 +22,6 @@ function aplicarRatio(ratio) {
         "original"
     );
 
-    // 🔴 CRÍTICO: limpiar estilos inline
     pinContainer.style.width = "";
     pinContainer.style.height = "";
 
@@ -71,7 +69,6 @@ fileInput.addEventListener("change", () => {
             previewImg.style.display = "block";
             textPrompt.style.display = "none";
 
-            // ✅ Seleccionar ORIGINAL por defecto
             const originalInput = document.querySelector(
                 'input[name="aspect_ratio"][value="original"]'
             );

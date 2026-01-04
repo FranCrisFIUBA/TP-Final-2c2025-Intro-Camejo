@@ -79,6 +79,26 @@ function inicializarNavbar() {
     const dropdownMenu = document.getElementById('dropdown-menu');
     const overlay = document.getElementById('overlay');
     const profileButton = document.getElementById('profile-button');
+    const createBoardItem = document.querySelector(
+    '.dropdown-item[href="create-board.html"]'
+);
+
+const boardform = document.getElementById('board-form');
+const boardInput = document.getElementById('board-name');
+const cancelBoardBtn = document.getElementById('cancel-board');
+const createBoardBtn = document.getElementById('create-board');
+function abrirformTablero() {
+    cerrarDropdown();
+    boardform.classList.add('show');
+    overlay.classList.add('show');
+    boardInput.value = '';
+    boardInput.focus();
+}
+
+function cerrarformTablero() {
+    boardform.classList.remove('show');
+    overlay.classList.remove('show');
+}
 
     function cerrarDropdown() {
         dropdownMenu?.classList.remove('show');
@@ -96,7 +116,32 @@ function inicializarNavbar() {
         toggleDropdown();
     });
 
-    overlay?.addEventListener('click', cerrarDropdown);
+    overlay?.addEventListener('click', () => {
+    cerrarDropdown();
+    cerrarformTablero();
+});
+cancelBoardBtn?.addEventListener('click', cerrarformTablero);
+
+createBoardBtn?.addEventListener('click', () => {
+    const nombre = boardInput.value.trim();
+
+    if (!nombre) {
+        alert('Ingresá un nombre para el tablero');
+        return;
+    }
+
+    console.log('Crear tablero:', nombre);
+
+    // Acá luego llamás a tu API
+    // fetch(`${API_BASE}/tableros`, {...})
+
+    cerrarformTablero();
+});
+createBoardItem?.addEventListener('click', e => {
+    e.preventDefault();
+    abrirformTablero();
+});
+
 
     document.querySelectorAll('.dropdown-item').forEach(item => {
         item.addEventListener('click', cerrarDropdown);

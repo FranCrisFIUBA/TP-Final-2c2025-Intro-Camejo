@@ -32,7 +32,7 @@ const cargarPublicaciones = async () => {
         if (!respuesta.ok) throw new Error(`Error: ${respuesta.status}`);
 
         const datos = await respuesta.json();
-        const SINPUBLIC = './img/sinPublicacion.png';
+        const SINPUBLIC = './img/sinPublicaciones1.png';
         const contenedor =
             document.querySelector(".cards-container") ||
             document.querySelector("#cards-container");
@@ -177,7 +177,6 @@ function abrirCardModal(card) {
         </div>
     `;
 
-    // Mostrar el modal
     modal.style.display = 'block';
     document.body.style.overflow = 'hidden';
     
@@ -222,13 +221,11 @@ function abrirCardModal(card) {
     });
     
     inputComentario.onkeydown = (e) => {
-    // Si presiona Enter pero NO presiona Shift (para permitir saltos de línea)
     if (e.key === 'Enter' && !e.shiftKey) {
-        e.preventDefault(); // Evita que se cree una línea nueva
-        btnPublicar.click(); // Dispara el evento del botón
+        e.preventDefault();
+        btnPublicar.click(); 
     }
     };
-    // Eventos de cierre
     modal.querySelector('.modal-close').onclick = closeCardModal;
     modal.querySelector('.modal-overlay').onclick = closeCardModal;
 }
@@ -292,11 +289,9 @@ async function cargarComentariosEnModal(publicacionId) {
     const AVATAR_DEFAULT = './img/avatar-default.jpg';
 
     try {
-        // Asegúrate de que la ruta coincida con tu backend
         const res = await fetch(`${API_BASE_URL}/comentarios/publicacion/${publicacionId}`);
         const comentarios = await res.json();
 
-        // Actualizar contador si tienes el elemento en el HTML
         if (countElement) countElement.textContent = `${comentarios.length} comentarios`;
 
         if (comentarios.length === 0) {
@@ -304,7 +299,6 @@ async function cargarComentariosEnModal(publicacionId) {
             return;
         }
 
-        // Renderizar usando tus clases CSS originales
         container.innerHTML = comentarios.map(com => `
             <div class="comment-item">
                 <div class="comment-author">
@@ -317,8 +311,6 @@ async function cargarComentariosEnModal(publicacionId) {
                 </div>
             </div>
         `).join('');
-
-        // Hacer scroll automático al final para ver el nuevo comentario
         container.scrollTop = container.scrollHeight;
 
     } catch (err) {
