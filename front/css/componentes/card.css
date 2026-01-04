@@ -100,3 +100,16 @@
 .like-btn *, .modal-like-btn * {
     pointer-events: none;
 }
+
+
+
+
+.btn-edit-publicacion{
+    background: var(--amarillo);
+  color: var(--negro);
+  border: none;
+  font-family: var(--nunito);
+  padding: 8px 14px;
+  border-radius: 8px;
+  cursor: pointer;
+}

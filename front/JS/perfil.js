@@ -30,6 +30,14 @@ function formatearFecha(fechaString) {
     day: 'numeric'
   });
 }
+function esPerfilDelUsuarioLogueado() {
+  const usuarioLogueado = obtenerUsuarioLogueado();
+  const usuarioPerfilId = obtenerUsuarioId();
+
+  if (!usuarioLogueado || !usuarioPerfilId) return false;
+
+  return Number(usuarioLogueado.id) === Number(usuarioPerfilId);
+}
 
 
 function configurarNavegacion() {
@@ -168,15 +176,32 @@ async function cargarPublicacionesDeUsuario(usuarioId) {
 
     container.innerHTML = '';
 
-    publicaciones.forEach(p => {
-      const card = crearCard({
+  const mostrarEditar = esPerfilDelUsuarioLogueado();
+
+  publicaciones.forEach(p => {
+    const editable = Number(obtenerUsuarioLogueado()?.id) === Number(usuarioId);
+    const card = crearCard(
+      {
         ...p,
         usuario_nombre: usuarioActual.nombre,
         usuario_icono: usuarioActual.icono
-      });
+      },
+      {
+        editable,
+        onEdit: (publicacion) => {
+          localStorage.setItem(
+            "publicacionEditar",
+            JSON.stringify(publicacion)
+          );
+          window.location.href = "create-pin.html";
+        }
+      }
+    );
 
-      container.appendChild(card);
-    });
+
+    container.appendChild(card);
+  });
+
 
   } catch (error) {
     console.error(error);

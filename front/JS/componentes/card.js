@@ -5,11 +5,13 @@ const API_ICONOS = API_BASE_URL + '/iconos';
 
 export function crearCard(
   card,
-  {
-    onOpenModal = () => {},
-    onGoToProfile = () => {}
-  } = {}
-) {
+    {
+        onOpenModal = () => {},
+        onGoToProfile = () => {},
+        editable = false,
+        onEdit = () => {}
+    } = {}
+    ) {
     const AVATAR_DEFAULT = './img/avatar-default.jpg';
     const cardDiv = document.createElement("div");
     cardDiv.className = "card";
@@ -45,6 +47,19 @@ export function crearCard(
             <span class="author-name">${card.usuario_nombre || ''}</span>
         </div>
     `;
+    if (editable) {
+    const editBtn = document.createElement("button");
+    editBtn.className = "btn-edit-publicacion";
+    editBtn.textContent = "Editar";
+
+    editBtn.addEventListener("click", (e) => {
+        e.stopPropagation();
+        onEdit(card);
+    });
+
+    footer.appendChild(editBtn);
+}
+
     const authorElement = footer.querySelector('.card-author');
 
     authorElement.addEventListener("click", (e) => {
