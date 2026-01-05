@@ -1,4 +1,3 @@
--- Esta query tiene como objetivo generar las tablas necesarias al iniciar la base de datos.
 CREATE TABLE usuarios (
     id SERIAL PRIMARY KEY,
     nombre VARCHAR NOT NULL, -- de 5 a 25 caracteres
@@ -6,7 +5,7 @@ CREATE TABLE usuarios (
     email VARCHAR NOT NULL,
     icono VARCHAR, -- URL al icono
     fecha_nacimiento TIMESTAMP NOT NULL,
-    fecha_registro TIMESTAMP NOT NULL
+    fecha_registro TIMESTAMP NOT NULL DEFAULT now()
 );
 /*
 INSERT INTO usuarios (nombre, contrasenia, email, icono, fecha_nacimiento, fecha_registro) VALUES
@@ -99,8 +98,8 @@ CREATE TABLE comentarios (
     usuario_id INT NOT NULL,
     publicacion_id INT NOT NULL,
     contenido VARCHAR NOT NULL,
-    fecha_publicacion TIMESTAMP NOT NULL,
-    fecha_edicion TIMESTAMP NOT NULL,
+    fecha_publicacion TIMESTAMP NOT NULL DEFAULT now(),
+    fecha_edicion TIMESTAMP NOT NULL DEFAULT now(),
 
     FOREIGN KEY (usuario_id)
         REFERENCES usuarios(id)
@@ -123,7 +122,7 @@ INSERT INTO comentarios (usuario_id, publicacion_id, contenido) VALUES
 (9, 5, 'Me encanta la variedad de botones'),
 (10, 6, 'Sailor Moon forever! 🌙');
 */
-CREATE TABLE listas (
+CREATE TABLE listas ( /*busquedas personalizadas*/
     id SERIAL PRIMARY KEY,
     usuario_id INT NOT NULL,
     titulo VARCHAR NOT NULL,
@@ -141,8 +140,8 @@ CREATE TABLE tableros (
     usuario_id INT NOT NULL,
     titulo VARCHAR NOT NULL,
     etiquetas VARCHAR,
-    fecha_publicacion TIMESTAMP NOT NULL,
-    fecha_edicion TIMESTAMP NOT NULL,
+    fecha_publicacion TIMESTAMP NOT NULL DEFAULT now(),
+    fecha_edicion TIMESTAMP NOT NULL DEFAULT now(),
 
     FOREIGN KEY (usuario_id)
         REFERENCES usuarios(id)
