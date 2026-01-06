@@ -283,6 +283,61 @@ function listarHashtags(etiquetas) {
 }
 
 
+async function borrarComentario(comentarioId) {
+    const usuarioLogueado = obtenerUsuarioLogueado();
+
+    try {
+        const res = await fetch(`${API_BASE_URL}/comentarios/${comentarioId}`, {
+            method: 'DELETE',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                usuario_id: usuarioLogueado.id
+            })
+        });
+
+        if (!res.ok) {
+            const err = await res.json();
+            throw new Error(err.error);
+        }
+
+        return true;
+    } catch (err) {
+        console.error(err);
+        alert(err.message);
+        return false;
+    }
+}
+
+async function editarComentario(comentarioId, contenido) {
+    const usuarioLogueado = obtenerUsuarioLogueado();
+
+    try {
+        const res = await fetch(`${API_BASE_URL}/comentarios/${comentarioId}`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                contenido,
+                usuario_id: usuarioLogueado.id
+            })
+        });
+
+        if (!res.ok) {
+            const err = await res.json();
+            throw new Error(err.error);
+        }
+
+        return true;
+    } catch (err) {
+        console.error(err);
+        alert(err.message);
+        return false;
+    }
+}
+
 async function cargarComentariosEnModal(publicacionId) {
     const container = document.querySelector('.comments-container');
     const countElement = document.querySelector('.comments-count');
@@ -299,24 +354,57 @@ async function cargarComentariosEnModal(publicacionId) {
             return;
         }
 
-        container.innerHTML = comentarios.map(com => `
-            <div class="comment-item">
-                <div class="comment-author">
-                    <img src="${com.avatar ? `${API_ICONOS}/${com.avatar}` : AVATAR_DEFAULT}" class="comment-avatar" onerror="this.src='${AVATAR_DEFAULT}'">
-                    <div class="comment-content">
-                        <span class="comment-author-name">${com.author}</span>
-                        <p class="comment-text">${com.text}</p>
-                        <span class="comment-date">${calcularFecha(com.date)}</span>
+        const usuarioLogueado = obtenerUsuarioLogueado();
+
+        container.innerHTML = comentarios.map(comentario => {
+            const esAutor = usuarioLogueado && usuarioLogueado.id === comentario.usuario_id;
+
+            return `
+                <div class="comment-item" data-id="${comentario.id}">
+                    <div class="comment-author">
+                        <img src="${comentario.avatar ? `${API_ICONOS}/${comentario.avatar}` : AVATAR_DEFAULT}"
+                        class="comment-avatar"
+                        data-user-id="${comentario.usuario_id}"
+                        onerror="this.src='${AVATAR_DEFAULT}'">
+                        <div class="comment-content">
+                            <div class="comment-header">
+                                <span class="comment-author-name">${comentario.author}</span>
+
+                                ${esAutor ? `
+                                    <div class="comment-actions">
+                                        <button class="btn-edit-comment" data-id="${comentario.id}">Editar</button>
+                                        <button class="btn-delete-comment" data-id="${comentario.id}">Borrar</button>
+                                    </div>
+                                ` : ''}
+                            </div>
+
+                            <p class="comment-text">${comentario.text}</p>
+                            <span class="comment-date">${calcularFecha(comentario.date)}</span>
+                        </div>
                     </div>
                 </div>
-            </div>
-        `).join('');
+            `;
+        }).join('');
         container.scrollTop = container.scrollHeight;
+
 
     } catch (err) {
         console.error("Error cargando comentarios:", err);
         container.innerHTML = '<p class="no-comments">Error al conectar con el servidor.</p>';
     }
+
+    document.addEventListener('click', (e) => {
+
+    const avatar = e.target.closest('.comment-avatar');
+    if (!avatar) return;
+
+    const userId = avatar.dataset.userId;
+    if (!userId) return;
+    e.stopPropagation();
+
+    irAlPerfil(userId);
+});
+
 }
 
 
@@ -360,3 +448,30 @@ async function enviarComentario(publicacionId, contenido, usuarioId) {
 
 cargarPublicaciones();
 
+document.addEventListener('click', async (e) => {
+
+    if (e.target.classList.contains('btn-delete-comment')) {
+        const comentarioId = e.target.dataset.id;
+
+        if (!confirm('¿Eliminar este comentario?')) return;
+
+        const ok = await borrarComentario(comentarioId);
+        if (ok) {
+            e.target.closest('.comment-item').remove();
+        }
+    }
+
+    if (e.target.classList.contains('btn-edit-comment')) {
+        const comentarioId = e.target.dataset.id;
+        const commentItem = e.target.closest('.comment-item');
+        const textEl = commentItem.querySelector('.comment-text');
+
+        const nuevoTexto = prompt('Editar comentario:', textEl.textContent);
+        if (!nuevoTexto || !nuevoTexto.trim()) return;
+
+        const ok = await editarComentario(comentarioId, nuevoTexto.trim());
+        if (ok) {
+            textEl.textContent = nuevoTexto.trim();
+        }
+    }
+});

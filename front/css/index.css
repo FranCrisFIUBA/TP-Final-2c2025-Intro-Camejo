@@ -692,3 +692,30 @@ body, html {
   background: var(--gris2);
   cursor: not-allowed;
 }
+
+
+
+
+
+
+.comment-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.comment-actions button {
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 0.8rem;
+    margin-left: 6px;
+    color: #888;
+}
+
+.comment-actions button:hover {
+    color: #000;
+}
+.comment-avatar {
+    cursor: pointer;
+}
