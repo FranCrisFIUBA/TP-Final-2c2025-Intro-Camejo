@@ -160,7 +160,7 @@ usuarios.delete('/:id', async (req, res) => {
 
         await pool.query(
             "DELETE FROM usuarios WHERE id = $1",
-            req.params.id
+            [req.params.id]
         );
 
         res.status(200).json({ message: "Usuario eliminado" });

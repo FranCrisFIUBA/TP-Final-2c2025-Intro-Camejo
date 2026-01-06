@@ -269,26 +269,38 @@ document.addEventListener('click', (e) => {
 const btnBorrar = document.getElementById('borrar-edit');
 
 btnBorrar.addEventListener('click', async () => {
-    const confirmar = confirm("¿Estás seguro de que deseas eliminar tu cuenta? Esta acción no se puede deshacer.");
-    
-    if (confirmar) {
-        try {
-            const user = obtenerUsuarioLogueado(); 
+    const confirmar = confirm(
+        "¿Estás seguro de que deseas eliminar tu cuenta? Esta acción no se puede deshacer."
+    );
 
-            const response = await fetch(`${API_BASE_URL}/usuarios/${user.id}`, {
-                method: 'DELETE',
-            });
+    if (!confirmar) return;
 
-            if (response.ok) {
-                alert("Cuenta eliminada con éxito.");
-                window.location.href = '/login.html';
-            } else {
-                const errorData = await response.json();
-                alert("Error: " + errorData.error);
-            }
-        } catch (error) {
-            console.error("Error en la petición:", error);
-            alert("No se pudo conectar con el servidor.");
+    const user = obtenerUsuarioLogueado();
+
+    if (!user || !user.id) {
+        alert("No se pudo identificar al usuario logueado.");
+        return;
+    }
+
+    try {
+        const response = await fetch(
+            `${API_BASE_URL}/usuarios/${user.id}`,
+            { method: 'DELETE' }
+        );
+
+        if (response.ok) {
+            // Limpia sesión local antes de redirigir
+            localStorage.removeItem('usuario');
+            localStorage.removeItem('token');
+
+            alert("Cuenta eliminada con éxito.");
+            window.location.href = '/login.html';
+        } else {
+            const errorData = await response.json();
+            alert(errorData?.error || "Error al eliminar la cuenta.");
         }
+    } catch (error) {
+        console.error("Error en la petición:", error);
+        alert("No se pudo conectar con el servidor.");
     }
 });

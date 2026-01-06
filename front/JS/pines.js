@@ -394,16 +394,15 @@ async function cargarComentariosEnModal(publicacionId) {
     }
 
     document.addEventListener('click', (e) => {
+        const avatar = e.target.closest('.comment-avatar');
+        if (!avatar) return;
 
-    const avatar = e.target.closest('.comment-avatar');
-    if (!avatar) return;
+        const userId = avatar.dataset.userId;
+        if (!userId) return;
+        e.stopPropagation();
 
-    const userId = avatar.dataset.userId;
-    if (!userId) return;
-    e.stopPropagation();
-
-    irAlPerfil(userId);
-});
+        irAlPerfil(userId);
+    });
 
 }
 
