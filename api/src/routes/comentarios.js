@@ -106,9 +106,11 @@ router.put('/:id', async (req, res) => {
 // DELETE - Eliminar comentario
 router.delete('/:id', async (req, res) => {
     try {
+        const { id } = req.params;
+
         const { rowCount } = await pool.query(
             "DELETE FROM comentarios WHERE id = $1 RETURNING id",
-            [req.params.id]
+            [id]
         );
 
         if (rowCount === 0) {
