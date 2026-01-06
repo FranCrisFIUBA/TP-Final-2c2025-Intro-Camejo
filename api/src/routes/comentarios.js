@@ -74,8 +74,8 @@ router.post('/', async (req, res) => {
     }
 });
 
-// PUT - Actualizar comentario
-router.put('/:id', async (req, res) => {
+// PATCH - Actualizar comentario
+router.patch('/:id', async (req, res) => {
     try {
         const { id } = req.params;
         const { contenido, usuario_id } = req.body;
