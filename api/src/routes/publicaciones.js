@@ -155,45 +155,83 @@ publicaciones.post(
 );
 
 // PATCH /publicaciones/:id - Actualizar publicación
-publicaciones.patch('/:id', async (req, res) => {
-    try {
-        const publicacion = await intentarConseguirPublicacionPorId(req.params.id);
-        if (!publicacion) {
-            return res.status(404).json({ error: "Publicación no encontrada" });
-        }
-
-        const parsedActualizacion = esquemaActualizacionPublicacion.safeParse(req.body);
-        if (!parsedActualizacion.success) {
-            return res.status(400).json({ errors: parsedActualizacion.error.issues });
-        }
-
-        // Construir query dinámica
-        const campos = [];
-        const valores = [];
-        let contador = 1;
-
-        Object.entries(parsedActualizacion.data).forEach(([key, value]) => {
-            if (value !== undefined) {
-                campos.push(`${key} = $${contador}`);
-                valores.push(value);
-                contador++;
+publicaciones.patch(
+    '/:id',
+    (req, res, next) => {
+        imagenPublicacionUpload.single('imagen')(req, res, function (err) {
+            if (err instanceof multer.MulterError) {
+                return res.status(400).json({ error: err.message });
+            } else if (err) {
+                return res.status(500).json({ error: "Error en la subida de archivo" });
             }
+            next();
         });
+    },
 
-        // Agregar fecha_edicion automáticamente
-        campos.push('fecha_edicion = CURRENT_TIMESTAMP');
-        
-        valores.push(req.params.id);
-        const query = `UPDATE publicaciones SET ${campos.join(', ')} WHERE id = $${contador} RETURNING *`;
-        
-        const result = await pool.query(query, valores);
-        res.status(200).json(result.rows[0]);
+    async (req, res) => {
+        try {
+            const { id } = req.params;
 
-    } catch (err) {
-        console.error(err);
-        res.status(500).json({ error: "Error al actualizar publicación" });
+            const publicacion = await intentarConseguirPublicacionPorId(id);
+            if (!publicacion) {
+                return res.status(404).json({ error: "Publicación no encontrada" });
+            }
+
+            const datosActualizados = {
+                ...req.body,
+                imagen: req.file ? req.file.filename : undefined,
+                alto_imagen: req.body.alto_imagen
+                    ? Number(req.body.alto_imagen)
+                    : undefined,
+                ancho_imagen: req.body.ancho_imagen
+                    ? Number(req.body.ancho_imagen)
+                    : undefined
+            };
+
+            const parsedActualizacion = esquemaActualizacionPublicacion.safeParse(datosActualizados);
+
+            if (!parsedActualizacion.success) {
+                return res.status(400).json({
+                    errors: parsedActualizacion.error.issues
+                });
+            }
+
+            if (req.file && publicacion.imagen) {
+                await eliminarImagenPublicacionPorId(publicacion.imagen);
+            }
+
+            const campos = [];
+            const valores = [];
+            let i = 1;
+
+            Object.entries(parsedActualizacion.data).forEach(([key, value]) => {
+                if (value !== undefined) {
+                    campos.push(`${key} = $${i}`);
+                    valores.push(value);
+                    i++;
+                }
+            });
+
+            campos.push(`fecha_edicion = CURRENT_TIMESTAMP`);
+
+            valores.push(id);
+
+            const query = `
+                UPDATE publicaciones
+                SET ${campos.join(', ')}
+                WHERE id = $${i}
+                RETURNING *
+            `;
+
+            const result = await pool.query(query, valores);
+
+            res.status(200).json(result.rows[0]);
+        } catch (err) {
+            console.error(err);
+            res.status(500).json({ error: "Error al actualizar publicación" });
+        }
     }
-});
+);
 
 // DELETE /publicaciones/:id - Eliminar publicación
 publicaciones.delete('/:id', async (req, res) => {
