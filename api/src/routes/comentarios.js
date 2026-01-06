@@ -115,26 +115,16 @@ router.put('/:id', async (req, res) => {
 // DELETE - Eliminar comentario
 router.delete('/:id', async (req, res) => {
     try {
-        const { id } = req.params;
-        const { usuario_id } = req.body;
-        
-        // Verificar que el usuario es el dueño del comentario
-        const comentarioExistente = await pool.query(
-            'SELECT usuario_id FROM comentarios WHERE id = $1',
-            [id]
+        const { rowCount } = await pool.query(
+            "DELETE FROM comentarios WHERE id = $1 RETURNING id",
+            [req.params.id]
         );
-        
-        if (comentarioExistente.rows.length === 0) {
+
+        if (rowCount === 0) {
             return res.status(404).json({ error: "Comentario no encontrado" });
         }
-        
-        if (comentarioExistente.rows[0].usuario_id !== usuario_id) {
-            return res.status(403).json({ error: "No tienes permiso para eliminar este comentario" });
-        }
-        
-        await pool.query('DELETE FROM comentarios WHERE id = $1', [id]);
-        
-        res.status(200).json({ message: "Comentario eliminado correctamente" });
+
+        res.status(200).json({ message: "Comentario eliminado" });
     } catch (error) {
         console.error('Error eliminando comentario:', error);
         res.status(500).json({ error: "Error al eliminar comentario" });
