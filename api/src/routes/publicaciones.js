@@ -2,12 +2,11 @@ import express from 'express';
 import { pool } from "../db.js";
 import {
     esquemaActualizacionPublicacion,
-    esquemaPostPublicacion,
-    esquemaPublicacion
+    esquemaPostPublicacion
 } from "../utils/esquemas/publicaciones.js";
 import {intentarConseguirPublicacionPorId} from "../utils/database/publicaciones.js"
 import {existeUsuarioConId} from "../utils/database/usuarios.js";
-import {iconoUsuarioUpload, imagenPublicacionUpload} from "../middlewares/storage.js";
+import {imagenPublicacionUpload} from "../middlewares/storage.js";
 import multer from "multer";
 import {eliminarImagenPublicacionPorId} from "../utils/storage/publicaciones.js";
 
@@ -188,7 +187,7 @@ publicaciones.patch(
                     : undefined
             };
 
-            const parsedActualizacion = esquemaActualizacionPublicacion.safeParse(datosActualizados);
+            const parsedActualizacion = esquemaActualizacionPublicacion.safeParseAsync(datosActualizados);
 
             if (!parsedActualizacion.success) {
                 return res.status(400).json({
