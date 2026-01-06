@@ -17,7 +17,14 @@ body, html {
     gap: 20px;
     padding: 20px;
 }
+.container.con-navbar {
+    grid-template-columns: 80px 1fr 300px;
+}
 
+/* ===== GRID SIN NAVBAR ===== */
+.container.sin-navbar {
+    grid-template-columns: 1fr 300px;
+}
 /* Sección izquierda */ 
 .izq-section {
     flex: 3;
@@ -423,11 +430,14 @@ body, html {
 }
 
 .profile-actions {
-    display: flex;
-    gap: 10px;
-    margin-top: auto;
+  display: none;
+  gap: 10px;
+  margin-top: auto;
 }
 
+.profile-actions.visible {
+  display: flex;
+}
 .btn {
     padding: 10px 5px 10px 5px; /*arriba, derecha, abajo, izquierda*/
     border: 2px solid var(--negro);
@@ -764,3 +774,135 @@ body, html {
 }
 
 
+
+
+
+
+
+
+
+
+
+/* OVERLAY */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.25);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.modal-card {
+  background: #fff;
+  width: 700px;
+  border-radius: 14px;
+  padding: 20px 24px 24px;
+  box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+}
+
+.modal-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.modal-top h2 {
+  margin: 0;
+  font-size: 22px;
+}
+
+.modal-top-actions {
+  display: flex;
+  gap: 10px;
+}
+
+.btn-borrar{
+    background: var(--rojo);
+    border: none;
+    padding: 6px 16px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-family: var(--nunito);
+}
+
+.btn-cancelar {
+    background: var(--gris);
+    border: none;
+    padding: 6px 14px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-family: var(--nunito);
+}
+
+.btn-guardar {
+    background: var(--amarillo);
+    border: none;
+    padding: 6px 16px;
+    border-radius: 6px;
+    font-weight: bold;
+    cursor: pointer;
+    font-family: var(--nunito);
+}
+
+.modal-content {
+  display: grid;
+  grid-template-columns: 220px 1fr;
+  gap: 24px;
+}
+
+.modal-avatar {
+  display: flex;
+  justify-content: center;
+}
+
+.avatar-box {
+  width: 220px;
+  height: 255px;
+  position: relative;
+  background: var(--blanco);
+  border: var(--border-estandar);
+  box-shadow: 9px 8px 0px var(--negro); 
+  overflow: hidden;       
+  position: relative;
+  margin-bottom: 10px;
+}
+
+.profile-image-edit {
+    width: 200px;
+    height: 200px;
+    object-fit: cover;
+    margin: 0 auto 15px;
+    margin-top: 10px;
+    display: block;
+    border: var(--border-estandar);
+}
+
+.avatar-box i {
+  position: absolute;
+  right: 10px;
+  bottom: 10px;
+  background: rgba(255,255,255,0.8);
+  padding: 6px;
+  border-radius: 50%;
+  cursor: pointer;
+}
+
+.modal-form {
+  display: flex;
+  flex-direction: column;
+}
+
+.modal-form label {
+  font-size: 14px;
+  margin-bottom: 4px;
+}
+
+.modal-form input {
+  margin-bottom: 12px;
+  padding: 8px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+}

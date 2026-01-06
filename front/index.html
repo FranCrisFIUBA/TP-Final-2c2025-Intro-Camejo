@@ -3,26 +3,50 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="css/index.css">
-    <link rel="stylesheet" href="css/variables.css">
-    <link rel="icon" href="img/logo%20(4).png" type="image/x-icon" style="border-radius: 50%;">
+    <link rel="stylesheet" href="./css/index.css">
+    <link rel="stylesheet" href="./css/variables.css">
     <title>inicio</title>
 </head>
 <body>
     <div class="container">
-        <div id="navbar-container"></div>
+        <nav class="sidebar">
+            <div class="sidebar-top">
+                <div class="logo">
+                    <img src="./img/face_24dp_47413E_FILL0_wght400_GRAD0_opsz24.svg" alt="Logo de la página">
+                </div>
+            </div>
+            <div class="sidebar-middle">
+                <button class="icon-bar home" aria-label="Inicio">
+                    <div class="hover-effect"></div>
+                    <img src="./img/home_app_logo_24dp_47413E_FILL0_wght400_GRAD0_opsz24.svg" alt="Inicio">
+                </button>
+                <button class="icon-bar search" aria-label="Buscar">
+                    <div class="hover-effect"></div>
+                    <img src="./img/explore_24dp_47413E_FILL0_wght400_GRAD0_opsz24.svg" alt="Buscar">
+                </button>
+                <button class="icon-bar add" aria-label="Agregar">
+                    <div class="hover-effect"></div>
+                    <img src="./img/add_box_24dp_47413E_FILL0_wght400_GRAD0_opsz24.svg" alt="Agregar">
+                </button>
+            </div>
+            <div class="sidebar-bottom">
+                <button class="user-avatar" aria-label="Perfil de usuario">
+                    <img src="./img/[940] avatar 𓂃꙳⋆.jpeg" alt="Foto de usuario">
+                </button>
+            </div>
+        </nav>
         <main class="main-content">
-            <header class="top-section" role="toolbar">
+            <header class="top-section" role="toolbar"> 
                 <form class="search-bar" role="search"> 
                     <span class="search-icon">
-                        <img src="img/search_24dp_47413E_FILL0_wght400_GRAD0_opsz24.svg" >
+                        <img src="./img/search_24dp_47413E_FILL0_wght400_GRAD0_opsz24.svg" >
                     </span>
                     <input class="search-input" type="search" aria-label="Buscar contenido"/>
                 </form>
                 
                 <button class="order-by" aria-label="Ordenar por">
                     <span class="icon order">
-                        <img src="img/compare_arrows_24dp_47413E_FILL0_wght400_GRAD0_opsz24.svg" alt="Ordenar">
+                        <img src="./img/compare_arrows_24dp_47413E_FILL0_wght400_GRAD0_opsz24.svg" alt="Ordenar">
                     </span>
                     <p>Ordenar por</p>
                 </button>
@@ -34,11 +58,303 @@
             </header>
 
             <section class="pines-section" aria-label="Contenido principal">
-                <div id="cards-container" class="cards-container"></div>
+                <div class="card">
+                    <img src="./img/temp/_ (1).jpeg" alt="Imagen de ejemplo 1" class="card-image">
+                    <div class="card-content">
+                        <div class="card-footer">
+                            <div class="card-author">
+                                <img src="./img/[940] avatar 𓂃꙳⋆.jpeg" alt="Avatar de usuario" class="author-avatar">
+                                <span class="author-name">White-bear</span>
+                            </div>
+                            <div class="card-actions">
+                                <button class="action-btn">
+                                    <svg class="action-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                        <path d="M12 21.35L10.55 20.03C5.4 15.36 2 12.28 2 8.5C2 5.42 4.42 3 7.5 3C9.24 3 10.91 3.81 12 5.09C13.09 3.81 14.76 3 16.5 3C19.58 3 22 5.42 22 8.5C22 12.28 18.6 15.36 13.45 20.04L12 21.35Z" fill="currentColor"/>
+                                    </svg>
+                                    <span>124</span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="card">
+                    <img src="./img/temp/rosarrie _ jesse_ Photo.jpeg" alt="Imagen de ejemplo 1" class="card-image">
+                    <div class="card-content">
+                        <div class="card-footer">
+                            <div class="card-author">
+                                <img src="./img/temp/icon-user.jpeg" alt="Avatar de usuario" class="author-avatar">
+                                <span class="author-name">Green-girl</span>
+                            </div>
+                            <div class="card-actions">
+                                <button class="action-btn">
+                                    <svg class="action-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                        <path d="M12 21.35L10.55 20.03C5.4 15.36 2 12.28 2 8.5C2 5.42 4.42 3 7.5 3C9.24 3 10.91 3.81 12 5.09C13.09 3.81 14.76 3 16.5 3C19.58 3 22 5.42 22 8.5C22 12.28 18.6 15.36 13.45 20.04L12 21.35Z" fill="currentColor"/>
+                                    </svg>
+                                    <span>301</span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="card">
+                    <img src="./img/temp/_(2).jpeg" alt="Imagen de ejemplo 1" class="card-image">
+                    <div class="card-content">
+                        <div class="card-footer">
+                            <div class="card-author">
+                                <img src="./img/temp/_ (2).jpeg" alt="Avatar de usuario" class="author-avatar">
+                                <span class="author-name">Coroline</span>
+                            </div>
+                            <div class="card-actions">
+                                <button class="action-btn">
+                                    <svg class="action-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                        <path d="M12 21.35L10.55 20.03C5.4 15.36 2 12.28 2 8.5C2 5.42 4.42 3 7.5 3C9.24 3 10.91 3.81 12 5.09C13.09 3.81 14.76 3 16.5 3C19.58 3 22 5.42 22 8.5C22 12.28 18.6 15.36 13.45 20.04L12 21.35Z" fill="currentColor"/>
+                                    </svg>
+                                    <span>301</span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="card">
+                    <img src="./img/temp/Queen penguin✨.jpeg" alt="Imagen de ejemplo 1" class="card-image">
+                    <div class="card-content">
+                        <div class="card-footer">
+                            <div class="card-author">
+                                <img src="./img/[940] avatar 𓂃꙳⋆.jpeg" alt="Avatar de usuario" class="author-avatar">
+                                <span class="author-name">White-bear</span>
+                            </div>
+                            <div class="card-actions">
+                                <button class="action-btn">
+                                    <svg class="action-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                        <path d="M12 21.35L10.55 20.03C5.4 15.36 2 12.28 2 8.5C2 5.42 4.42 3 7.5 3C9.24 3 10.91 3.81 12 5.09C13.09 3.81 14.76 3 16.5 3C19.58 3 22 5.42 22 8.5C22 12.28 18.6 15.36 13.45 20.04L12 21.35Z" fill="currentColor"/>
+                                    </svg>
+                                    <span>124</span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="card">
+                    <img src="./img/temp/_ (2).jpeg" alt="Imagen de ejemplo 1" class="card-image">
+                    <div class="card-content">
+                        <div class="card-footer">
+                            <div class="card-author">
+                                <img src="./img/temp/icon-user.jpeg" alt="Avatar de usuario" class="author-avatar">
+                                <span class="author-name">Green-girl</span>
+                            </div>
+                            <div class="card-actions">
+                                <button class="action-btn">
+                                    <svg class="action-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                        <path d="M12 21.35L10.55 20.03C5.4 15.36 2 12.28 2 8.5C2 5.42 4.42 3 7.5 3C9.24 3 10.91 3.81 12 5.09C13.09 3.81 14.76 3 16.5 3C19.58 3 22 5.42 22 8.5C22 12.28 18.6 15.36 13.45 20.04L12 21.35Z" fill="currentColor"/>
+                                    </svg>
+                                    <span>301</span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="card">
+                    <img src="./img/temp/bluey.jpeg" alt="Imagen de ejemplo 1" class="card-image">
+                    <div class="card-content">
+                        <div class="card-footer">
+                            <div class="card-author">
+                                <img src="./img/temp/_ (2).jpeg" alt="Avatar de usuario" class="author-avatar">
+                                <span class="author-name">Coroline</span>
+                            </div>
+                            <div class="card-actions">
+                                <button class="action-btn">
+                                    <svg class="action-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                        <path d="M12 21.35L10.55 20.03C5.4 15.36 2 12.28 2 8.5C2 5.42 4.42 3 7.5 3C9.24 3 10.91 3.81 12 5.09C13.09 3.81 14.76 3 16.5 3C19.58 3 22 5.42 22 8.5C22 12.28 18.6 15.36 13.45 20.04L12 21.35Z" fill="currentColor"/>
+                                    </svg>
+                                    <span>301</span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="card">
+                    <img src="./img/temp/mussin.jpeg" alt="Imagen de ejemplo 1" class="card-image">
+                    <div class="card-content">
+                        <div class="card-footer">
+                            <div class="card-author">
+                                <img src="./img/[940] avatar 𓂃꙳⋆.jpeg" alt="Avatar de usuario" class="author-avatar">
+                                <span class="author-name">White-bear</span>
+                            </div>
+                            <div class="card-actions">
+                                <button class="action-btn">
+                                    <svg class="action-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                        <path d="M12 21.35L10.55 20.03C5.4 15.36 2 12.28 2 8.5C2 5.42 4.42 3 7.5 3C9.24 3 10.91 3.81 12 5.09C13.09 3.81 14.76 3 16.5 3C19.58 3 22 5.42 22 8.5C22 12.28 18.6 15.36 13.45 20.04L12 21.35Z" fill="currentColor"/>
+                                    </svg>
+                                    <span>124</span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="card">
+                    <img src="./img/temp/harry.jpeg" alt="Imagen de ejemplo 1" class="card-image">
+                    <div class="card-content">
+                        <div class="card-footer">
+                            <div class="card-author">
+                                <img src="./img/temp/icon-user.jpeg" alt="Avatar de usuario" class="author-avatar">
+                                <span class="author-name">Green-girl</span>
+                            </div>
+                            <div class="card-actions">
+                                <button class="action-btn">
+                                    <svg class="action-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                        <path d="M12 21.35L10.55 20.03C5.4 15.36 2 12.28 2 8.5C2 5.42 4.42 3 7.5 3C9.24 3 10.91 3.81 12 5.09C13.09 3.81 14.76 3 16.5 3C19.58 3 22 5.42 22 8.5C22 12.28 18.6 15.36 13.45 20.04L12 21.35Z" fill="currentColor"/>
+                                    </svg>
+                                    <span>301</span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="card">
+                    <img src="./img/temp/_ (3).jpeg" alt="Imagen de ejemplo 1" class="card-image">
+                    <div class="card-content">
+                        <div class="card-footer">
+                            <div class="card-author">
+                                <img src="./img/temp/_ (2).jpeg" alt="Avatar de usuario" class="author-avatar">
+                                <span class="author-name">Coroline</span>
+                            </div>
+                            <div class="card-actions">
+                                <button class="action-btn">
+                                    <svg class="action-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                        <path d="M12 21.35L10.55 20.03C5.4 15.36 2 12.28 2 8.5C2 5.42 4.42 3 7.5 3C9.24 3 10.91 3.81 12 5.09C13.09 3.81 14.76 3 16.5 3C19.58 3 22 5.42 22 8.5C22 12.28 18.6 15.36 13.45 20.04L12 21.35Z" fill="currentColor"/>
+                                    </svg>
+                                    <span>301</span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="card">
+                    <img src="./img/temp/bluey 2.jpeg" alt="Imagen de ejemplo 1" class="card-image">
+                    <div class="card-content">
+                        <div class="card-footer">
+                            <div class="card-author">
+                                <img src="./img/temp/_ (2).jpeg" alt="Avatar de usuario" class="author-avatar">
+                                <span class="author-name">Coroline</span>
+                            </div>
+                            <div class="card-actions">
+                                <button class="action-btn">
+                                    <svg class="action-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                        <path d="M12 21.35L10.55 20.03C5.4 15.36 2 12.28 2 8.5C2 5.42 4.42 3 7.5 3C9.24 3 10.91 3.81 12 5.09C13.09 3.81 14.76 3 16.5 3C19.58 3 22 5.42 22 8.5C22 12.28 18.6 15.36 13.45 20.04L12 21.35Z" fill="currentColor"/>
+                                    </svg>
+                                    <span>301</span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="card">
+                    <img src="./img/temp/Quilty Autumn Patchwork Fall Pattern.jpeg" alt="Imagen de ejemplo 1" class="card-image">
+                    <div class="card-content">
+                        <div class="card-footer">
+                            <div class="card-author">
+                                <img src="./img/temp/_ (2).jpeg" alt="Avatar de usuario" class="author-avatar">
+                                <span class="author-name">Coroline</span>
+                            </div>
+                            <div class="card-actions">
+                                <button class="action-btn">
+                                    <svg class="action-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                        <path d="M12 21.35L10.55 20.03C5.4 15.36 2 12.28 2 8.5C2 5.42 4.42 3 7.5 3C9.24 3 10.91 3.81 12 5.09C13.09 3.81 14.76 3 16.5 3C19.58 3 22 5.42 22 8.5C22 12.28 18.6 15.36 13.45 20.04L12 21.35Z" fill="currentColor"/>
+                                    </svg>
+                                    <span>301</span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="card">
+                    <img src="./img/temp/Checkered Halloween design with whimsical elements_ Fabric _ Spoonflower.jpeg" alt="Imagen de ejemplo 1" class="card-image">
+                    <div class="card-content">
+                        <div class="card-footer">
+                            <div class="card-author">
+                                <img src="./img/temp/_ (2).jpeg" alt="Avatar de usuario" class="author-avatar">
+                                <span class="author-name">Coroline</span>
+                            </div>
+                            <div class="card-actions">
+                                <button class="action-btn">
+                                    <svg class="action-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                        <path d="M12 21.35L10.55 20.03C5.4 15.36 2 12.28 2 8.5C2 5.42 4.42 3 7.5 3C9.24 3 10.91 3.81 12 5.09C13.09 3.81 14.76 3 16.5 3C19.58 3 22 5.42 22 8.5C22 12.28 18.6 15.36 13.45 20.04L12 21.35Z" fill="currentColor"/>
+                                    </svg>
+                                    <span>301</span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="card">
+                    <img src="./img/temp/Mary Ann (@theghostegg) • Instagram photos and videos.jpeg" alt="Imagen de ejemplo 1" class="card-image">
+                    <div class="card-content">
+                        <div class="card-footer">
+                            <div class="card-author">
+                                <img src="./img/temp/_ (2).jpeg" alt="Avatar de usuario" class="author-avatar">
+                                <span class="author-name">Coroline</span>
+                            </div>
+                            <div class="card-actions">
+                                <button class="action-btn">
+                                    <svg class="action-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                        <path d="M12 21.35L10.55 20.03C5.4 15.36 2 12.28 2 8.5C2 5.42 4.42 3 7.5 3C9.24 3 10.91 3.81 12 5.09C13.09 3.81 14.76 3 16.5 3C19.58 3 22 5.42 22 8.5C22 12.28 18.6 15.36 13.45 20.04L12 21.35Z" fill="currentColor"/>
+                                    </svg>
+                                    <span>301</span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </section>
         </main>
     </div>
-    <script src="JS/navbar.js"></script>
-    <script src="JS/pines.js"></script>
+    <script> //para que funcionen los iconos del nav
+        document.addEventListener("DOMContentLoaded", () => {
+            const homeBtn = document.querySelector(".icon-bar.home");
+            const searchBtn = document.querySelector(".icon-bar.search");
+            const addBtn = document.querySelector(".icon-bar.add");
+            const imgUser = document.querySelector(".user-avatar")
+
+            homeBtn.addEventListener("click", () => {
+                window.location.href = "index.html"; 
+            });
+
+            searchBtn.addEventListener("click", () => {
+                window.location.href = ".html";
+            });
+
+            addBtn.addEventListener("click", () => {
+                window.location.href = "create-pin.html";
+            });
+
+        });
+    </script>
+    <script> //para que funcione el boton de ordenar
+        document.addEventListener("DOMContentLoaded", () => {
+            // Ordenar por
+            const orderBtn = document.querySelector(".order-by");
+            const orderMenu = document.querySelector(".order-menu");
+
+            orderBtn.addEventListener("click", (e) => {
+                e.stopPropagation();
+                orderMenu.style.display = orderMenu.style.display === "block" ? "none" : "block";
+            });
+
+            // Cerrar menú si clicás afuera
+            document.addEventListener("click", () => {
+                orderMenu.style.display = "none";
+            });
+
+            orderMenu.querySelectorAll("li").forEach(item => {
+                item.addEventListener("click", (e) => {
+                const tipo = e.target.dataset.order;
+                console.log("Orden seleccionado:", tipo);
+                orderMenu.style.display = "none";
+                // acá se ejecutara la función de ordenamiento elegida por el usuario
+                });
+            });
+        });
+    </script>
+
 </body>
 </html>

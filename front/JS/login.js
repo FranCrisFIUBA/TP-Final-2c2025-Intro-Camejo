@@ -1,30 +1,43 @@
 document.getElementById("form-login").addEventListener("submit", async (e) => {
     e.preventDefault();
+    
+    const mensaje = document.getElementById("mensaje-login");
+    mensaje.textContent = "";
+    mensaje.style.color = "red";
 
     const datos = {
         usuario: e.target.usuario.value,
-        contrasenia: e.target.contraseña.value // enviar contrasenia, no contraseña
+        contrasenia: e.target.contraseña.value 
     };
 
+    if (!datos.usuario || !datos.contrasenia) {
+        mensaje.textContent = "Debes completar todos los campos";
+        return;
+    }
+
     try {
-        const respuesta = await fetch("http://localhost:3000/usuarios/", {
-            method: "POST",
-            headers: {
-                "Content-Type" : "aplication/json"
-            },
-            body: JSON.stringify(datos)
-        });
-
+        const respuesta = await fetch("http://localhost:3000/usuarios/");
+        if (!respuesta.ok) {
+            mensaje.textContent = "No se pudo obtener usuarios";
+            return;
+        }
         const resultado = await respuesta.json();
-        console.log("respuesta del backend:",resultado);
+        const usuario_ingresado = resultado.find(u =>
+            u.nombre === datos.usuario && u.contrasenia === datos.contrasenia
+        );
 
-        if (resultado.ok) {
-            alert("Login exitoso");
+        if (usuario_ingresado) {
+            mensaje.style.color = "green";
+            mensaje.textContent = "Login exitoso";
+            console.log("Usuario logueado", usuario_ingresado);
+            irAlPerfil(usuario_ingresado.id);
         } else {
-            alert("Usuario o contraseña incorrectos");
+            mensaje.style.color = "red";
+            mensaje.textContent = "Usuario o contraseña incorrectos";
+            return;
         }
     } catch (error) {
         console.log("error al enviar los datos",error);
-        alert("No se pudo conectar con el servidor");
+        mensaje.textContent = "No se pudo conectar con el servidor";
     }
 });
