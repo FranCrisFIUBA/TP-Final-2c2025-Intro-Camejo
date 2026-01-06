@@ -2,63 +2,96 @@
     box-sizing: border-box;
 }
 
-
-form {
-    width: 430px;
-    height: 430px;
-    margin: 50px,auto;
-    border: 1px solid;
-    border-radius: 30px;
-    text-align: center;
+body {
+  font-family: var(--nunito-bold);
+  background: url("../img/registro-fondo.png") no-repeat center center fixed;
+  background-size: cover;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  margin: 0;
+  overflow: hidden;
 }
 
+form {
+    width: 580px;
+    max-height: 95vh;
+    margin: 50px,auto;
+    border: var(--border-estandar);
+    border-radius: 30px;
+    text-align: center;
+    background: var(--blanco);
+    padding-bottom: 60px;
+}
 
+.top-logo {
+    margin-top: 10px;
+    display: flex;
+    justify-content: center;
+}
 
+.logo {
+    width: 60px;
+    height: 50px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.logo img {
+    width: 50px;
+    height: 50px;
+}
 input {
     width: 80%;
     margin-bottom: 8px;
     margin-left: 8px;
     margin-right: 8px ;
-    padding: 8px;
+    padding: 13px;
     background-color: transparent;
     border-radius: 8px;
-    border: 2px solid #555;
+    border: var(--border-estandar);
 }
 
 input[type="date"] {
     width: 35%;
-    margin-right: 200px;
+    margin-right: 46%;
     color: #6c757d;
 }
 
 .campo-registrarse {
-    width: 100px;
-    height: 50px;
-    margin-bottom: 4px;
+    width: 120px;
+    height: 40px;
+    padding-top: 10px;
+    margin-top: 5px;
+    margin-bottom: 5px;
     background-color: var(--amarillo);
+    font-family: var(--nunito);
+    color: var(--negro);
 }
 
 p {
-
-    margin-top: 5px;
-    color: red;
-    font-family:'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;    
+    color: var(--naranja);
+    font-family: var(--nunito-bold); 
+    margin-top: 1px;
 }
 
 p a{
-    color: red;
+    color: var(--naranja);
     text-decoration: none;
+    cursor: pointer;
 }
-
-body {
-    height: 100vh;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    background-color: var(--blanco);
+p a:hover {
+    color: var(--morado-oscuro);
+    text-decoration: underline;
+    text-underline-offset: 4px;
+    text-decoration-thickness: 2px;
 }
 
 h1 {
-    margin-top: 70px;
-    font-family:'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+    font-family:var(--nunito-bold);
+    color: var(--negro);
+    margin-top: 3px;
+    margin-bottom: 15px;
 }

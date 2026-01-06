@@ -1,95 +1,114 @@
+const usuarioLogueado = JSON.parse(localStorage.getItem("usuarioLogueado"));
+
+document.addEventListener('DOMContentLoaded', () => {
+    const container = document.querySelector('.container');
+    const navbarContainer = document.getElementById('navbar-container');
+
+    if (!container) return;
+
+    if (!usuarioLogueado) {
+        container.classList.remove('con-navbar');
+        container.classList.add('sin-navbar');
+
+        if (navbarContainer) {
+            navbarContainer.innerHTML = '';
+            navbarContainer.style.display = 'none';
+        }
+
+        controlarAuthButtons();
+        return;
+    }
+
+    container.classList.remove('sin-navbar');
+    container.classList.add('con-navbar');
+
+    cargarNavbar();
+    controlarAuthButtons();
+});
+
+
 function cargarNavbar() {
     fetch('./navbar.html')
         .then(response => response.text())
-        .then(data => {
-            document.getElementById('navbar-container').innerHTML = data;
-            setTimeout(inicializarNavbar, 100);
+        .then(html => {
+            const container = document.getElementById('navbar-container');
+            if (!container) return;
+
+            container.innerHTML = html;
+            container.style.display = 'block';
+
+            inicializarNavbar();
         })
         .catch(error => console.error('Error loading navbar:', error));
 }
 
+function controlarAuthButtons() {
+    const authButtons = document.querySelector('.auth-buttons');
+    if (!authButtons) return;
+
+    const usuarioLogueado = JSON.parse(localStorage.getItem('usuarioLogueado'));
+
+    if (usuarioLogueado) {
+        authButtons.classList.add('hidden');
+    } else {
+        authButtons.classList.remove('hidden');
+    }
+}
+
+
 function inicializarNavbar() {
-    console.log('Inicializando navbar...'); 
-    
+    const sidebar = document.querySelector(".sidebar");
+    if (!sidebar) return;
+
+    sidebar.style.display = "flex";
+
+    // Avatar
+    const avatarImg = document.querySelector(".user-avatar img");
+    if (avatarImg) {
+        avatarImg.src = usuarioLogueado.icono || "./img/avatar-default.jpg";
+    }
+
     const addButton = document.getElementById('add-button');
     const dropdownMenu = document.getElementById('dropdown-menu');
     const overlay = document.getElementById('overlay');
     const profileButton = document.getElementById('profile-button');
-    
-    console.log('Elementos encontrados:', { addButton, dropdownMenu, overlay, profileButton }); 
-    
-    // Función para mostrar y ocultar el menú desplegable
+
     function toggleDropdown() {
-        if (dropdownMenu && overlay) {
-            const isShowing = dropdownMenu.classList.contains('show');
-            dropdownMenu.classList.toggle('show');
-            overlay.classList.toggle('show');
-            console.log('Dropdown toggled. Showing:', !isShowing); 
-        }
+        dropdownMenu?.classList.toggle('show');
+        overlay?.classList.toggle('show');
     }
-    
-    // botón "Agregar"
-    if (addButton) {
-        addButton.addEventListener('click', function(e) {
-            e.preventDefault();
-            e.stopPropagation();
-            console.log('Add button clicked'); 
-            toggleDropdown();
-        });
-    } else {
-        console.error('Add button not found');
-    }
-    
-    // Cerrar el menú al hacer clic fuera
-    if (overlay) {
-        overlay.addEventListener('click', function() {
-            console.log('Overlay clicked - closing dropdown'); 
-            dropdownMenu.classList.remove('show');
-            overlay.classList.remove('show');
-        });
-    }
-    
-    // Cerrar el menú al hacer clic en una opción
-    const dropdownItems = document.querySelectorAll('.dropdown-item');
-    dropdownItems.forEach(item => {
-        item.addEventListener('click', function(e) {
-            console.log('Dropdown item clicked'); 
-            dropdownMenu.classList.remove('show');
-            overlay.classList.remove('show');
+
+    addButton?.addEventListener('click', (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        toggleDropdown();
+    });
+
+    overlay?.addEventListener('click', () => {
+        dropdownMenu?.classList.remove('show');
+        overlay.classList.remove('show');
+    });
+
+    document.querySelectorAll('.dropdown-item').forEach(item => {
+        item.addEventListener('click', () => {
+            dropdownMenu?.classList.remove('show');
+            overlay?.classList.remove('show');
         });
     });
-    
-    // Cerrar menú al hacer clic en cualquier parte del documento
-    document.addEventListener('click', function(e) {
-        if (dropdownMenu && dropdownMenu.classList.contains('show') && 
-            !dropdownMenu.contains(e.target) && 
-            e.target !== addButton) {
-            console.log('Click outside - closing dropdown'); 
-            dropdownMenu.classList.remove('show');
-            overlay.classList.remove('show');
+
+    document.querySelector(".icon-bar.home")
+        ?.addEventListener("click", () => location.href = "index.html");
+
+    document.querySelector(".icon-bar.search")
+        ?.addEventListener("click", () => location.href = "search.html");
+
+    profileButton?.addEventListener("click", () => {
+        if (!usuarioLogueado || !usuarioLogueado.id) {
+            console.warn("No hay usuario logueado");
+            return;
         }
+
+        location.href = `perfil.html?id=${usuarioLogueado.id}`;
     });
-    
-    const homeBtn = document.querySelector(".icon-bar.home");
-    const searchBtn = document.querySelector(".icon-bar.search");
 
-    if (homeBtn) {
-        homeBtn.addEventListener("click", () => {
-            window.location.href = "index.html"; 
-        });
-    }
-
-    if (searchBtn) {
-        searchBtn.addEventListener("click", () => {
-            window.location.href = "search.html";
-        });
-    }
-
-    if (profileButton) {
-        profileButton.addEventListener("click", () => {
-            window.location.href = "perfil.html";
-        });
-    }
 }
-
-document.addEventListener('DOMContentLoaded', cargarNavbar);
