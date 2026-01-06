@@ -9,6 +9,7 @@ import {
 import {esquemaActualizacionUsuario, esquemaPostUsuario} from "../utils/esquemas/usuarios.js";
 import {iconoUsuarioUpload} from "../middlewares/storage.js";
 import multer from "multer";
+import {elimiarIconoUsuarioPorId} from "../utils/storage/usuarios.js";
 
 const usuarios = express.Router()
 
@@ -155,12 +156,16 @@ usuarios.patch('/:id', async (req, res) => {
 
 usuarios.delete('/:id', async (req, res) => {
     try {
-        if (await existeUsuarioConId(req.params.id) !== true)
+        const { id } = req.params;
+
+        if (await existeUsuarioConId(id) !== true)
             return res.status(404).json({ error: "Usuario no encontrado" });
+
+        await elimiarIconoUsuarioPorId(id)
 
         await pool.query(
             "DELETE FROM usuarios WHERE id = $1",
-            [req.params.id]
+            id
         );
 
         res.status(200).json({ message: "Usuario eliminado" });
