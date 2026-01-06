@@ -9,6 +9,7 @@ import {intentarConseguirPublicacionPorId} from "../utils/database/publicaciones
 import {existeUsuarioConId} from "../utils/database/usuarios.js";
 import {iconoUsuarioUpload, imagenPublicacionUpload} from "../middlewares/storage.js";
 import multer from "multer";
+import {eliminarImagenPublicacionPorId} from "../utils/storage/publicaciones.js";
 
 const publicaciones = express.Router();
 
@@ -197,9 +198,13 @@ publicaciones.patch('/:id', async (req, res) => {
 // DELETE /publicaciones/:id - Eliminar publicación
 publicaciones.delete('/:id', async (req, res) => {
     try {
+        const { id } = req.params;
+
+        await eliminarImagenPublicacionPorId(id);
+
         const { rowCount } = await pool.query(
             "DELETE FROM publicaciones WHERE id = $1 RETURNING id",
-            [req.params.id]
+            [id]
         );
 
         if (rowCount === 0) {
