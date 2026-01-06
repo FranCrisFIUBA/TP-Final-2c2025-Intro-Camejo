@@ -10,11 +10,11 @@ export async function elimiarIconoUsuarioPorId(id) {
         throw new Error("No se pudo encontrar a un usuario con Id " + id)
     }
 
-    const { icono } = usuario;
-
-    fs.unlink(path.join(ICONOS_PATH, icono), (err) => {
-        if (err) {
-            console.error(err);
-        }
-    });
+    if (usuario.icono) {
+        fs.unlink(path.join(ICONOS_PATH, usuario.icono), (err) => {
+            if (err) {
+                console.error(err);
+            }
+        });
+    }
 }

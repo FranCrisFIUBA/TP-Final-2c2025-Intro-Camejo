@@ -10,11 +10,11 @@ export async function eliminarImagenPublicacionPorId(id) {
         throw new Error("No se pudo encontrar una publicacion con Id " + id)
     }
 
-    const { imagen } = publicacion;
-
-    fs.unlink(path.join(IMAGENES_PATH, imagen), (err) => {
-        if (err) {
-            console.error(err);
-        }
-    });
+    if (publicacion.imagen) {
+        fs.unlink(path.join(IMAGENES_PATH, publicacion.imagen), (err) => {
+            if (err) {
+                console.error(err);
+            }
+        });
+    }
 }
