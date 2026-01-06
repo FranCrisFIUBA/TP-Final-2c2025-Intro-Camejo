@@ -1,6 +1,7 @@
 import {intentarConseguirUsuarioPorId} from "../database/usuarios.js";
 import fs from "fs";
 import {ICONOS_PATH} from "../../middlewares/storage.js";
+import * as path from "node:path";
 
 export async function elimiarIconoUsuarioPorId(id) {
     const usuario = await intentarConseguirUsuarioPorId(id);
@@ -11,7 +12,7 @@ export async function elimiarIconoUsuarioPorId(id) {
 
     const { icono } = usuario;
 
-    fs.unlink(ICONOS_PATH + icono, (err) => {
+    fs.unlink(path.join(ICONOS_PATH, icono), (err) => {
         if (err) {
             console.error(err);
         }
