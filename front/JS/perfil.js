@@ -209,6 +209,16 @@ async function cargarPublicacionesDeUsuario(usuarioId) {
   }
 }
 
+function validarContrasenia(password) {
+  const regex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}$/;
+  return regex.test(password);
+}
+
+function validarNombre(nombre) {
+  const regex = /^[A-Za-z0-9._-]{6,25}$/;
+  return regex.test(nombre);
+}
+
 
 function abrirModalPerfil() {
   const modal = document.getElementById('modal-editar');
@@ -224,23 +234,15 @@ function completarFormularioPerfil(usuario) {
   if (!usuario) return;
 
   const nombre = document.getElementById('edit-nombre');
-  const fecha = document.getElementById('edit-fecha');
   const img = document.getElementById('profile-image-edit');
 
   if (nombre) nombre.value = usuario.nombre || '';
-  if (fecha && usuario.fecha_nacimiento) {
-    fecha.value = usuario.fecha_nacimiento.split('T')[0];
-  }
 
   if (img) {
     img.src = resolverIcono(usuario.icono);
     img.onerror = () => img.src = './img/avatar-default.jpg';
   }
 }
-
-document.addEventListener('DOMContentLoaded', () => {
-  cargarPerfilUsuario();
-});
 
 document.addEventListener('click', (e) => {
 
@@ -303,4 +305,118 @@ btnBorrar.addEventListener('click', async () => {
         console.error("Error en la petición:", error);
         alert("No se pudo conectar con el servidor.");
     }
+});
+
+
+const editForm = document.getElementById('edit-profile-form');
+
+editForm.addEventListener('submit', async (e) => {
+  e.preventDefault();
+
+  const usuarioLogueado = obtenerUsuarioLogueado();
+  if (!usuarioLogueado || !usuarioLogueado.id) {
+    alert('Usuario no identificado');
+    return;
+  }
+
+  const nombre = document.getElementById('edit-nombre').value.trim();
+  const pass = document.getElementById('edit-contraseña').value;
+  const passRep = document.getElementById('edit-contraseña-repetida').value;
+  const iconoInput = document.getElementById('edit-icono');
+
+  if (pass || passRep) {
+    if (pass !== passRep) {
+      alert('Las contraseñas no coinciden');
+      return;
+    }
+
+    if (!validarContrasenia(pass)) {
+      alert(
+        'La contraseña debe tener al menos:\n' +
+        '- 8 caracteres\n' +
+        '- 1 letra mayúscula\n' +
+        '- 1 letra minúscula\n' +
+        '- 1 número'
+      );
+      return;
+    }
+  }
+
+
+  const formData = new FormData();
+  formData.append('id', Number(usuarioLogueado.id));
+
+
+  if (nombre && nombre !== usuarioActual.nombre) {
+    if (!validarNombre(nombre)) {
+      alert(
+        'El nombre de usuario debe:\n' +
+        '- Tener entre 6 y 25 caracteres\n' +
+        '- Usar solo letras, números, . _ -\n' +
+        '- No contener espacios ni tildes'
+      );
+      return;
+    }
+
+    formData.append('nombre', nombre);
+  }
+
+  if (pass) formData.append('contrasenia', pass);
+
+  if (iconoInput?.files?.length > 0) { 
+    formData.append('icono', iconoInput.files[0]);
+  }
+
+  try {
+    const response = await fetch(
+      `${API_BASE_URL}/usuarios/${usuarioLogueado.id}`,
+      {
+        method: 'PATCH',
+        body: formData
+      }
+    );
+
+    if (!response.ok) {
+      const error = await response.json();
+      alert(error.error || 'Error al actualizar perfil');
+      return;
+    }
+
+    const usuarioActualizado = await response.json();
+
+    // actualizar estado frontend
+    usuarioActual = usuarioActualizado;
+    localStorage.setItem(
+      'usuarioLogueado',
+      JSON.stringify(usuarioActualizado)
+    );
+
+    mostrarDatosUsuario(usuarioActualizado);
+    cerrarModalPerfil();
+    alert('Perfil actualizado correctamente');
+
+  } catch (err) {
+    console.error(err);
+    alert('Error de conexión con el servidor');
+  }
+});
+
+
+const btnEditarAvatar = document.getElementById('btn-editar-avatar');
+const inputIcono = document.getElementById('edit-icono');
+const previewImg = document.getElementById('profile-image-edit');
+
+btnEditarAvatar.addEventListener('click', () => {
+  inputIcono.click();
+});
+
+inputIcono.addEventListener('change', () => {
+  const file = inputIcono.files[0];
+  if (!file) return;
+
+  const reader = new FileReader();
+  reader.onload = (e) => {
+    previewImg.src = e.target.result;
+  };
+  reader.readAsDataURL(file);
 });

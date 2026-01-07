@@ -80,15 +80,17 @@
             <div class="modal-top-actions">
                 <button class="btn-borrar" id="borrar-edit">Eliminar cuenta</button>
                 <button class="btn-cancelar" id="cancel-edit">Cancelar</button>
-                <button class="btn-guardar" form="perfil-edit">Guardar</button>
+                <button class="btn-guardar" form="edit-profile-form">Guardar</button>
+
             </div>
             </div>
 
             <div class="modal-content">
                 <div class="modal-avatar">
-                    <div class="avatar-box">
-                    <img src="" alt="Foto de perfil" class="profile-image-edit" id="profile-image-edit">
-                    <i class="fa-solid fa-pencil"></i>
+                   <div class="avatar-box">
+                        <img src="" alt="Foto de perfil" class="profile-image-edit" id="profile-image-edit">
+                        <i class="fa-solid fa-pencil" id="btn-editar-avatar"></i>
+                        <input type="file" id="edit-icono" accept="image/*" style="display:none">
                     </div>
                 </div>
 
@@ -101,9 +103,6 @@
 
                     <label>Repetir contraseña</label>
                     <input type="password" id="edit-contraseña-repetida">
-
-                    <label>Fecha de nacimiento</label>
-                    <input type="date" id="edit-fecha">
                 </form>
             </div>
         </div>

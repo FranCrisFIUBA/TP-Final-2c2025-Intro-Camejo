@@ -118,7 +118,16 @@ usuarios.patch(
 
     async (req, res) => {
         try {
-            const { id } = req.params;
+            const id = Number(req.params.id);
+
+            if (Number.isNaN(id)) {
+                return res.status(400).json({
+                errors: [{
+                    path: ['id'],
+                    message: 'Id de usuario invalido'
+                }]
+                });
+            }
 
             const usuario = await intentarConseguirUsuarioPorId(id);
             if (!usuario.success) {
@@ -158,7 +167,7 @@ usuarios.patch(
 
             // Si hay icono nuevo, eliminar el anterior
             if (req.file && usuario.data.icono) {
-                await elimiarIconoUsuarioPorId(usuario.data.icono);
+                await elimiarIconoUsuarioPorId(usuario.data.id);
             }
 
             const result = await actualizarUsuarioPorId(
