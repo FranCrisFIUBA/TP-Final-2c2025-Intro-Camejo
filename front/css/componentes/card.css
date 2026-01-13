@@ -104,12 +104,28 @@
 
 
 
-.btn-edit-publicacion{
-    background: var(--amarillo);
-  color: var(--negro);
+.card-actions {
+  display: flex;
+  gap: 8px;
+  margin-left: auto;
+}
+
+.card-action-btn {
+  background: none;
   border: none;
-  font-family: var(--nunito);
-  padding: 8px 14px;
-  border-radius: 8px;
   cursor: pointer;
+  font-size: 14px;
+  padding: 6px;
+  border-radius: 6px;
+  color: #555;
+}
+
+.card-action-btn.edit:hover {
+  color: #1e90ff;
+  background-color: rgba(30,144,255,0.1);
+}
+
+.card-action-btn.delete:hover {
+  color: #e53935;
+  background-color: rgba(229,57,53,0.1);
 }

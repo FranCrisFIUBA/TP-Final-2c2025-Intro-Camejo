@@ -178,29 +178,68 @@ async function cargarPublicacionesDeUsuario(usuarioId) {
 
   const mostrarEditar = esPerfilDelUsuarioLogueado();
 
-  publicaciones.forEach(p => {
-    const editable = Number(obtenerUsuarioLogueado()?.id) === Number(usuarioId);
-    const card = crearCard(
-      {
-        ...p,
-        usuario_nombre: usuarioActual.nombre,
-        usuario_icono: usuarioActual.icono
+publicaciones.forEach(p => {
+  const editable = esPerfilDelUsuarioLogueado();
+
+  const card = crearCard(
+    {
+      ...p,
+      usuario_nombre: usuarioActual.nombre,
+      usuario_icono: usuarioActual.icono
+    },
+    {
+      editable,
+
+      onEdit: (publicacion) => {
+        localStorage.setItem(
+          "publicacionEditar",
+          JSON.stringify(publicacion)
+        );
+        window.location.href = "create-pin.html";
       },
-      {
-        editable,
-        onEdit: (publicacion) => {
-          localStorage.setItem(
-            "publicacionEditar",
-            JSON.stringify(publicacion)
+
+      onDelete: async (publicacion) => {
+        const confirmar = confirm(
+          "¿Estás seguro de que querés eliminar esta publicación? Esta acción no se puede deshacer."
+        );
+
+        if (!confirmar) return;
+
+        try {
+          const response = await fetch(
+            `${API_BASE_URL}/publicaciones/${publicacion.id}`,
+            { method: 'DELETE' }
           );
-          window.location.href = "create-pin.html";
+
+          if (!response.ok) {
+            const err = await response.json();
+            alert(err.error || "Error al eliminar la publicación");
+            return;
+          }
+
+          // eliminar visualmente la card
+          card.remove();
+
+          // si ya no quedan publicaciones, mostrar estado vacío
+          if (!container.children.length) {
+            container.innerHTML = `
+              <div class="no-content">
+                <img src="./img/sinPublicaciones1.png" alt="Sin contenido">
+                <p>Este usuario aún no tiene publicaciones</p>
+              </div>`;
+          }
+
+        } catch (error) {
+          console.error(error);
+          alert("Error de conexión con el servidor");
         }
       }
-    );
+    }
+  );
 
+  container.appendChild(card);
+});
 
-    container.appendChild(card);
-  });
 
 
   } catch (error) {

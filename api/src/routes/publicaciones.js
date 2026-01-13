@@ -236,22 +236,17 @@ publicaciones.patch(
 publicaciones.delete('/:id', async (req, res) => {
     try {
         const { id } = req.params;
+        const imagenEliminada = await eliminarImagenPublicacionPorId(id);
 
-        await eliminarImagenPublicacionPorId(id);
-
-        const { rowCount } = await pool.query(
-            "DELETE FROM publicaciones WHERE id = $1 RETURNING id",
-            [id]
-        );
+        const { rowCount } = await pool.query("DELETE FROM publicaciones WHERE id = $1", [id]);
 
         if (rowCount === 0) {
             return res.status(404).json({ error: "Publicación no encontrada" });
         }
 
-        res.status(200).json({ message: "Publicación eliminada" });
+        res.json({ message: "Publicación eliminada", imagenEliminada });
     } catch (err) {
-        console.error(err);
-        res.status(500).json({ error: "Error al eliminar publicación" });
+        res.status(500).json({ error: "Error al eliminar" });
     }
 });
 
