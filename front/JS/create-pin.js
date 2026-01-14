@@ -5,13 +5,33 @@ const formPublicacion = document.getElementById("form-publicacion");
 const fileInput = document.getElementById("file-input");
 const previewImg = document.getElementById("preview-img");
 const textPrompt = document.getElementById("text-prompt");
-
+const pinParaEditar = JSON.parse(localStorage.getItem("pinParaEditar"));
 const usuarioLogueado = JSON.parse(localStorage.getItem("usuarioLogueado"));
 const btnTrigger = document.getElementById("btn-subir-imagen-trigger");
 const pinContainer = document.querySelector(".pin-container");
 
 btnTrigger.addEventListener("click", () => {
     fileInput.click();
+});
+
+if (pinParaEditar) {
+    document.title = "Editar Pin";
+    const submitBtn = document.querySelector(".publish-btn");
+    if(submitBtn) submitBtn.textContent = "Guardar cambios";
+    
+    formPublicacion.querySelector('[name="titulo"]').value = pinParaEditar.titulo || "";
+    formPublicacion.querySelector('[name="etiquetas"]').value = pinParaEditar.etiquetas || "";
+    
+    if (pinParaEditar.imagen) {
+        previewImg.src = `${API_BASE}/imagenes/${pinParaEditar.imagen}`;
+        previewImg.style.display = "block";
+        textPrompt.style.display = "none";
+    }
+}
+
+const btnCancelar = document.querySelector(".cancel-btn");
+btnCancelar.addEventListener("click", () => {
+    localStorage.removeItem("pinParaEditar");
 });
 
 function aplicarRatio(ratio) {
@@ -113,14 +133,17 @@ fileInput.addEventListener("change", () => {
 formPublicacion.addEventListener("submit", async (e) => {
     e.preventDefault();
 
-    if (!fileInput.files.length) {
+    if (!fileInput.files.length && !pinParaEditar) {
         alert("Debes seleccionar una imagen");
         return;
     }
 
     const formData = new FormData(formPublicacion);
     formData.set("usuario_id", usuarioLogueado.id);
-
+    
+    if (pinParaEditar && fileInput.files.length === 0) {
+        formData.delete("imagen");
+    }
     const selectedRatio = formData.get("aspect_ratio");
 
     let ancho = null;
@@ -141,21 +164,38 @@ formPublicacion.addEventListener("submit", async (e) => {
         formData.set("ancho_imagen", ancho);
         formData.set("alto_imagen", alto);
     }
+    
+    let url = API_PUBLICACIONES;
+    let metodo = "POST";
+
+    if (pinParaEditar) {
+        url = `${API_PUBLICACIONES}/${pinParaEditar.id}`;
+        metodo = "PATCH";
+        console.log("Editando pin:", pinParaEditar.id);
+        // Añade este console.log antes del fetch en create-pin.js
+console.log("Archivo seleccionado:", fileInput.files[0]);
+console.log("Campos en FormData:");
+for (let pair of formData.entries()) {
+    console.log(pair[0] + ': ' + pair[1]);
+}
+    }
 
     try {
-        const res = await fetch(API_PUBLICACIONES, {
-            method: "POST",
+        const res = await fetch(url, {
+            method: metodo,
             body: formData
         });
+        const data = await res.json();
 
         if (!res.ok) {
-            const err = await res.json();
-            alert("Error al publicar: " + JSON.stringify(err));
+            console.error("Detalle del error:", data);
+            alert("Error: " + (data.error || "Error desconocido"));
             return;
         }
 
-        alert("¡Publicación creada con éxito!");
-        window.location.href = "index.html";
+        alert(pinParaEditar ? "¡Actualizado con éxito!" : "¡Publicado con éxito!");
+        localStorage.removeItem("pinParaEditar");
+        window.location.href = `perfil.html?id=${usuarioLogueado.id}`;
     } catch (err) {
         console.error(err);
         alert("No se pudo conectar con el servidor");

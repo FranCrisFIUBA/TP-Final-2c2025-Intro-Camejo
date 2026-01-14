@@ -176,8 +176,6 @@ async function cargarPublicacionesDeUsuario(usuarioId) {
 
     container.innerHTML = '';
 
-  const mostrarEditar = esPerfilDelUsuarioLogueado();
-
 publicaciones.forEach(p => {
   const editable = esPerfilDelUsuarioLogueado();
 
@@ -188,14 +186,11 @@ publicaciones.forEach(p => {
       usuario_icono: usuarioActual.icono
     },
     {
-      editable,
+      editable: true,
 
       onEdit: (publicacion) => {
-        localStorage.setItem(
-          "publicacionEditar",
-          JSON.stringify(publicacion)
-        );
-        window.location.href = "create-pin.html";
+          localStorage.setItem("pinParaEditar", JSON.stringify(publicacion));
+          window.location.href = "create-pin.html";
       },
 
       onDelete: async (publicacion) => {
@@ -216,11 +211,7 @@ publicaciones.forEach(p => {
             alert(err.error || "Error al eliminar la publicación");
             return;
           }
-
-          // eliminar visualmente la card
           card.remove();
-
-          // si ya no quedan publicaciones, mostrar estado vacío
           if (!container.children.length) {
             container.innerHTML = `
               <div class="no-content">
@@ -422,8 +413,6 @@ editForm.addEventListener('submit', async (e) => {
     }
 
     const usuarioActualizado = await response.json();
-
-    // actualizar estado frontend
     usuarioActual = usuarioActualizado;
     localStorage.setItem(
       'usuarioLogueado',

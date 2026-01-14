@@ -177,17 +177,14 @@ publicaciones.patch(
             }
 
             const datosActualizados = {
+                id: Number(id), 
                 ...req.body,
                 imagen: req.file ? req.file.filename : undefined,
-                alto_imagen: req.body.alto_imagen
-                    ? Number(req.body.alto_imagen)
-                    : undefined,
-                ancho_imagen: req.body.ancho_imagen
-                    ? Number(req.body.ancho_imagen)
-                    : undefined
+                alto_imagen: req.body.alto_imagen ? Number(req.body.alto_imagen) : undefined,
+                ancho_imagen: req.body.ancho_imagen ? Number(req.body.ancho_imagen) : undefined
             };
 
-            const parsedActualizacion = esquemaActualizacionPublicacion.safeParseAsync(datosActualizados);
+            const parsedActualizacion = await esquemaActualizacionPublicacion.safeParseAsync(datosActualizados);
 
             if (!parsedActualizacion.success) {
                 return res.status(400).json({
@@ -195,16 +192,17 @@ publicaciones.patch(
                 });
             }
 
-            if (req.file && publicacion.imagen) {
-                await eliminarImagenPublicacionPorId(publicacion.imagen);
+            const dataParaDB = { ...parsedActualizacion.data };
+            if (req.file) {
+                dataParaDB.imagen = req.file.filename;
             }
 
             const campos = [];
             const valores = [];
             let i = 1;
 
-            Object.entries(parsedActualizacion.data).forEach(([key, value]) => {
-                if (value !== undefined) {
+            Object.entries(dataParaDB).forEach(([key, value]) => {
+                if (key !== 'id' && value !== undefined) {
                     campos.push(`${key} = $${i}`);
                     valores.push(value);
                     i++;
@@ -225,9 +223,16 @@ publicaciones.patch(
             const result = await pool.query(query, valores);
 
             res.status(200).json(result.rows[0]);
-        } catch (err) {
-            console.error(err);
-            res.status(500).json({ error: "Error al actualizar publicación" });
+        } catch (err) { 
+            console.error("Error detallado:", err);
+            
+            if (err && err.issues) {
+                return res.status(400).json({ 
+                    error: "Datos inválidos", 
+                    detalles: err.issues.map(i => i.message) 
+                });
+            }
+            return res.status(500).json({ error: "Error al actualizar publicación" });
         }
     }
 );
