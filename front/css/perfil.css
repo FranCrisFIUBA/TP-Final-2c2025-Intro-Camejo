@@ -665,7 +665,7 @@ body, html {
 
 
 /* Estilos para las publicaciones */
-.publicaciones-container {
+.cards-container{
   column-count: 6; 
   column-gap: 10px; 
   padding: var(--padding-estandar);
@@ -673,115 +673,6 @@ body, html {
   box-sizing: border-box;
 }
 
-.publicacion-item {
-    background: white;
-    border-radius: 16px;
-    padding: 18px;
-    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-    transition: all 0.3s ease;
-    border: 1px solid #f0f0f0;
-}
-
-.publicacion-item:hover {
-    transform: translateY(-8px);
-    box-shadow: 0 8px 25px rgba(0,0,0,0.15);
-}
-
-.publicacion-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-start;
-    margin-bottom: 15px;
-}
-
-.publicacion-title {
-    font-size: 16px;
-    font-weight: 600;
-    margin: 0;
-    color: var(--text-color);
-    line-height: 1.3;
-    flex: 1;
-    margin-right: 10px;
-}
-
-.publicacion-likes {
-    background: var(--primary-color);
-    color: white;
-    padding: 6px 12px;
-    border-radius: 20px;
-    font-size: 12px;
-    font-weight: 600;
-    display: flex;
-    align-items: center;
-    gap: 5px;
-    white-space: nowrap;
-}
-
-.publicacion-image {
-    width: 100%;
-    height: 200px;
-    object-fit: cover;
-    border-radius: 12px;
-    cursor: pointer;
-    transition: transform 0.3s ease;
-}
-
-.publicacion-image:hover {
-    transform: scale(1.05);
-}
-
-.publicacion-info {
-    margin-top: 15px;
-}
-
-.publicacion-hashtags {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 6px;
-    margin-bottom: 10px;
-}
-
-.hashtag {
-    background: var(--light-gray);
-    padding: 4px 10px;
-    border-radius: 12px;
-    font-size: 11px;
-    color: var(--text-color);
-    font-weight: 500;
-}
-
-.publicacion-fecha {
-    font-size: 12px;
-    color: var(--gray);
-    margin: 0;
-    display: flex;
-    align-items: center;
-    gap: 5px;
-}
-
-.no-content {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  text-align: center;
-  padding: 60px 20px;
-  width: 100%;
-  grid-column: 1 / -1; 
-  column-span: all;  
-}
-
-.no-content img {
-  max-width: 200px;
-  margin-bottom: 15px;
-}
-
-.no-content p {
-  font-size: 18px;
-  color: var(--gris2);
-  font-weight: 500;
-  font-family: var(--nunito);
-}
 
 
 
@@ -789,9 +680,6 @@ body, html {
 
 
 
-
-
-/* OVERLAY */
 .modal-overlay {
   position: fixed;
   inset: 0;

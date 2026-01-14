@@ -8,6 +8,7 @@
     <link rel="stylesheet" href="css/variables.css">
     <link rel="stylesheet" href="css/perfil.css">
     <link rel="stylesheet" href="css/componentes/card.css">
+    <link rel="stylesheet" href="css/componentes/modal.css">
     <link rel="icon" href="img/logo-transp.png" type="image/x-icon">
 </head>
 <body>
@@ -22,7 +23,7 @@
             
             <!-- CONTENIDO DE MIS PUBLICACIONES -->
             <div class="publicaciones-content">
-                <div class="publicaciones-container" id="publicaciones-container"></div>
+                <div class="cards-container" id="publicaciones-container"></div>
             </div>
 
             <!-- CONTENIDO DE TABLEROS -->
@@ -72,7 +73,6 @@
         </div>
     </div>
 
-    
     <div class="modal-overlay" id="modal-editar">
         <div class="modal-card">
             <div class="modal-top">
@@ -107,9 +107,10 @@
             </div>
         </div>
     </div>
-
+    <div id="card-modal" class="modal" style="display: none;"></div>
     <script type="module" src="JS/navbar.js"></script>
     <script type="module" src="JS/componentes/card.js"></script>
+    <script type="module" src="JS/componentes/modal.js"></script>
     <script type="module" src="JS/perfil.js"></script>
 
 </body>
