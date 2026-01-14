@@ -1,4 +1,5 @@
 import { crearCard } from './componentes/card.js';
+import { abrirCardModal } from './componentes/modal.js';
 
 const API_BASE_URL = 'http://127.0.0.1:3000';
 const API_IMAGENES = API_BASE_URL + '/imagenes';
@@ -177,8 +178,6 @@ async function cargarPublicacionesDeUsuario(usuarioId) {
     container.innerHTML = '';
 
 publicaciones.forEach(p => {
-  const editable = esPerfilDelUsuarioLogueado();
-
   const card = crearCard(
     {
       ...p,
@@ -186,8 +185,10 @@ publicaciones.forEach(p => {
       usuario_icono: usuarioActual.icono
     },
     {
-      editable: true,
-
+      onOpenModal: abrirCardModal, 
+      onGoToProfile: (id) => {
+          window.location.href = `perfil.html?id=${id}`;
+      },
       onEdit: (publicacion) => {
           localStorage.setItem("pinParaEditar", JSON.stringify(publicacion));
           window.location.href = "create-pin.html";
