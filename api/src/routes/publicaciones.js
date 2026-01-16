@@ -7,7 +7,7 @@ import {
 } from "../utils/esquemas/publicaciones.js";
 import {
     getPublicacionesConBusqueda,
-    intentarConseguirPublicacionPorId
+    intentarConseguirPublicacionPorId, validarParametrosDeBusqueda
 } from "../utils/database/publicaciones.js"
 import {existeUsuarioConId} from "../utils/database/usuarios.js";
 import {iconoUsuarioUpload, imagenPublicacionUpload} from "../middlewares/storage.js";
@@ -20,6 +20,10 @@ publicaciones.get('/', async (req, res) => {
     // TODO: Permitir solicitar el orden de las publicaciones, ascendente o descendente; por fecha de publicacion o likes.
     try {
         const params = req.body;
+
+        const error = validarParametrosDeBusqueda(params);
+        if (error)
+            return res.status(400).json({error: error});
 
         const result = await getPublicacionesConBusqueda(params);
 
