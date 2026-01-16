@@ -10,9 +10,11 @@ export async function intentarConseguirPublicacionPorId(id) {
     return esquemaPublicacion.safeParseAsync(result.rows[0])
 }
 
+/**
+ * @param params Parametros de busqueda. Se deben validar con validarParametrosDeBusqueda antes de usarlos en el metodo
+ * @returns {Promise<*>}
+ */
 export async function getPublicacionesConBusqueda(params) {
-    validarParametrosDeBusqueda(params);
-
     const {
         autor_id,
         etiquetas,
@@ -51,6 +53,33 @@ export async function getPublicacionesConBusqueda(params) {
     return pool.query(query, queryParams);
 }
 
-function validarParametrosDeBusqueda(params) {
-    return true;
+/**
+ * @param params Parametros de busqueda
+ * @returns {*} Si hay un error devuelve un string describiendolo o undefined en caso contrario.
+ */
+export function validarParametrosDeBusqueda(params) {
+    const {
+        autor_id,
+        etiquetas, // TODO: Validar etiquetas
+        likes_minimos, likes_maximos,
+        fecha_minima, fecha_maxima,
+        alto_minimo, alto_maximo,
+        ancho_minimo, ancho_maximo,
+    } = params;
+
+    const returnIfTrue = (condition, value) => {
+        if (condition) return value
+    };
+
+    const assetMinMax = (min, max, minLowerThanZero, maxLowerThanZero, minGreaterThanMax) => {
+        return returnIfTrue(min !== undefined && min < 0, minLowerThanZero)
+            || returnIfTrue(max !== undefined && max < 0, maxLowerThanZero)
+            || returnIfTrue(min !== undefined && max !== undefined && min > max, minGreaterThanMax);
+    }
+
+    return returnIfTrue(autor_id !== undefined && autor_id < 0, "Id del autor invalido")
+        || assetMinMax(likes_minimos, likes_maximos, "Likes minimos < 0", "Likes maximos < 0", "Likes minimos > Likes maximos")
+        || assetMinMax(fecha_minima, fecha_maxima, "Fecha minima < 0", "Fecha maxima < 0", "Fecha minima > Fecha maxima")
+        || assetMinMax(alto_minimo, alto_maximo, "Alto minimo < 0", "Alto maximo < 0", "Alto minimo > Alto maximo")
+        || assetMinMax(ancho_minimo, ancho_maximo, "Ancho minimo < 0", "Ancho maximo < 0", "Ancho minimo > Ancho maximo");
 }
