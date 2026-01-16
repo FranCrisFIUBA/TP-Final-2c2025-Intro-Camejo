@@ -6,7 +6,6 @@ import {
     esquemaPublicacion
 } from "../utils/esquemas/publicaciones.js";
 import {
-    buscarPublicaciones,
     getPublicacionesConBusqueda,
     intentarConseguirPublicacionPorId
 } from "../utils/database/publicaciones.js"
