@@ -1,52 +1,77 @@
-document.getElementById("form-registro").addEventListener("submit", async (e) =>{
-    e.preventDefault();
+const API_BASE = "http://127.0.0.1:3000";
+const API_USUARIOS = API_BASE + "/usuarios";
 
-    const mensajes_error_aviso = document.getElementById("mensaje-error-aviso");
-    mensajes_error_aviso.innerHTML = "";
-    mensajes_error_aviso.style.color = "red";
+const formRegistro = document.getElementById("form-registro");
+const mensajeError = document.getElementById("mensaje-error-aviso");
+
+formRegistro.addEventListener("submit", async (e) => {
+    e.preventDefault();
+    mensajeError.textContent = "";
+
+    const usuario = formRegistro.usuario.value.trim();
+    const email = formRegistro.email.value.trim();
+    const contrasena = formRegistro.contrasena.value;
+    const repetir = formRegistro.repetir_contrasena.value;
+    const fecha = formRegistro.fecha.value;
+    const icono = formRegistro.icono.files[0];
+
+    if (!usuario || !email || !contrasena || !repetir || !fecha) {
+        mensajeError.textContent = "Todos los campos son obligatorios.";
+        return;
+    }
+    if (contrasena !== repetir) { 
+        mensajeError.textContent = "Las contraseñas no coinciden."; 
+        return; 
+    }
+    if (usuario.length < 6) {    
+        mensajeError.textContent = "El nombre debe tener al menos 6 caracteres."; 
+        return; 
+    }
+    if (contrasena.length < 6) {    
+        mensajeError.textContent = "La contraseña debe tener al menos 6 caracteres."; 
+        return; 
+    }
+    const formData = new FormData();
+    formData.append("nombre", usuario);              
+    formData.append("email", email);
+    formData.append("contrasenia", contrasena);
+    formData.append("fecha_nacimiento", fecha);
     
-    const datos = {
-        nombre: e.target.usuario.value,
-        contrasenia: e.target.contrasena.value,
-        repetir_contrasenia: e.target.repetir_contrasena.value,
-        email: e.target.email.value,
-        fecha_nacimiento: e.target.fecha.value
-    };
-    
+    if (icono) {
+        formData.append("icono", icono);
+    }
+
     try {
-        const respuesta = await fetch("http://localhost:3000/usuarios/", {
+        const res = await fetch(API_USUARIOS, {
             method: "POST",
-            headers: {
-                "Content-Type" : "application/json"
-            },
-            body: JSON.stringify(datos)
+            body: formData
         });
 
-        const resultado = await respuesta.json();
-
-        if (!respuesta.ok) {
-            if (resultado.errors && Array.isArray(resultado.errors)) {
-                mensajes_error_aviso.textContent = resultado.errors[0].message;
-                return;
+        const data = await res.json();
+        
+        if (!res.ok) {
+            let mensaje = "Error al registrar usuario.";
+            
+            if (res.status === 400 && data.error) {
+                mensaje = `Error en la imagen: ${data.error}`;
+            } else if (res.status === 400 && data.errors) {
+                mensaje = "Datos inválidos: " + data.errors.map(err => err.message).join(', ');
+            } else if (res.status === 409) {
+                mensaje = data.error;
+            } else if (res.status === 500 && data.error === "Error en la subida de archivo") {
+                mensaje = "Error al subir la imagen.";
             }
-
-            if (resultado.error) {
-                mensajes_error_aviso.textContent = resultado.error;
-                return;
-            }
-
-            mensajes_error_aviso.textContent = "Error al registrar usuario";
-            console.log("respuesta del backend:",resultado);
+            
+            mensajeError.textContent = mensaje || data.error || data.mensaje || "Error del servidor.";
             return;
         }
 
-        mensajes_error_aviso.style.color = "green";
-        mensajes_error_aviso.textContent = "Registro enviado exitosamente";
-        console.log("respuesta del backend:",resultado);
-        irAlPerfil(resultado.id);
-        
-    } catch (error) {
-        console.error("error al enviar datos:",error);
-        alert("Ocurrió un error al enviar los datos");
+        formRegistro.reset();
+        alert("Usuario registrado correctamente");
+        window.location.href = "login.html";
+
+    } catch (err) {
+        console.error(err);
+        mensajeError.textContent = "No se pudo conectar con el servidor.";
     }
 });

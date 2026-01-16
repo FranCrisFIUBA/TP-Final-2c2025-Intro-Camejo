@@ -1,4 +1,8 @@
+import { crearCard } from './componentes/card.js';
+
 const API_BASE_URL = 'http://127.0.0.1:3000';
+const API_IMAGENES = API_BASE_URL + '/imagenes';
+const API_ICONOS = API_BASE_URL + '/iconos';
 let usuarioActual = null;
 
 function obtenerUsuarioLogueado() {
@@ -11,209 +15,30 @@ function obtenerUsuarioId() {
   return params.get('id');
 }
 
-function validarAccionesPerfil() {
-  const usuarioLogueado = obtenerUsuarioLogueado();
-  const usuarioPerfilId = obtenerUsuarioId();
-  const acciones = document.querySelector('.profile-actions');
-
-  console.log('Validando acciones:', {
-    usuarioLogueado,
-    usuarioPerfilId,
-    accionesExiste: !!acciones
-  });
-
-  if (!acciones) return;
-
-  acciones.classList.remove('visible');
-
-  if (!usuarioLogueado || !usuarioPerfilId) return;
-
-  if (Number(usuarioLogueado.id) === Number(usuarioPerfilId)) {
-    acciones.classList.add('visible');
-  }
+function resolverIcono(icono) {
+  if (!icono) return './img/avatar-default.jpg';
+  return `${API_ICONOS}/${icono}`;
 }
-
 
 function formatearFecha(fechaString) {
-  try {
-    const fecha = new Date(fechaString);
-    return fecha.toLocaleDateString('es-ES', {
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric'
-    });
-  } catch {
-    return '2024';
-  }
+  const fecha = new Date(fechaString);
+  if (isNaN(fecha.getTime())) return 'Fecha desconocida';
+
+  return fecha.toLocaleDateString('es-ES', {
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric'
+  });
+}
+function esPerfilDelUsuarioLogueado() {
+  const usuarioLogueado = obtenerUsuarioLogueado();
+  const usuarioPerfilId = obtenerUsuarioId();
+
+  if (!usuarioLogueado || !usuarioPerfilId) return false;
+
+  return Number(usuarioLogueado.id) === Number(usuarioPerfilId);
 }
 
-function listarHashtags(etiquetas) {
-  if (!etiquetas) return '';
-  return etiquetas
-    .split(',')
-    .map(tag => `<span class="hashtag">#${tag.trim()}</span>`)
-    .join('');
-}
-
-async function cargarPerfilUsuario() {
-  const usuarioId = obtenerUsuarioId();
-  if (!usuarioId) return;
-
-  try {
-    const response = await fetch(`${API_BASE_URL}/usuarios/${usuarioId}`);
-    if (!response.ok) throw new Error('Usuario no encontrado');
-
-    const usuario = await response.json();
-    usuarioActual = usuario;
-
-    mostrarDatosUsuario(usuario);
-    cargarPublicacionesDeUsuario(usuarioId);
-
-    setTimeout(validarAccionesPerfil, 0);
-
-  } catch (error) {
-    console.error('Error al cargar perfil:', error);
-  }
-}
-
-
-function mostrarDatosUsuario(usuario) {
-  const profileImage = document.getElementById('profile-image');
-  const profileName = document.getElementById('profile-name');
-  const profileDate = document.getElementById('profile-date');
-
-  if (profileImage) {
-    profileImage.src = usuario.icono || './img/avatar-default.jpg';
-    profileImage.onerror = () => {
-      profileImage.src = './img/avatar-default.jpg';
-    };
-  }
-
-  if (profileName) {
-    profileName.textContent = usuario.nombre;
-  }
-
-  if (profileDate) {
-    profileDate.textContent = usuario.fecha_registro
-      ? `Miembro desde ${formatearFecha(usuario.fecha_registro)}`
-      : 'Miembro desde 2024';
-  }
-}
-
-async function cargarPublicacionesDeUsuario(usuarioId) {
-    const publicacionesContainer = document.getElementById('publicaciones-container');
-    if (!publicacionesContainer) return;
-
-    try {
-        console.log(`Intentando cargar publicaciones para el ID: ${usuarioId}`);
-        const response = await fetch(`${API_BASE_URL}/publicaciones/usuario/${usuarioId}`);
-        
-        if (!response.ok) {
-            const errorTexto = await response.text(); 
-            throw new Error(`Error ${response.status}: ${errorTexto}`);
-        }
-        
-        const publicaciones = await response.json();
-        console.log("Publicaciones recibidas:", publicaciones);
-
-        // 1. Manejo de caso sin publicaciones
-        if (!publicaciones || publicaciones.length === 0) {
-            publicacionesContainer.innerHTML = `
-                <div class="no-content">
-                    <i class="fa-solid fa-images" style="font-size: 48px; margin-bottom: 20px; color: #ccc;"></i>
-                    <p>Este usuario aún no tiene publicaciones</p>
-                </div>
-            `;
-            return;
-        }
-
-        // 2. Renderizado de las cards
-        const html = publicaciones.map(p => {
-            // Convertimos el objeto a string para pasarlo al modal de forma segura
-            const publicacionJSON = JSON.stringify(p).replace(/'/g, "&apos;");
-
-            return `
-            <div class="publicacion-item" data-publicacion-id="${p.id}">
-                <div class="publicacion-header">
-                    <h3 class="publicacion-title">${p.titulo || 'Sin título'}</h3>
-                    <span class="publicacion-likes">
-                        <i class="fas fa-heart"></i> ${p.likes || 0}
-                    </span>
-                </div>
-                <div class="publicacion-preview">
-                    <img src="${p.url_imagen || './img/placeholder.jpg'}" 
-                         alt="${p.titulo}" 
-                         class="publicacion-image" "
-                         onclick='abrirCardModal(${publicacionJSON})'>
-                </div>
-                <div class="publicacion-info">
-                    <div class="publicacion-hashtags">
-                        ${listarHashtags(p.etiquetas)}
-                    </div>
-                    <p class="publicacion-fecha">
-                        <i class="fa-regular fa-calendar"></i> ${calcularFecha(p.fecha_publicacion)}
-                    </p>
-                </div>
-            </div>
-            `;
-        }).join('');
-
-        publicacionesContainer.innerHTML = html;
-
-    } catch (error) {
-        console.error('Error detallado:', error);
-        publicacionesContainer.innerHTML = `<p class="error-msg">Error: No se pudieron cargar las publicaciones.</p>`;
-    }
-}
-
-document.addEventListener('DOMContentLoaded', cargarPerfilUsuario);
-
-
-
-function listarHashtags(etiquetas) {
-    if (!etiquetas) return '';
-    return etiquetas.split(',')
-        .map(tag => `<span class="hashtag">#${tag.trim()}</span>`)
-        .join('');
-}
-
-function calcularFecha(fechaInput) {
-    const fechaPublicacion = new Date(fechaInput);
-    const ahora = new Date();
-    const diferenciaEnSegundos = Math.floor((ahora - fechaPublicacion) / 1000);
-
-    // Definimos los intervalos en segundos
-    const intervalos = {
-        año: 31536000,
-        mes: 2592000,
-        día: 86400,
-        hora: 3600,
-        minuto: 60
-    };
-
-    let unidad = Math.floor(diferenciaEnSegundos / intervalos.año);
-    if (unidad >= 1) {
-        return unidad === 1 ? "hace 1 año" : `hace ${unidad} años`;
-    }
-    unidad = Math.floor(diferenciaEnSegundos / intervalos.mes);
-    if (unidad >= 1) {
-        return unidad === 1 ? "hace 1 mes" : `hace ${unidad} meses`;
-    }
-    unidad = Math.floor(diferenciaEnSegundos / intervalos.día);
-    if (unidad >= 1) {
-        return unidad === 1 ? "hace 1 día" : `hace ${unidad} días`;
-    }
-    unidad = Math.floor(diferenciaEnSegundos / intervalos.hora);
-    if (unidad >= 1) {
-        return unidad === 1 ? "hace 1 hora" : `hace ${unidad} horas`;
-    }
-    unidad = Math.floor(diferenciaEnSegundos / intervalos.minuto);
-    if (unidad >= 1) {
-        return unidad === 1 ? "hace 1 minuto" : `hace ${unidad} minutos`;
-    }
-
-    return "hace un momento";
-}
 
 function configurarNavegacion() {
     const usuarioId = obtenerUsuarioId();
@@ -253,51 +78,207 @@ document.addEventListener('DOMContentLoaded', function() {
     }, 100);
 });
 
+function listarHashtags(etiquetas) {
+  if (!etiquetas) return '';
+  return etiquetas
+    .split(',')
+    .map(tag => `<span class="hashtag">#${tag.trim()}</span>`)
+    .join('');
+}
+
+
+async function cargarPerfilUsuario() {
+  const usuarioId = obtenerUsuarioId();
+  if (!usuarioId) return;
+
+  try {
+    const response = await fetch(`${API_BASE_URL}/usuarios/${usuarioId}`);
+    if (!response.ok) throw new Error('Usuario no encontrado');
+
+    const json = await response.json();
+
+    if (!json.success || !json.data) {
+      throw new Error('Respuesta inválida del servidor');
+    }
+
+    const usuario = json.data;
+    usuarioActual = usuario;
+
+    mostrarDatosUsuario(usuario);
+    cargarPublicacionesDeUsuario(usuario.id);
+
+    setTimeout(validarAccionesPerfil, 0);
+
+  } catch (error) {
+    console.error('Error al cargar perfil:', error);
+  }
+}
+
+function mostrarDatosUsuario(usuario) {
+  const profileImage = document.getElementById('profile-image');
+  const profileName = document.getElementById('profile-name');
+  const profileDate = document.getElementById('profile-date');
+
+  if (profileImage) {
+    profileImage.src = resolverIcono(usuario.icono);
+    profileImage.onerror = () => {
+      profileImage.src = './img/avatar-default.jpg';
+    };
+  }
+
+  if (profileName) {
+    profileName.textContent = usuario.nombre;
+  }
+
+  if (profileDate) {
+    profileDate.textContent = usuario.fecha_registro
+      ? `Miembro desde ${formatearFecha(usuario.fecha_registro)}`
+      : 'Miembro desde 2024';
+  }
+}
+
+function validarAccionesPerfil() {
+  const usuarioLogueado = obtenerUsuarioLogueado();
+  const usuarioPerfilId = obtenerUsuarioId();
+  const acciones = document.querySelector('.profile-actions');
+
+  if (!acciones) return;
+
+  acciones.classList.remove('visible');
+
+  if (!usuarioLogueado || !usuarioPerfilId) return;
+
+  if (Number(usuarioLogueado.id) === Number(usuarioPerfilId)) {
+    acciones.classList.add('visible');
+  }
+}
+
+
+async function cargarPublicacionesDeUsuario(usuarioId) {
+  const container = document.getElementById('publicaciones-container');
+  const SINPUBLIC = './img/sinPublicaciones1.png';
+  if (!container) return;
+
+  try {
+    const response = await fetch(`${API_BASE_URL}/publicaciones/usuario/${usuarioId}`);
+    if (!response.ok) throw new Error('Error al obtener publicaciones');
+
+    const publicaciones = await response.json();
+
+    if (!publicaciones || publicaciones.length === 0) {
+      container.innerHTML = `
+        <div class="no-content">
+          <img src='${SINPUBLIC}' alt="Sin contenido">
+          <p>Este usuario aún no tiene publicaciones</p>
+        </div>`;
+      return;
+    }
+
+    container.innerHTML = '';
+
+publicaciones.forEach(p => {
+  const editable = esPerfilDelUsuarioLogueado();
+
+  const card = crearCard(
+    {
+      ...p,
+      usuario_nombre: usuarioActual.nombre,
+      usuario_icono: usuarioActual.icono
+    },
+    {
+      editable: true,
+
+      onEdit: (publicacion) => {
+          localStorage.setItem("pinParaEditar", JSON.stringify(publicacion));
+          window.location.href = "create-pin.html";
+      },
+
+      onDelete: async (publicacion) => {
+        const confirmar = confirm(
+          "¿Estás seguro de que querés eliminar esta publicación? Esta acción no se puede deshacer."
+        );
+
+        if (!confirmar) return;
+
+        try {
+          const response = await fetch(
+            `${API_BASE_URL}/publicaciones/${publicacion.id}`,
+            { method: 'DELETE' }
+          );
+
+          if (!response.ok) {
+            const err = await response.json();
+            alert(err.error || "Error al eliminar la publicación");
+            return;
+          }
+          card.remove();
+          if (!container.children.length) {
+            container.innerHTML = `
+              <div class="no-content">
+                <img src="./img/sinPublicaciones1.png" alt="Sin contenido">
+                <p>Este usuario aún no tiene publicaciones</p>
+              </div>`;
+          }
+
+        } catch (error) {
+          console.error(error);
+          alert("Error de conexión con el servidor");
+        }
+      }
+    }
+  );
+
+  container.appendChild(card);
+});
+
+
+
+  } catch (error) {
+    console.error(error);
+    container.innerHTML = `<p>Error al cargar publicaciones</p>`;
+  }
+}
+
+function validarContrasenia(password) {
+  const regex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}$/;
+  return regex.test(password);
+}
+
+function validarNombre(nombre) {
+  const regex = /^[A-Za-z0-9._-]{6,25}$/;
+  return regex.test(nombre);
+}
+
+
 function abrirModalPerfil() {
   const modal = document.getElementById('modal-editar');
-  if (!modal) return;
-  modal.style.display = 'flex';
+  if (modal) modal.style.display = 'flex';
 }
 
 function cerrarModalPerfil() {
   const modal = document.getElementById('modal-editar');
-  if (!modal) return;
-  modal.style.display = 'none';
+  if (modal) modal.style.display = 'none';
 }
 
 function completarFormularioPerfil(usuario) {
   if (!usuario) return;
 
   const nombre = document.getElementById('edit-nombre');
-  const fecha = document.getElementById('edit-fecha');
   const img = document.getElementById('profile-image-edit');
-  const pass1 = document.getElementById('edit-contraseña');
-  const pass2 = document.getElementById('edit-contraseña-repetida');
 
   if (nombre) nombre.value = usuario.nombre || '';
-  if (fecha && usuario.fecha_nacimiento) {
-    fecha.value = usuario.fecha_nacimiento.split('T')[0];
-  }
 
   if (img) {
-    img.src = usuario.icono || './img/avatar-default.jpg';
+    img.src = resolverIcono(usuario.icono);
     img.onerror = () => img.src = './img/avatar-default.jpg';
   }
-
-  if (pass1) pass1.value = '';
-  if (pass2) pass2.value = '';
 }
 
 document.addEventListener('click', (e) => {
 
   if (e.target.closest('.btn-edit')) {
     e.preventDefault();
-
-    if (!usuarioActual) {
-      console.warn('Usuario aún no cargado');
-      return;
-    }
-
+    if (!usuarioActual) return;
     completarFormularioPerfil(usuarioActual);
     abrirModalPerfil();
   }
@@ -307,19 +288,163 @@ document.addEventListener('click', (e) => {
     cerrarModalPerfil();
   }
 
-});
-document.addEventListener('click', (e) => {
-  const btnLogout = e.target.closest('.btn-logout');
-  if (!btnLogout) return;
+  if (e.target.closest('.btn-logout')) {
+    e.preventDefault();
+    if (confirm('¿Seguro que querés cerrar sesión?')) {
+      localStorage.removeItem('usuarioLogueado');
+      window.location.href = 'index.html';
+    }
+  }
 
+});
+
+const btnBorrar = document.getElementById('borrar-edit');
+
+btnBorrar.addEventListener('click', async () => {
+    const confirmar = confirm(
+        "¿Estás seguro de que deseas eliminar tu cuenta? Esta acción no se puede deshacer."
+    );
+
+    if (!confirmar) return;
+
+    const user = obtenerUsuarioLogueado();
+
+    if (!user || !user.id) {
+        alert("No se pudo identificar al usuario logueado.");
+        return;
+    }
+
+    try {
+        const response = await fetch(
+            `${API_BASE_URL}/usuarios/${user.id}`,
+            { method: 'DELETE' }
+        );
+
+        if (response.ok) {
+            // Limpia sesión local antes de redirigir
+            localStorage.removeItem('usuario');
+            localStorage.removeItem('token');
+
+            alert("Cuenta eliminada con éxito.");
+            window.location.href = '/login.html';
+        } else {
+            const errorData = await response.json();
+            alert(errorData?.error || "Error al eliminar la cuenta.");
+        }
+    } catch (error) {
+        console.error("Error en la petición:", error);
+        alert("No se pudo conectar con el servidor.");
+    }
+});
+
+
+const editForm = document.getElementById('edit-profile-form');
+
+editForm.addEventListener('submit', async (e) => {
   e.preventDefault();
 
-  if (!confirm('¿Seguro que querés cerrar sesión?')) return;
-  localStorage.removeItem('usuarioLogueado');
-  window.location.href = 'index.html'; 
+  const usuarioLogueado = obtenerUsuarioLogueado();
+  if (!usuarioLogueado || !usuarioLogueado.id) {
+    alert('Usuario no identificado');
+    return;
+  }
+
+  const nombre = document.getElementById('edit-nombre').value.trim();
+  const pass = document.getElementById('edit-contraseña').value;
+  const passRep = document.getElementById('edit-contraseña-repetida').value;
+  const iconoInput = document.getElementById('edit-icono');
+
+  if (pass || passRep) {
+    if (pass !== passRep) {
+      alert('Las contraseñas no coinciden');
+      return;
+    }
+
+    if (!validarContrasenia(pass)) {
+      alert(
+        'La contraseña debe tener al menos:\n' +
+        '- 8 caracteres\n' +
+        '- 1 letra mayúscula\n' +
+        '- 1 letra minúscula\n' +
+        '- 1 número'
+      );
+      return;
+    }
+  }
+
+
+  const formData = new FormData();
+  formData.append('id', Number(usuarioLogueado.id));
+
+
+  if (nombre && nombre !== usuarioActual.nombre) {
+    if (!validarNombre(nombre)) {
+      alert(
+        'El nombre de usuario debe:\n' +
+        '- Tener entre 6 y 25 caracteres\n' +
+        '- Usar solo letras, números, . _ -\n' +
+        '- No contener espacios ni tildes'
+      );
+      return;
+    }
+
+    formData.append('nombre', nombre);
+  }
+
+  if (pass) formData.append('contrasenia', pass);
+
+  if (iconoInput?.files?.length > 0) { 
+    formData.append('icono', iconoInput.files[0]);
+  }
+
+  try {
+    const response = await fetch(
+      `${API_BASE_URL}/usuarios/${usuarioLogueado.id}`,
+      {
+        method: 'PATCH',
+        body: formData
+      }
+    );
+
+    if (!response.ok) {
+      const error = await response.json();
+      alert(error.error || 'Error al actualizar perfil');
+      return;
+    }
+
+    const usuarioActualizado = await response.json();
+    usuarioActual = usuarioActualizado;
+    localStorage.setItem(
+      'usuarioLogueado',
+      JSON.stringify(usuarioActualizado)
+    );
+
+    mostrarDatosUsuario(usuarioActualizado);
+    cerrarModalPerfil();
+    alert('Perfil actualizado correctamente');
+
+  } catch (err) {
+    console.error(err);
+    alert('Error de conexión con el servidor');
+  }
 });
 
 
-document.addEventListener('DOMContentLoaded', () => {
-  cargarPerfilUsuario();
+const btnEditarAvatar = document.getElementById('btn-editar-avatar');
+const inputIcono = document.getElementById('edit-icono');
+const previewImg = document.getElementById('profile-image-edit');
+
+btnEditarAvatar.addEventListener('click', () => {
+  inputIcono.click();
+});
+
+inputIcono.addEventListener('change', () => {
+  const file = inputIcono.files[0];
+  if (!file) return;
+
+  const reader = new FileReader();
+  reader.onload = (e) => {
+    previewImg.src = e.target.result;
+  };
+  reader.readAsDataURL(file);
 });

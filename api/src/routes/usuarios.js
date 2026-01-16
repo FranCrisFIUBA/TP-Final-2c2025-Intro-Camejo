@@ -9,6 +9,7 @@ import {
 import {esquemaActualizacionUsuario, esquemaPostUsuario} from "../utils/esquemas/usuarios.js";
 import {iconoUsuarioUpload} from "../middlewares/storage.js";
 import multer from "multer";
+import {elimiarIconoUsuarioPorId} from "../utils/storage/usuarios.js";
 
 const usuarios = express.Router()
 
@@ -102,65 +103,107 @@ usuarios.post('/',
 
 // PATCH /usuarios/:id
 
-usuarios.patch('/:id', async (req, res) => {
-    try {
-        const usuario = await intentarConseguirUsuarioPorId(req.params.id);
-        if (!usuario.success) {
-            console.error("error.issues:" + usuario.error.issues)
-            return res.status(404).json({error: "Usuario no encontrado"});
-        }
-
-        const actualizacion = await esquemaActualizacionUsuario.safeParseAsync({ ...req.body, id: req.params.id });
-        if (!actualizacion.success) {
-            console.error("error.issues:" + usuario.error.issues)
-            res.status(404).json({errors: usuario.error.issues});
-        }
-
-        // Validar unicidad si se cambia el nombre
-        if (actualizacion.data.nombre !== undefined && actualizacion.data.nombre !== usuario.data.nombre) {
-            if (await intentarConseguirUsuarioPorNombre(actualizacion.data.nombre)) {
-                console.error(`ya existe un usuario con el nombre ${usuario.data.nombre}`)
-                res.status(409).json({ error: "El nombre de usuario ya existe" });
-                return;
+usuarios.patch(
+    '/:id',
+    (req, res, next) => {
+        iconoUsuarioUpload.single('icono')(req, res, function (err) {
+            if (err instanceof multer.MulterError) {
+                return res.status(400).json({ error: err.message });
+            } else if (err) {
+                return res.status(500).json({ error: "Error en la subida de archivo" });
             }
-        }
+            next();
+        });
+    },
 
-        // Validar unicidad si se cambia el email
-        if (actualizacion.data.email !== undefined && actualizacion.data.email !== usuario.data.email) {
-            if (await existeUsuarioConEmail(usuario.data.email)) {
-                console.error(`Ya existe un usuario con el email ${existeEmail}`)
-                res.status(409).json({ error: "El email ya está registrado" });
-                return;
+    async (req, res) => {
+        try {
+            const id = Number(req.params.id);
+
+            if (Number.isNaN(id)) {
+                return res.status(400).json({
+                errors: [{
+                    path: ['id'],
+                    message: 'Id de usuario invalido'
+                }]
+                });
             }
-        }
 
-        actualizarUsuarioPorId(req.params.id, req.body.nombre, req.body.contrasenia, req.body.email, req.body.icono)
-            .then( (queryResponse) => {
-                if (queryResponse.rowCount !== 1) {
-                    res.status(404).send({}) // no encontrado
-                } else {
-                    res.status(200).send(queryResponse.rows[0]) // se devuelven los cambios
+            const usuario = await intentarConseguirUsuarioPorId(id);
+            if (!usuario.success) {
+                return res.status(404).json({ error: "Usuario no encontrado" });
+            }
+
+            const datosActualizados = {
+                ...req.body,
+                id,
+                icono: req.file ? req.file.filename : usuario.data.icono
+            };
+
+            const actualizacion = await esquemaActualizacionUsuario.safeParseAsync(datosActualizados);
+            if (!actualizacion.success) {
+                return res.status(400).json({ errors: actualizacion.error.issues });
+            }
+
+            // Validar unicidad nombre
+            if (
+                actualizacion.data.nombre !== undefined &&
+                actualizacion.data.nombre !== usuario.data.nombre
+            ) {
+                if (await existeUsuarioConNombre(actualizacion.data.nombre)) {
+                    return res.status(409).json({ error: "El nombre de usuario ya existe" });
                 }
-            }).catch( (err) => { // se ha pasado una cantidad invalida de parametros
-                console.error(err);
-                res.status(400).send();
-            })
-    } catch (err) {
-        console.error(err);
-        res.status(500).send()
+            }
+
+            // Validar unicidad email
+            if (
+                actualizacion.data.email !== undefined &&
+                actualizacion.data.email !== usuario.data.email
+            ) {
+                if (await existeUsuarioConEmail(actualizacion.data.email)) {
+                    return res.status(409).json({ error: "El email ya está registrado" });
+                }
+            }
+
+            // Si hay icono nuevo, eliminar el anterior
+            if (req.file && usuario.data.icono) {
+                await elimiarIconoUsuarioPorId(usuario.data.id);
+            }
+
+            const result = await actualizarUsuarioPorId(
+                id,
+                actualizacion.data.nombre,
+                actualizacion.data.contrasenia,
+                actualizacion.data.email,
+                actualizacion.data.icono
+            );
+
+            if (result.rowCount !== 1) {
+                return res.status(404).send({});
+            }
+
+            res.status(200).json(result.rows[0]);
+        } catch (err) {
+            console.error(err);
+            res.status(500).json({ error: "Error al actualizar usuario" });
+        }
     }
-})
+);
 
 // DELETE /usuarios/:id
 
 usuarios.delete('/:id', async (req, res) => {
     try {
-        if (await existeUsuarioConId(req.params.id) !== true)
+        const { id } = req.params;
+
+        if (await existeUsuarioConId(id) !== true)
             return res.status(404).json({ error: "Usuario no encontrado" });
+
+        await elimiarIconoUsuarioPorId(id)
 
         await pool.query(
             "DELETE FROM usuarios WHERE id = $1",
-            req.params.id
+            [id]
         );
 
         res.status(200).json({ message: "Usuario eliminado" });

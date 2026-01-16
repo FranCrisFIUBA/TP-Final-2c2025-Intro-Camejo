@@ -1,43 +1,57 @@
 document.getElementById("form-login").addEventListener("submit", async (e) => {
-    e.preventDefault();
+  e.preventDefault();
+
+  const mensaje = document.getElementById("mensaje-login");
+  mensaje.textContent = "";
+  mensaje.style.color = "red";
+
+  const datos = {
+    usuario: e.target.usuario.value.trim(),
+    contrasenia: e.target.contrasenia.value
+  };
+
+
+  if (!datos.usuario || !datos.contrasenia) {
+    mensaje.textContent = "Debes completar todos los campos";
+    return;
+  }
+
+  try {
+    const respuesta = await fetch("http://localhost:3000/usuarios");
     
-    const mensaje = document.getElementById("mensaje-login");
-    mensaje.textContent = "";
-    mensaje.style.color = "red";
-
-    const datos = {
-        usuario: e.target.usuario.value,
-        contrasenia: e.target.contraseña.value 
-    };
-
-    if (!datos.usuario || !datos.contrasenia) {
-        mensaje.textContent = "Debes completar todos los campos";
-        return;
+    if (!respuesta.ok) {
+      mensaje.textContent = "No se pudo obtener usuarios";
+      return;
     }
 
-    try {
-        const respuesta = await fetch("http://localhost:3000/usuarios/");
-        if (!respuesta.ok) {
-            mensaje.textContent = "No se pudo obtener usuarios";
-            return;
-        }
-        const resultado = await respuesta.json();
-        const usuario_ingresado = resultado.find(u =>
-            u.nombre === datos.usuario && u.contrasenia === datos.contrasenia
-        );
+    const usuarios = await respuesta.json();
 
-        if (usuario_ingresado) {
-            mensaje.style.color = "green";
-            mensaje.textContent = "Login exitoso";
-            console.log("Usuario logueado", usuario_ingresado);
-            irAlPerfil(usuario_ingresado.id);
-        } else {
-            mensaje.style.color = "red";
-            mensaje.textContent = "Usuario o contraseña incorrectos";
-            return;
-        }
-    } catch (error) {
-        console.log("error al enviar los datos",error);
-        mensaje.textContent = "No se pudo conectar con el servidor";
+    const usuario_ingresado = usuarios.find(u => {
+      return u.nombre === datos.usuario && u.contrasenia === datos.contrasenia;
+    });
+
+    if (!usuario_ingresado) {
+      mensaje.textContent = "Usuario o contraseña incorrectos";
+      return;
     }
+
+    localStorage.setItem(
+      "usuarioLogueado",
+      JSON.stringify(usuario_ingresado)
+    );
+
+    mensaje.style.color = "green";
+    mensaje.textContent = "Login exitoso";
+
+    irAlPerfil(usuario_ingresado.id);
+
+  } catch (error) {
+    console.error("Error completo:", error);
+    mensaje.textContent = "No se pudo conectar con el servidor";
+  }
 });
+
+function irAlPerfil(usuarioId) {
+  console.log("Redirigiendo a perfil con ID:", usuarioId);
+  window.location.href = `perfil.html?id=${usuarioId}`;
+}

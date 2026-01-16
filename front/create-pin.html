@@ -3,58 +3,89 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="css/create-pin.css">
     <link rel="stylesheet" href="css/variables.css">
-    <title></title>
+    <link rel="stylesheet" href="css/create-pin.css">
+    <link rel="icon" href="img/logo-transp.png" type="image/x-icon">
+    <title>Crear Pin</title>
 </head>
 <body>
-    <div class="container">
+    <form id="form-publicacion" class="container">
         <div class="contend-left">
-            <div class="add-pin upload-container">
+            <div class="add-pin upload-container" id="drop-area">
                 <div class="pin-container">
-                    <a class="imagen-small">
-                        <img src="img/add_photo_alternate_24dp_47413E_FILL0_wght400_GRAD0_opsz24.svg" class="pin">
-                        <span>Eligue una imagen</span>
-                    </a>
-                    <input type="file" accept="image/*" class="file-input" style="display: none;">
+                    <label for="file-input" class="imagen-small">
+                        <img src="./img/add_photo_alternate_24dp_47413E_FILL0_wght400_GRAD0_opsz24.svg" class="pin" id="preview-img">
+                        <span id="text-prompt">Imagen previa</span>
+                    </label>
+
+                    <input
+                        type="file"
+                        accept="image/*"
+                        class="file-input"
+                        name="imagen"
+                        id="file-input"
+                        hidden
+                    >
                 </div>
             </div>
             <div class="btn-left">
                 <hr>
-                <button class="btn-amarillo btn-addURL" aria-label="subir url">
-                    <p>Guardar desde la url</p>
+                <button type="button" class="btn-amarillo btn-addURL" id="btn-subir-imagen-trigger">
+                    <p>Subir imagen</p>
                 </button>
             </div>
         </div>
+
         <div class="contend-rigth">
             <div class="top-btns">
-                <button class="cancel-btn">cancelar</button>
-                <button class="btn-amarillo publish-btn">Publicar</button>
+                <button type="button" class="cancel-btn" onclick="window.history.back()">cancelar</button>
+                <button type="submit" class="btn-amarillo publish-btn">Publicar</button>
             </div>
+            
             <div class="form-group">
-                <label>Titulo</label>
-                <input type="text" placeholder="Agrega un título">
-            </div>
-            <div class="form-group">
-                <label>Descripción</label>
-                <textarea placeholder="Agrega una descripción detallada"></textarea>
+                <label>Título</label>
+                <input type="text" name="titulo" placeholder="Agrega un título" required>
             </div>
 
-            <div class="form-group size-inputs">
-                <label>Tamaño</label>  
-                <div class="bloque">
-                    <input type="text" placeholder="ancho">
-                    <button class="btn-f">x</button>
-                    <input type="text" placeholder="alto">
-                </div>
-                
+            <div class="form-group size-options-container">
+    <label>Tamaño (Relación de Aspecto)</label>
+    <div class="aspect-ratio-grid">
+        <label class="ratio-option">
+            <input type="radio" name="aspect_ratio" value="original" checked>
+            <div class="ratio-box original">
+                <i class="icon-aspect"></i>
             </div>
+            <span>Original</span>
+        </label>
+
+        <label class="ratio-option">
+            <input type="radio" name="aspect_ratio" value="1:1">
+            <div class="ratio-box square"></div>
+            <span>Cuadrado</span>
+        </label>
+
+        <label class="ratio-option">
+            <input type="radio" name="aspect_ratio" value="4:5">
+            <div class="ratio-box vertical-short"></div>
+            <span>Vertical</span>
+        </label>
+        
+        <label class="ratio-option">
+            <input type="radio" name="aspect_ratio" value="16:9">
+            <div class="ratio-box horizontal"></div>
+            <span>Horizontal (16:9)</span>
+        </label>
+    </div>
+</div>
 
             <div class="form-group tags">
                 <label>Etiquetas</label>
-                <button class="add-tag">+ agregar</button>
+                <input type="text" name="etiquetas" placeholder="Ej: arte, diseño">
             </div>
+            
+            <input type="hidden" name="usuario_id" value="">
         </div>
-    </div>
+    </form>
+    <script type="module" src="JS/create-pin.js"></script>
 </body>
 </html>
