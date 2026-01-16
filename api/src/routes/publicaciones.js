@@ -4,7 +4,10 @@ import {
     esquemaActualizacionPublicacion,
     esquemaPostPublicacion
 } from "../utils/esquemas/publicaciones.js";
-import {intentarConseguirPublicacionPorId} from "../utils/database/publicaciones.js"
+import {
+    getPublicacionesConBusqueda,
+    intentarConseguirPublicacionPorId, validarParametrosDeBusqueda
+} from "../utils/database/publicaciones.js"
 import {existeUsuarioConId} from "../utils/database/usuarios.js";
 import {imagenPublicacionUpload} from "../middlewares/storage.js";
 import multer from "multer";
@@ -15,12 +18,14 @@ const publicaciones = express.Router();
 // GET /publicaciones - Obtener todas las publicaciones
 publicaciones.get('/', async (req, res) => {
     // TODO: Permitir solicitar el orden de las publicaciones, ascendente o descendente; por fecha de publicacion o likes.
-
     try {
-        const result = await pool.query(`
-            SELECT * FROM publicaciones
-            ORDER BY fecha_publicacion DESC
-        `);
+        const params = req.body;
+
+        const error = validarParametrosDeBusqueda(params);
+        if (error)
+            return res.status(400).json({error: error});
+
+        const result = await getPublicacionesConBusqueda(params);
 
         res.status(200).json(result.rows);
     } catch (err) {
