@@ -28,36 +28,53 @@ export async function intentarConseguirUsuarioPorEmail(email) {
     return esquemaUsuario.safeParseAsync(result.rows[0])
 }
 
-export async function actualizarUsuarioPorId(id, nombre, contrasenia, email, icono) {
-    const sets = []
-    const params = []
+export async function actualizarUsuarioPorId(
+  id,
+  nombre,
+  contrasenia,
+  email,
+  icono
+) {
+  const sets = [];
+  const params = [];
+  let index = 1;
 
-    if (nombre !== undefined) {
-        sets.push("[nombre] = ?")
-        params.push(nombre)
-    }
-    if (contrasenia !== undefined) {
-        sets.push("[contrasenia] = ?")
-        params.push(contrasenia)
-    }
-    if (email !== undefined) {
-        sets.push("[email] = ?")
-        params.push(email)
-    }
-    if (icono !== undefined) {
-        sets.push("[icono] = ?")
-        params.push(icono)
-    }
+  if (nombre !== undefined) {
+    sets.push(`nombre = $${index++}`);
+    params.push(nombre);
+  }
 
-    if (sets.length === 0) {
-        return Promise.reject("No se ha pasado la cantidad de parametros adecuada")
-    }
+  if (contrasenia !== undefined) {
+    sets.push(`contrasenia = $${index++}`);
+    params.push(contrasenia);
+  }
 
-    params.push(id)
+  if (email !== undefined) {
+    sets.push(`email = $${index++}`);
+    params.push(email);
+  }
 
-    const query = `UPDATE usuarios SET ${sets.join(", ")} WHERE id = ?`
-    return pool.query(query, params)
+  if (icono !== undefined) {
+    sets.push(`icono = $${index++}`);
+    params.push(icono);
+  }
+
+  if (sets.length === 0) {
+    throw new Error("No se ha pasado ningún campo para actualizar");
+  }
+
+  params.push(id);
+
+  const query = `
+    UPDATE usuarios
+    SET ${sets.join(', ')}
+    WHERE id = $${index}
+    RETURNING *;
+  `;
+
+  return pool.query(query, params);
 }
+
 
 export async function existeUsuarioConId(id) {
     const result = await pool.query(

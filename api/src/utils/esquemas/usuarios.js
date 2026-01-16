@@ -11,7 +11,7 @@ export const esquemaUsuario = zod.object({
     contrasenia: zod.string()
         .regex(regexContrasenia, "Contrasenia invalida"),
 
-    email: zod.email("Email de usuario inválido"),
+    email: zod.string().email("Email de usuario inválido"),
 
     icono: zod.string("URL de icono inválida")
         .nullable()

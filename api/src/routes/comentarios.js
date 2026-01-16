@@ -25,6 +25,7 @@ router.get('/publicacion/:publicacionId', async (req, res) => {
         `, [publicacionId]);
         
         const comentarios = result.rows.map(comentario => ({
+            id: comentario.id,
             author: comentario.author,
             avatar: comentario.avatar,
             text: comentario.text,

@@ -599,7 +599,7 @@ body, html {
     padding: 4px 8px;
     border-radius: 12px;
     font-size: 12px;
-}
+} 
 
 .tablero-preview-img {
     width: 100%;
@@ -666,10 +666,11 @@ body, html {
 
 /* Estilos para las publicaciones */
 .publicaciones-container {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-    gap: 25px;
-    padding: 20px;
+  column-count: 6; 
+  column-gap: 10px; 
+  padding: var(--padding-estandar);
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .publicacion-item {
@@ -759,21 +760,28 @@ body, html {
 }
 
 .no-content {
-    text-align: center;
-    padding: 60px 20px;
-    color: var(--gray);
-    font-style: italic;
-    background: white;
-    border-radius: 12px;
-    margin: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 60px 20px;
+  width: 100%;
+  grid-column: 1 / -1; 
+  column-span: all;  
 }
 
-.no-content i {
-    display: block;
-    margin-bottom: 15px;
+.no-content img {
+  max-width: 200px;
+  margin-bottom: 15px;
 }
 
-
+.no-content p {
+  font-size: 18px;
+  color: var(--gris2);
+  font-weight: 500;
+  font-family: var(--nunito);
+}
 
 
 

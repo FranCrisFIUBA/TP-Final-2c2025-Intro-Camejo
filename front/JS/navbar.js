@@ -1,8 +1,10 @@
-const usuarioLogueado = JSON.parse(localStorage.getItem("usuarioLogueado"));
+const API_BASE = 'http://127.0.0.1:3000';
 
 document.addEventListener('DOMContentLoaded', () => {
     const container = document.querySelector('.container');
     const navbarContainer = document.getElementById('navbar-container');
+
+    const usuarioLogueado = obtenerUsuarioLogueado();
 
     if (!container) return;
 
@@ -27,9 +29,14 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 
+function obtenerUsuarioLogueado() {
+    const data = localStorage.getItem("usuarioLogueado");
+    return data ? JSON.parse(data) : null;
+}
+
 function cargarNavbar() {
     fetch('./navbar.html')
-        .then(response => response.text())
+        .then(res => res.text())
         .then(html => {
             const container = document.getElementById('navbar-container');
             if (!container) return;
@@ -39,20 +46,16 @@ function cargarNavbar() {
 
             inicializarNavbar();
         })
-        .catch(error => console.error('Error loading navbar:', error));
+        .catch(err => console.error('Error loading navbar:', err));
 }
+
 
 function controlarAuthButtons() {
     const authButtons = document.querySelector('.auth-buttons');
     if (!authButtons) return;
 
-    const usuarioLogueado = JSON.parse(localStorage.getItem('usuarioLogueado'));
-
-    if (usuarioLogueado) {
-        authButtons.classList.add('hidden');
-    } else {
-        authButtons.classList.remove('hidden');
-    }
+    const usuarioLogueado = obtenerUsuarioLogueado();
+    authButtons.classList.toggle('hidden', !!usuarioLogueado);
 }
 
 
@@ -62,53 +65,103 @@ function inicializarNavbar() {
 
     sidebar.style.display = "flex";
 
-    // Avatar
+    const usuarioLogueado = obtenerUsuarioLogueado();
+    if (!usuarioLogueado) return;
+
+
     const avatarImg = document.querySelector(".user-avatar img");
     if (avatarImg) {
-        avatarImg.src = usuarioLogueado.icono || "./img/avatar-default.jpg";
+        avatarImg.src = usuarioLogueado.icono
+            ? `${API_BASE}/iconos/${usuarioLogueado.icono}`
+            : "./img/avatar-default.jpg";
     }
-
     const addButton = document.getElementById('add-button');
     const dropdownMenu = document.getElementById('dropdown-menu');
     const overlay = document.getElementById('overlay');
     const profileButton = document.getElementById('profile-button');
-
-    function toggleDropdown() {
-        dropdownMenu?.classList.toggle('show');
-        overlay?.classList.toggle('show');
+    const createBoardItem = document.querySelector('.dropdown-item[href="create-board.html"]');
+    const boardform = document.getElementById('board-form');
+    const boardInput = document.getElementById('board-name');
+    const cancelBoardBtn = document.getElementById('cancel-board');
+    const createBoardBtn = document.getElementById('create-board');
+   
+    function abrirformTablero() {
+        cerrarDropdown();
+        boardform.classList.add('show');
+        overlay.classList.add('show');
+        boardInput.value = '';
+        boardInput.focus();
     }
 
-    addButton?.addEventListener('click', (e) => {
-        e.preventDefault();
-        e.stopPropagation();
-        toggleDropdown();
-    });
-
-    overlay?.addEventListener('click', () => {
-        dropdownMenu?.classList.remove('show');
+    function cerrarformTablero() {
+        boardform.classList.remove('show');
         overlay.classList.remove('show');
-    });
+    }
 
-    document.querySelectorAll('.dropdown-item').forEach(item => {
-        item.addEventListener('click', () => {
+        function cerrarDropdown() {
             dropdownMenu?.classList.remove('show');
             overlay?.classList.remove('show');
+        }
+
+        function toggleDropdown() {
+            dropdownMenu?.classList.toggle('show');
+            overlay?.classList.toggle('show');
+        }
+
+        addButton?.addEventListener('click', e => {
+            e.preventDefault();
+            e.stopPropagation();
+            toggleDropdown();
         });
+
+        overlay?.addEventListener('click', () => {
+        cerrarDropdown();
+        cerrarformTablero();
+    });
+    cancelBoardBtn?.addEventListener('click', cerrarformTablero);
+
+    createBoardBtn?.addEventListener('click', () => {
+        const nombre = boardInput.value.trim();
+
+        if (!nombre) {
+            alert('Ingresá un nombre para el tablero');
+            return;
+        }
+
+        console.log('Crear tablero:', nombre);
+        cerrarformTablero();
+    });
+    createBoardItem?.addEventListener('click', e => {
+        e.preventDefault();
+        abrirformTablero();
     });
 
-    document.querySelector(".icon-bar.home")
-        ?.addEventListener("click", () => location.href = "index.html");
+
+    document.querySelectorAll('.dropdown-item').forEach(item => {
+        item.addEventListener('click', (e) => {
+            const href = item.getAttribute('href');
+            
+            if (href === 'create-pin.html') {
+                localStorage.removeItem("pinParaEditar");
+            }
+            
+            cerrarDropdown();
+        });
+    });
+    document.querySelector(".logo")?.addEventListener("click", () => {
+        localStorage.removeItem("pinParaEditar");
+        location.href = "index.html";
+    });
+
+    document.querySelector(".icon-bar.home")?.addEventListener("click", () => {
+        localStorage.removeItem("pinParaEditar");
+        location.href = "index.html";
+    });     
 
     document.querySelector(".icon-bar.search")
         ?.addEventListener("click", () => location.href = "search.html");
 
     profileButton?.addEventListener("click", () => {
-        if (!usuarioLogueado || !usuarioLogueado.id) {
-            console.warn("No hay usuario logueado");
-            return;
-        }
-
         location.href = `perfil.html?id=${usuarioLogueado.id}`;
     });
-
 }

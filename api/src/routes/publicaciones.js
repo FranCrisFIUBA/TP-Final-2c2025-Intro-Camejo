@@ -2,25 +2,30 @@ import express from 'express';
 import { pool } from "../db.js";
 import {
     esquemaActualizacionPublicacion,
-    esquemaPostPublicacion,
-    esquemaPublicacion
+    esquemaPostPublicacion
 } from "../utils/esquemas/publicaciones.js";
-import {intentarConseguirPublicacionPorId} from "../utils/database/publicaciones.js"
+import {
+    getPublicacionesConBusqueda,
+    intentarConseguirPublicacionPorId, validarParametrosDeBusqueda
+} from "../utils/database/publicaciones.js"
 import {existeUsuarioConId} from "../utils/database/usuarios.js";
-import {iconoUsuarioUpload, imagenPublicacionUpload} from "../middlewares/storage.js";
+import {imagenPublicacionUpload} from "../middlewares/storage.js";
 import multer from "multer";
+import {eliminarImagenPublicacionPorId} from "../utils/storage/publicaciones.js";
 
 const publicaciones = express.Router();
 
 // GET /publicaciones - Obtener todas las publicaciones
 publicaciones.get('/', async (req, res) => {
     // TODO: Permitir solicitar el orden de las publicaciones, ascendente o descendente; por fecha de publicacion o likes.
-
     try {
-        const result = await pool.query(`
-            SELECT * FROM publicaciones
-            ORDER BY fecha_publicacion DESC
-        `);
+        const params = req.body;
+
+        const error = validarParametrosDeBusqueda(params);
+        if (error)
+            return res.status(400).json({error: error});
+
+        const result = await getPublicacionesConBusqueda(params);
 
         res.status(200).json(result.rows);
     } catch (err) {
@@ -154,62 +159,104 @@ publicaciones.post(
 );
 
 // PATCH /publicaciones/:id - Actualizar publicación
-publicaciones.patch('/:id', async (req, res) => {
-    try {
-        const publicacion = await intentarConseguirPublicacionPorId(req.params.id);
-        if (!publicacion) {
-            return res.status(404).json({ error: "Publicación no encontrada" });
-        }
-
-        const parsedActualizacion = esquemaActualizacionPublicacion.safeParse(req.body);
-        if (!parsedActualizacion.success) {
-            return res.status(400).json({ errors: parsedActualizacion.error.issues });
-        }
-
-        // Construir query dinámica
-        const campos = [];
-        const valores = [];
-        let contador = 1;
-
-        Object.entries(parsedActualizacion.data).forEach(([key, value]) => {
-            if (value !== undefined) {
-                campos.push(`${key} = $${contador}`);
-                valores.push(value);
-                contador++;
+publicaciones.patch(
+    '/:id',
+    (req, res, next) => {
+        imagenPublicacionUpload.single('imagen')(req, res, function (err) {
+            if (err instanceof multer.MulterError) {
+                return res.status(400).json({ error: err.message });
+            } else if (err) {
+                return res.status(500).json({ error: "Error en la subida de archivo" });
             }
+            next();
         });
+    },
 
-        // Agregar fecha_edicion automáticamente
-        campos.push('fecha_edicion = CURRENT_TIMESTAMP');
-        
-        valores.push(req.params.id);
-        const query = `UPDATE publicaciones SET ${campos.join(', ')} WHERE id = $${contador} RETURNING *`;
-        
-        const result = await pool.query(query, valores);
-        res.status(200).json(result.rows[0]);
+    async (req, res) => {
+        try {
+            const { id } = req.params;
 
-    } catch (err) {
-        console.error(err);
-        res.status(500).json({ error: "Error al actualizar publicación" });
+            const publicacion = await intentarConseguirPublicacionPorId(id);
+            if (!publicacion) {
+                return res.status(404).json({ error: "Publicación no encontrada" });
+            }
+
+            const datosActualizados = {
+                id: Number(id), 
+                ...req.body,
+                imagen: req.file ? req.file.filename : undefined,
+                alto_imagen: req.body.alto_imagen ? Number(req.body.alto_imagen) : undefined,
+                ancho_imagen: req.body.ancho_imagen ? Number(req.body.ancho_imagen) : undefined
+            };
+
+            const parsedActualizacion = await esquemaActualizacionPublicacion.safeParseAsync(datosActualizados);
+
+            if (!parsedActualizacion.success) {
+                return res.status(400).json({
+                    errors: parsedActualizacion.error.issues
+                });
+            }
+
+            const dataParaDB = { ...parsedActualizacion.data };
+            if (req.file) {
+                dataParaDB.imagen = req.file.filename;
+            }
+
+            const campos = [];
+            const valores = [];
+            let i = 1;
+
+            Object.entries(dataParaDB).forEach(([key, value]) => {
+                if (key !== 'id' && value !== undefined) {
+                    campos.push(`${key} = $${i}`);
+                    valores.push(value);
+                    i++;
+                }
+            });
+
+            campos.push(`fecha_edicion = CURRENT_TIMESTAMP`);
+
+            valores.push(id);
+
+            const query = `
+                UPDATE publicaciones
+                SET ${campos.join(', ')}
+                WHERE id = $${i}
+                RETURNING *
+            `;
+
+            const result = await pool.query(query, valores);
+
+            res.status(200).json(result.rows[0]);
+        } catch (err) { 
+            console.error("Error detallado:", err);
+            
+            if (err && err.issues) {
+                return res.status(400).json({ 
+                    error: "Datos inválidos", 
+                    detalles: err.issues.map(i => i.message) 
+                });
+            }
+            return res.status(500).json({ error: "Error al actualizar publicación" });
+        }
     }
-});
+);
 
 // DELETE /publicaciones/:id - Eliminar publicación
 publicaciones.delete('/:id', async (req, res) => {
     try {
-        const { rowCount } = await pool.query(
-            "DELETE FROM publicaciones WHERE id = $1 RETURNING id",
-            [req.params.id]
-        );
+        const { id } = req.params;
+        const imagenEliminada = await eliminarImagenPublicacionPorId(id);
+
+        const { rowCount } = await pool.query("DELETE FROM publicaciones WHERE id = $1", [id]);
 
         if (rowCount === 0) {
             return res.status(404).json({ error: "Publicación no encontrada" });
         }
 
-        res.status(200).json({ message: "Publicación eliminada" });
+        res.json({ message: "Publicación eliminada", imagenEliminada });
     } catch (err) {
-        console.error(err);
-        res.status(500).json({ error: "Error al eliminar publicación" });
+        res.status(500).json({ error: "Error al eliminar" });
     }
 });
 

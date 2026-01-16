@@ -6,11 +6,19 @@
     --blanco: #f7f6ed;
     --negro: #47413e;
     --naranja: #fa6d48;
+    --naranja-oscuro: #e46545;
     --celeste: #a6cde4;
+    --celeste-oscuro: #73a1b9;
+    --azul: #4f9df0;
     --morado: #a096c8;
-    --morado-oscuro: #8662b6;
+    --morado-oscuro: #73699b;
     --gris: #dfded5;
-
+    --rojo: #f46a6a;
+    --rojo-oscuro: #e94949;
+    --gris1: #ddd;
+    --gris2: #ccc;
+    --gris3: #666;
+    --gris2: #494949;
     --padding-pag-6px: 6px;
     --padding-estandar: 8px;
     --border-radius: 8px;
@@ -18,6 +26,7 @@
     --border-estandar: 2px solid var(--negro);
     --gap-min: 5px;
     --gap-max: 10px;
+
 
     --nunito: 'Nunito-Bold', sans-serif;
     --nunito-light: 'Nunito-Light', sans-serif;

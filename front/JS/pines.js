@@ -1,4 +1,29 @@
+import { crearCard } from './componentes/card.js';
+
 const API_BASE_URL = 'http://127.0.0.1:3000';
+const API_IMAGENES = API_BASE_URL + '/imagenes';
+const API_ICONOS = API_BASE_URL + '/iconos';
+const usuariosCache = new Map();
+
+async function obtenerUsuarioPorId(usuarioId) {
+    if (usuariosCache.has(usuarioId)) {
+        return usuariosCache.get(usuarioId);
+    }
+
+    try {
+        const res = await fetch(`${API_BASE_URL}/usuarios/${usuarioId}`);
+        if (!res.ok) throw new Error('Error obteniendo usuario');
+
+        const json = await res.json();
+        const usuario = json.data;
+
+        usuariosCache.set(usuarioId, usuario);
+        return usuario;
+    } catch (err) {
+        console.error(`Error cargando usuario ${usuarioId}`, err);
+        return null;
+    }
+}
 
 // Función para obtener las publicaciones
 const cargarPublicaciones = async () => {
@@ -7,75 +32,54 @@ const cargarPublicaciones = async () => {
         if (!respuesta.ok) throw new Error(`Error: ${respuesta.status}`);
 
         const datos = await respuesta.json();
-        const contenedor = document.querySelector(".cards-container") || document.querySelector("#cards-container");
+        const SINPUBLIC = './img/sinPublicaciones1.png';
+        const contenedor =
+            document.querySelector(".cards-container") ||
+            document.querySelector("#cards-container");
 
         if (!contenedor) {
             console.error("No se encontró el contenedor en el HTML");
             return;
         }
+
         contenedor.innerHTML = "";
-        datos.forEach(publicacion => {
-            const nuevaCard = crearCard(publicacion);
+
+        if (!datos || datos.length === 0) {
+            contenedor.innerHTML = `
+                <div class="no-content">
+                    <img src='${SINPUBLIC}' alt="No hay contenido">
+                    <i class="fas fa-folder-open"></i>
+                    <p>Aún no se ha hecho ninguna publicación. ¡Sé el primero en compartir algo!</p>
+                </div>`;
+            return; 
+        }
+
+
+        for (const publicacion of datos) {
+            const usuario = await obtenerUsuarioPorId(publicacion.usuario_id);
+
+            publicacion.usuario_nombre = usuario?.nombre || 'Usuario';
+            publicacion.usuario_icono  = usuario?.icono || null;
+
+            const nuevaCard = crearCard(publicacion, {
+                onOpenModal: abrirCardModal,
+                onGoToProfile: irAlPerfil
+            });
+
             contenedor.appendChild(nuevaCard);
-        });
+        }
+
     } catch (error) {
         console.error('Hubo un error al conectar con la API:', error);
+        const contenedor = document.querySelector(".cards-container");
+        if (contenedor) {
+            contenedor.innerHTML = `<p class="no-content">Error al cargar las publicaciones. Inténtalo más tarde.</p>`;
+        }
     }
 };
 
-function crearCard(card) {
-    const AVATAR_DEFAULT = './img/avatar-default.jpg';
-    const cardDiv = document.createElement("div");
-    cardDiv.className = "card";
-    cardDiv.setAttribute("data-id", card.id);
 
-    const img = document.createElement("img");
-    img.src = card.url_imagen; 
-    img.alt = "Imagen de " + card.usuario_nombre;
-    img.className = "card-image";
 
-    if (card.ancho_imagen && card.alto_imagen) {
-        const aspectRatio = card.ancho_imagen / card.alto_imagen;
-        img.style.aspectRatio = aspectRatio;
-        img.style.maxWidth = "100%"; 
-        img.style.objectFit = "cover";
-        img.style.display = "block";
-    }
-
-    const content = document.createElement("div");
-    content.className = "card-content";
-
-    const footer = document.createElement("div");
-    footer.className = "card-footer";
-
-    const avatarSrc = card.usuario_icono && card.usuario_icono !== "" ? card.usuario_icono : AVATAR_DEFAULT;
-    footer.innerHTML = `
-        <div class="card-author">
-            <img src="${avatarSrc}" alt="Avatar" class="author-avatar">
-            <span class="author-name">${card.usuario_nombre}</span>
-        </div>
-        <div class="card-actions">
-        </div>
-    `;
-
-    content.appendChild(footer);
-    cardDiv.appendChild(img);
-    cardDiv.appendChild(content);
-
-    cardDiv.addEventListener("click", (e) => {
-        if (!e.target.closest('.card-author') && !e.target.closest('.like-btn')) {
-            abrirCardModal(card);
-        }
-    });
-    
-    const authorElement = footer.querySelector('.card-author');
-    authorElement.addEventListener("click", (e) => {
-        e.stopPropagation(); 
-        irAlPerfil(card.usuario_id); 
-    });
-
-    return cardDiv;
-}
 
 
 function irAlPerfil(usuarioId) {
@@ -86,8 +90,25 @@ function irAlPerfil(usuarioId) {
 
 
 
+function obtenerImageRatio(card) {
+    if (card.ancho_imagen == null || card.alto_imagen == null) {
+        return 'original';
+    }
 
+    if (card.ancho_imagen === card.alto_imagen) {
+        return '1-1';
+    }
 
+    if (card.ancho_imagen === 1920 && card.alto_imagen === 1080) {
+        return '16-9';
+    }
+
+    if (card.ancho_imagen === 1080 && card.alto_imagen === 1350) {
+        return '4-5';
+    }
+
+    return 'original';
+}
 
 
 
@@ -96,26 +117,36 @@ function abrirCardModal(card) {
     if (!modal) return;
 
     const AVATAR_DEFAULT = './img/avatar-default.jpg';
+    const imageRatio = obtenerImageRatio(card);
+    const tieneImagen = !!card.imagen;
 
     modal.innerHTML = `
         <div class="modal-overlay"></div>
         <div class="modal-content">
             <button class="modal-close">&times;</button>
             <div class="modal-body">
-                <div class="modal-image-section">
+            ${tieneImagen ? `
+            <div class="modal-image-section">
+                <div class="modal-image-wrapper ratio-${imageRatio}">
                     <img 
-                        src="${card.url_imagen}" 
+                        src="${API_IMAGENES}/${card.imagen}" 
                         class="modal-image"
-                        style="width: ${card.ancho_imagen}px; height: ${card.alto_imagen}px; max-width: 100%; object-fit: contain;"
+                        alt=""
                     >
-                    <div class="modal-author-info">
-                        <img src="${card.usuario_icono || AVATAR_DEFAULT}" class="modal-author-avatar" onerror="this.src='${AVATAR_DEFAULT}'">
-                        <div class="modal-author-details">
-                            <span class="modal-author-name">${card.usuario_nombre}</span>
-                            <span class="modal-publish-date">${calcularFecha(card.fecha_edicion)}</span>
-                        </div>
+                </div>
+
+                <div class="modal-author-info">
+                    <img src="${card.usuario_icono ? `${API_ICONOS}/${card.usuario_icono}` : AVATAR_DEFAULT}"
+                        class="modal-author-avatar"
+                        onerror="this.src='${AVATAR_DEFAULT}'">
+                    <div class="modal-author-details">
+                        <span class="modal-author-name">${card.usuario_nombre}</span>
+                        <span class="modal-publish-date">${calcularFecha(card.fecha_edicion)}</span>
                     </div>
                 </div>
+            </div>
+            ` : ''}
+
                 <div class="modal-comments-section">
                         <div class="modal-details">
                             <h2 class="modal-title">${card.titulo || 'Sin título'}</h2>
@@ -146,7 +177,6 @@ function abrirCardModal(card) {
         </div>
     `;
 
-    // Mostrar el modal
     modal.style.display = 'block';
     document.body.style.overflow = 'hidden';
     
@@ -156,23 +186,33 @@ function abrirCardModal(card) {
     const modalAuthorInfo = modal.querySelector('.modal-author-info');
     btnPublicar.onclick = async () => {
         const texto = inputComentario.value.trim();
-        
-        if (!texto) return; // No publicar si está vacío
+        if (!texto) return;
 
-        // Deshabilitamos el botón para evitar múltiples clics
+        const usuarioLogueado = obtenerUsuarioLogueado();
+
+        if (!usuarioLogueado || !usuarioLogueado.id) {
+            alert("Debes iniciar sesión para comentar");
+            return;
+        }
+
         btnPublicar.disabled = true;
         btnPublicar.textContent = "Publicando...";
 
-        const exito = await enviarComentario(card.id, texto);
+        const exito = await enviarComentario(
+            card.id,
+            texto,
+            usuarioLogueado.id
+        );
 
         if (exito) {
-            inputComentario.value = ""; 
-            await cargarComentariosEnModal(card.id); 
+            inputComentario.value = "";
+            await cargarComentariosEnModal(card.id);
         }
 
         btnPublicar.disabled = false;
         btnPublicar.textContent = "Publicar";
     };
+
 
 
     modalAuthorInfo.addEventListener('click', (e) => {
@@ -181,13 +221,11 @@ function abrirCardModal(card) {
     });
     
     inputComentario.onkeydown = (e) => {
-    // Si presiona Enter pero NO presiona Shift (para permitir saltos de línea)
     if (e.key === 'Enter' && !e.shiftKey) {
-        e.preventDefault(); // Evita que se cree una línea nueva
-        btnPublicar.click(); // Dispara el evento del botón
+        e.preventDefault();
+        btnPublicar.click(); 
     }
     };
-    // Eventos de cierre
     modal.querySelector('.modal-close').onclick = closeCardModal;
     modal.querySelector('.modal-overlay').onclick = closeCardModal;
 }
@@ -245,17 +283,70 @@ function listarHashtags(etiquetas) {
 }
 
 
+async function borrarComentario(comentarioId) {
+    const usuarioLogueado = obtenerUsuarioLogueado();
+
+    try {
+        const res = await fetch(`${API_BASE_URL}/comentarios/${comentarioId}`, {
+            method: 'DELETE',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                usuario_id: usuarioLogueado.id
+            })
+        });
+
+        if (!res.ok) {
+            const err = await res.json();
+            throw new Error(err.error);
+        }
+
+        return true;
+    } catch (err) {
+        console.error(err);
+        alert(err.message);
+        return false;
+    }
+}
+
+async function editarComentario(comentarioId, contenido) {
+    const usuarioLogueado = obtenerUsuarioLogueado();
+
+    try {
+        const res = await fetch(`${API_BASE_URL}/comentarios/${comentarioId}`, {
+            method: 'PATCH',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                contenido,
+                usuario_id: usuarioLogueado.id
+            })
+        });
+
+        if (!res.ok) {
+            const err = await res.json();
+            throw new Error(err.error);
+        }
+
+        return true;
+    } catch (err) {
+        console.error(err);
+        alert(err.message);
+        return false;
+    }
+}
+
 async function cargarComentariosEnModal(publicacionId) {
     const container = document.querySelector('.comments-container');
     const countElement = document.querySelector('.comments-count');
     const AVATAR_DEFAULT = './img/avatar-default.jpg';
 
     try {
-        // Asegúrate de que la ruta coincida con tu backend
         const res = await fetch(`${API_BASE_URL}/comentarios/publicacion/${publicacionId}`);
         const comentarios = await res.json();
 
-        // Actualizar contador si tienes el elemento en el HTML
         if (countElement) countElement.textContent = `${comentarios.length} comentarios`;
 
         if (comentarios.length === 0) {
@@ -263,36 +354,69 @@ async function cargarComentariosEnModal(publicacionId) {
             return;
         }
 
-        // Renderizar usando tus clases CSS originales
-        container.innerHTML = comentarios.map(com => `
-            <div class="comment-item">
-                <div class="comment-author">
-                    <img src="${com.avatar || AVATAR_DEFAULT}" class="comment-avatar" onerror="this.src='${AVATAR_DEFAULT}'">
-                    <div class="comment-content">
-                        <span class="comment-author-name">${com.author}</span>
-                        <p class="comment-text">${com.text}</p>
-                        <span class="comment-date">${calcularFecha(com.date)}</span>
+        const usuarioLogueado = obtenerUsuarioLogueado();
+
+        container.innerHTML = comentarios.map(comentario => {
+            const esAutor = usuarioLogueado && usuarioLogueado.id === comentario.usuario_id;
+
+            return `
+                <div class="comment-item" data-id="${comentario.id}">
+                    <div class="comment-author">
+                        <img src="${comentario.avatar ? `${API_ICONOS}/${comentario.avatar}` : AVATAR_DEFAULT}"
+                        class="comment-avatar"
+                        data-user-id="${comentario.usuario_id}"
+                        onerror="this.src='${AVATAR_DEFAULT}'">
+                        <div class="comment-content">
+                            <div class="comment-header">
+                                <span class="comment-author-name">${comentario.author}</span>
+
+                                ${esAutor ? `
+                                    <div class="comment-actions">
+                                        <button class="btn-edit-comment" data-id="${comentario.id}">Editar</button>
+                                        <button class="btn-delete-comment" data-id="${comentario.id}">Borrar</button>
+                                    </div>
+                                ` : ''}
+                            </div>
+
+                            <p class="comment-text">${comentario.text}</p>
+                            <span class="comment-date">${calcularFecha(comentario.date)}</span>
+                        </div>
                     </div>
                 </div>
-            </div>
-        `).join('');
-
-        // Hacer scroll automático al final para ver el nuevo comentario
+            `;
+        }).join('');
         container.scrollTop = container.scrollHeight;
+
 
     } catch (err) {
         console.error("Error cargando comentarios:", err);
         container.innerHTML = '<p class="no-comments">Error al conectar con el servidor.</p>';
     }
+
+    document.addEventListener('click', (e) => {
+        const avatar = e.target.closest('.comment-avatar');
+        if (!avatar) return;
+
+        const userId = avatar.dataset.userId;
+        if (!userId) return;
+        e.stopPropagation();
+
+        irAlPerfil(userId);
+    });
+
+}
+
+
+
+function obtenerUsuarioLogueado() {
+    const data = localStorage.getItem("usuarioLogueado");
+    return data ? JSON.parse(data) : null;
 }
 
 
 
 
-
-
-
-async function enviarComentario(publicacionId, contenido) {
+async function enviarComentario(publicacionId, contenido, usuarioId) {
     try {
         const response = await fetch(`${API_BASE_URL}/comentarios`, {
             method: 'POST',
@@ -300,7 +424,7 @@ async function enviarComentario(publicacionId, contenido) {
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify({
-                usuario_id: 2, //usuario fijo por ahora
+                usuario_id: usuarioId,
                 publicacion_id: publicacionId,
                 contenido: contenido
             })
@@ -320,5 +444,33 @@ async function enviarComentario(publicacionId, contenido) {
 }
 
 
+
 cargarPublicaciones();
 
+document.addEventListener('click', async (e) => {
+
+    if (e.target.classList.contains('btn-delete-comment')) {
+        const comentarioId = e.target.dataset.id;
+
+        if (!confirm('¿Eliminar este comentario?')) return;
+
+        const ok = await borrarComentario(comentarioId);
+        if (ok) {
+            e.target.closest('.comment-item').remove();
+        }
+    }
+
+    if (e.target.classList.contains('btn-edit-comment')) {
+        const comentarioId = e.target.dataset.id;
+        const commentItem = e.target.closest('.comment-item');
+        const textEl = commentItem.querySelector('.comment-text');
+
+        const nuevoTexto = prompt('Editar comentario:', textEl.textContent);
+        if (!nuevoTexto || !nuevoTexto.trim()) return;
+
+        const ok = await editarComentario(comentarioId, nuevoTexto.trim());
+        if (ok) {
+            textEl.textContent = nuevoTexto.trim();
+        }
+    }
+});

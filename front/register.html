@@ -3,8 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="css/variables.css">
     <link rel="stylesheet" href="./css/register.css">
-    <link rel="stylesheet" href="./css/variables.css">
+    <link rel="icon" href="img/logo-transp.png" type="image/x-icon">
     <title>Registro</title>
 </head>
 <body>
@@ -18,22 +19,24 @@
             <h1>
                 ¡Bienvenido a Imago!
             </h1>
-            <input type="text" name="usuario" placeholder="Nombre de usuario" > <br>
-            <input type="email" name="email" placeholder="Correo" > <br>
-            <input type="password" name="contrasena" placeholder="Contraseña"> <br>
-            <input type="password" name="repetir_contrasena" placeholder="Repetir contraseña"> <br>
-            <input type="date" name="fecha"> <br>
-            <div id="mensaje-error-aviso">
+            <input type="text" name="usuario" placeholder="Nombre de usuario" required> <br>
+            <input type="email" name="email" placeholder="Correo" required> <br>
+            <input type="password" name="contrasena" placeholder="Contraseña" required> <br>
+            <input type="password" name="repetir_contrasena" placeholder="Repetir contraseña" required> <br>
+            <input type="date" name="fecha" required> <br>
 
-            </div>
-            <input type="submit" class="campo-registrarse" value="Registrarse" >
+            <label for="icono">Foto de perfil:</label>
+            <input type="file" name="icono" id="icono" accept="image/*" required> <br>
+
+            <div id="mensaje-error-aviso"></div>
+            <input type="submit" class="campo-registrarse" value="Registrarse">
             <p>
                 ¿Ya tienes una cuenta? <br>
                 <a href="login.html">Inicia sesión</a>
             </p>
         </form>
     </div>
-    <script src="JS/register.js"></script>
-    <script src="JS/pines.js"></script>
+    <script type="module" src="JS/register.js"></script>
+    <script type="module" src="JS/pines.js"></script>
 </body>
 </html>
