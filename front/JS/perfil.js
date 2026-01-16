@@ -181,6 +181,7 @@ publicaciones.forEach(p => {
   const card = crearCard(
     {
       ...p,
+      usuario_id: usuarioId,
       usuario_nombre: usuarioActual.nombre,
       usuario_icono: usuarioActual.icono
     },
