@@ -492,7 +492,43 @@ async function enviarComentario(publicacionId, contenido, usuarioId) {
 
 
 
-cargarPublicaciones();
+
+document.addEventListener("DOMContentLoaded", () => {
+    console.log("DOM LISTO");
+
+    cargarPublicaciones();
+
+    const searchForm = document.querySelector(".search-bar");
+    const searchInput = document.querySelector(".search-input");
+
+    console.log("FORM:", searchForm);
+    console.log("INPUT:", searchInput);
+
+    if (!searchForm || !searchInput) return;
+
+    searchForm.addEventListener("submit", (e) => {
+        e.preventDefault();
+        console.log("SUBMIT OK");
+
+        const valor = searchInput.value.trim();
+
+        if (!valor) {
+            cargarPublicaciones();
+            return;
+        }
+
+        if (valor.startsWith("#")) {
+            const tag = valor.slice(1).trim();
+            if (!tag) return;
+
+            console.log("BUSCANDO TAG:", tag);
+            buscarPublicacionesPorTag(tag);
+        } else {
+            cargarPublicaciones();
+        }
+    });
+});
+
 
 document.addEventListener('click', async (e) => {
 
