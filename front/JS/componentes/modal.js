@@ -3,7 +3,6 @@ const API_IMAGENES = API_BASE_URL + '/imagenes';
 const API_ICONOS = API_BASE_URL + '/iconos';
 const AVATAR_DEFAULT = './img/avatar-default.jpg';
 
-// --- FUNCIONES DE NAVEGACIÓN Y UTILIDAD ---
 
 function irAlPerfil(usuarioId) {
     window.location.href = `perfil.html?id=${usuarioId}`;
@@ -42,7 +41,6 @@ function listarHashtags(etiquetas) {
     return etiquetas.split(',').map(tag => `<span class="hashtag">#${tag.trim()}</span>`).join('');
 }
 
-// --- LÓGICA PRINCIPAL DEL MODAL ---
 
 export function closeCardModal() {
     const modal = document.getElementById('card-modal');
@@ -59,17 +57,20 @@ export function abrirCardModal(card) {
     const imageRatio = obtenerImageRatio(card);
     const tieneImagen = !!card.imagen;
 
-    modal.innerHTML = `
-        <div class="modal-overlay"></div>
-        <div class="modal-content">
-            <button class="modal-close">&times;</button>
-            <div class="modal-body">
-                ${tieneImagen ? `
-                <div class="modal-image-section">
-                    <div class="modal-image-wrapper ratio-${imageRatio}">
-                        <img src="${API_IMAGENES}/${card.imagen}" class="modal-image">
-                    </div>
-                    <div class="modal-author-info" style="cursor:pointer">
+const isLiked = card.usuario_dio_like; 
+
+modal.innerHTML = `
+    <div class="modal-overlay"></div>
+    <div class="modal-content">
+        <button class="modal-close">&times;</button>
+        <div class="modal-body">
+            ${tieneImagen ? `
+            <div class="modal-image-section">
+                <div class="modal-image-wrapper ratio-${imageRatio}">
+                    <img src="${API_IMAGENES}/${card.imagen}" class="modal-image">
+                </div>
+                <div class="modal-author-info">
+                    <div class="modal-author-details-wrapper" id="go-to-profile" style="display:flex; align-items:center; gap:12px; cursor:pointer;">
                         <img src="${card.usuario_icono ? `${API_ICONOS}/${card.usuario_icono}` : AVATAR_DEFAULT}"
                              class="modal-author-avatar" onerror="this.src='${AVATAR_DEFAULT}'">
                         <div class="modal-author-details">
@@ -77,7 +78,13 @@ export function abrirCardModal(card) {
                             <span class="modal-publish-date">${calcularFecha(card.fecha_edicion || card.fecha_publicacion)}</span>
                         </div>
                     </div>
-                </div>` : ''}
+
+                    <button class="modal-like-btn ${isLiked ? 'liked' : ''}" id="btn-like-modal">
+                        <i class="${isLiked ? 'fa-solid' : 'fa-regular'} fa-heart like-icon"></i>
+                        <span class="likes-number">${card.likes_count || 0}</span>
+                    </button>
+                </div>
+            </div>` : ''}
 
                 <div class="modal-comments-section">
                     <div class="modal-details">
@@ -102,16 +109,13 @@ export function abrirCardModal(card) {
     modal.style.display = 'block';
     document.body.style.overflow = 'hidden';
 
-    // 1. Cargar comentarios iniciales
     cargarComentariosEnModal(card.id);
 
-    // 2. Referencias a elementos
     const btnPublicar = modal.querySelector('.comment-submit-btn');
     const inputComentario = modal.querySelector('.comment-input');
     const commentsContainer = modal.querySelector('.comments-container');
     const modalAuthorInfo = modal.querySelector('.modal-author-info');
 
-    // 3. Evento: Publicar Comentario
     btnPublicar.onclick = async () => {
         const texto = inputComentario.value.trim();
         const usuarioLogueado = obtenerUsuarioLogueado();
@@ -127,7 +131,6 @@ export function abrirCardModal(card) {
         btnPublicar.disabled = false;
     };
 
-    // 4. Evento: Delegación para Editar/Borrar comentarios
     commentsContainer.onclick = async (e) => {
         const id = e.target.dataset.id;
         if (e.target.classList.contains('btn-delete-comment')) {
@@ -144,20 +147,28 @@ export function abrirCardModal(card) {
         }
     };
 
-    // 5. Evento: Ir al perfil del autor
-    if (modalAuthorInfo) {
-        modalAuthorInfo.onclick = () => {
-            closeCardModal();
-            irAlPerfil(card.usuario_id);
-        };
-    }
+const goToProfileArea = modal.querySelector('#go-to-profile');
+if (goToProfileArea) {
+    goToProfileArea.onclick = () => {
+        closeCardModal();
+        irAlPerfil(card.usuario_id);
+    };
+}
 
-    // 6. Cerrar modal
+const likeBtn = modal.querySelector('#btn-like-modal');
+
+if (likeBtn) {
+    likeBtn.addEventListener('click', () => {
+        const icon = likeBtn.querySelector('.like-icon');
+        const number = likeBtn.querySelector('.likes-number');
+        /*faltan los endpoints de likes*/
+    });
+}
+
     modal.querySelector('.modal-close').onclick = closeCardModal;
     modal.querySelector('.modal-overlay').onclick = closeCardModal;
 }
 
-// --- COMUNICACIÓN CON API (COMENTARIOS) ---
 
 async function cargarComentariosEnModal(publicacionId) {
     const container = document.querySelector('.comments-container');
@@ -227,3 +238,10 @@ async function editarComentario(id, contenido) {
     });
     return res.ok;
 }
+
+
+
+
+
+
+

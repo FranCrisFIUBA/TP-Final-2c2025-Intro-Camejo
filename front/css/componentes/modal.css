@@ -7,37 +7,6 @@
     height: 100%;
     background-color: rgba(0,0,0,0.5);
 }
-
-.modal-like-btn {
-    background: none;
-    border: none;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    padding: 8px 12px;
-    border-radius: 20px;
-    transition: all 0.2s ease;
-    font-weight: 600;
-}
-
-.modal-like-btn:hover {
-    background: rgba(0, 0, 0, 0.05);
-}
-
-.modal-like-btn.liked {
-    color: #e60023;
-}
-
-.modal-like-btn.liked:hover {
-    background: rgba(230, 0, 35, 0.05);
-}
-
-.like-icon {
-    width: 20px;
-    height: 20px;
-}
-
 @media (max-width: 1000px) {
   .pines-section {
     column-width: 200px;
@@ -204,14 +173,13 @@
 }
 
 .modal-author-info {
-  padding: 15px;
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  background: white;
-  border-top: 1px solid var(--gris1);
-  min-height: 80px;
-  flex-shrink: 0;
+    padding: 15px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between; /* Esto empuja el contenido a los extremos */
+    background: white;
+    border-top: 1px solid var(--gris1);
+    min-height: 80px;
 }
 
 .modal-author-details {
@@ -284,19 +252,80 @@
   flex: 1;
 }
 
-.modal-likes {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  color: var(--gris3);
-  font-weight: 500;
+
+
+
+
+
+
+
+
+
+.modal-like-btn {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    font-size: 15px;
+    color: #555;
+    transition: transform 0.15s ease, color 0.2s ease;
 }
 
-.like-icon {
-  width: 20px;
-  height: 20px;
-  color: #e74c3c;
+.modal-like-btn .like-icon {
+    font-size: 22px;
+    transition: transform 0.2s ease, color 0.2s ease;
 }
+
+.modal-like-btn .likes-number {
+    font-size: 16px;
+    font-weight: 400;
+    font-family: var(--nunito);
+}
+
+.modal-like-btn:hover .like-icon,
+.modal-like-btn:hover .likes-number{
+    color: var(--rojo-oscuro);
+}
+.modal-like-btn.liked {
+    color: var(--rojo-oscuro);
+}
+
+.modal-like-btn.liked .like-icon {
+    color: var(--rojo-oscuro);
+    animation: like-pop 0.25s ease;
+}
+
+@keyframes like-pop {
+    0%   { transform: scale(1); }
+    50%  { transform: scale(1.3); }
+    100% { transform: scale(1); }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 .modal-comments-section {
   flex: 1;
@@ -377,9 +406,12 @@
 .no-comments {
   text-align: center;
   color: var(--gris3);
-  font-style: italic;
   margin-top: 40px;
   padding: 20px;
+}
+
+.no-comments p{
+  font-size: 10px;
 }
 
 .add-comment-section {

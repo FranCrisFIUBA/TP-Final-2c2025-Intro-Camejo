@@ -4,9 +4,6 @@ import { abrirCardModal } from './componentes/modal.js';
 const API_BASE_URL = 'http://127.0.0.1:3000';
 const usuariosCache = new Map();
 
-/**
- * Obtiene datos de usuario con Cache para no saturar la API
- */
 async function obtenerUsuarioPorId(usuarioId) {
     if (usuariosCache.has(usuarioId)) {
         return usuariosCache.get(usuarioId);
@@ -26,10 +23,6 @@ async function obtenerUsuarioPorId(usuarioId) {
         return null;
     }
 }
-
-/**
- * Carga las publicaciones y las renderiza usando el componente Card
- */
 const cargarPublicaciones = async () => {
     try {
         const respuesta = await fetch(`${API_BASE_URL}/publicaciones`);
@@ -55,15 +48,11 @@ const cargarPublicaciones = async () => {
             return; 
         }
 
-        // Renderizado de cada card
         for (const publicacion of datos) {
             const usuario = await obtenerUsuarioPorId(publicacion.usuario_id);
-
-            // Inyectamos los datos del usuario en el objeto publicación
             publicacion.usuario_nombre = usuario?.nombre || 'Usuario';
             publicacion.usuario_icono  = usuario?.icono || null;
 
-            // Creamos la card pasando las funciones del componente
             const nuevaCard = crearCard(publicacion, {
                 onOpenModal: abrirCardModal,
                 onGoToProfile: irAlPerfil
@@ -81,12 +70,8 @@ const cargarPublicaciones = async () => {
     }
 };
 
-/**
- * Redirección al perfil
- */
 function irAlPerfil(usuarioId) {
     window.location.href = `perfil.html?id=${usuarioId}`;
 }
 
-// Inicializar la carga
 cargarPublicaciones();
