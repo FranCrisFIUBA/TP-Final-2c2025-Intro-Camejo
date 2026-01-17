@@ -73,40 +73,34 @@
         </div>
     </div>
 
-    <div class="modal-overlay" id="modal-editar">
-        <div class="modal-card">
-            <div class="modal-top">
-            <h2>Editar Perfil</h2>
-            <div class="modal-top-actions">
-                <button class="btn-borrar" id="borrar-edit">Eliminar cuenta</button>
+<div class="modal-overlay-editar" id="modal-editar">
+    <div class="edit-modal-card"> <div class="edit-modal-top"> <h2>Editar Perfil</h2>
+            <div class="edit-modal-top-actions"> <button class="btn-borrar" id="borrar-edit">Eliminar cuenta</button>
                 <button class="btn-cancelar" id="cancel-edit">Cancelar</button>
                 <button class="btn-guardar" form="edit-profile-form">Guardar</button>
-
-            </div>
-            </div>
-
-            <div class="modal-content">
-                <div class="modal-avatar">
-                   <div class="avatar-box">
-                        <img src="" alt="Foto de perfil" class="profile-image-edit" id="profile-image-edit">
-                        <i class="fa-solid fa-pencil" id="btn-editar-avatar"></i>
-                        <input type="file" id="edit-icono" accept="image/*" style="display:none">
-                    </div>
-                </div>
-
-                <form id="edit-profile-form" class="modal-form">
-                    <label>Nombre de usuario</label>
-                    <input type="text" id="edit-nombre">
-
-                    <label>Contraseña</label>
-                    <input type="password" id="edit-contraseña">
-
-                    <label>Repetir contraseña</label>
-                    <input type="password" id="edit-contraseña-repetida">
-                </form>
             </div>
         </div>
+
+        <div class="edit-modal-body-content"> <div class="modal-avatar">
+               <div class="avatar-box">
+                    <img src="" alt="Foto de perfil" class="profile-image-edit" id="profile-image-edit">
+                    <i class="fa-solid fa-pencil" id="btn-editar-avatar"></i>
+                    <input type="file" id="edit-icono" accept="image/*" style="display:none">
+                </div>
+            </div>
+
+            <form id="edit-profile-form" class="edit-modal-form"> <label>Nombre de usuario</label>
+                <input type="text" id="edit-nombre">
+
+                <label>Contraseña</label>
+                <input type="password" id="edit-contraseña">
+
+                <label>Repetir contraseña</label>
+                <input type="password" id="edit-contraseña-repetida">
+            </form>
+        </div>
     </div>
+</div>
     <div id="card-modal" class="modal" style="display: none;"></div>
     <script type="module" src="JS/navbar.js"></script>
     <script type="module" src="JS/componentes/card.js"></script>

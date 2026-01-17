@@ -167,7 +167,7 @@ body, html {
     grid-column: 2;
     grid-row: 2;
 }
-
+/* Estilo para cuando no hay pins */
 .no-content {
   display: flex;
   flex-direction: column;
@@ -180,7 +180,6 @@ body, html {
   column-span: all;  
 }
 
-
 .no-content img {
   max-width: 200px;
   margin-bottom: 15px;
@@ -192,9 +191,6 @@ body, html {
   font-weight: 500;
   font-family: var(--nunito);
 }
-
-
-
 
 
 .tablero-descripcion {
@@ -310,7 +306,14 @@ body, html {
 
 
 
+.cards-container{
+  column-count: 6; 
+  column-gap: 10px; 
+  padding: var(--padding-estandar);
+  width: 100%;
+  box-sizing: border-box;
 
+}
 
 
 
@@ -680,12 +683,122 @@ body, html {
 
 
 /* Estilos para las publicaciones */
-.cards-container{
+.publicaciones-container {
   column-count: 6; 
   column-gap: 10px; 
   padding: var(--padding-estandar);
   width: 100%;
   box-sizing: border-box;
+}
+
+.publicacion-item {
+    background: white;
+    border-radius: 16px;
+    padding: 18px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    transition: all 0.3s ease;
+    border: 1px solid #f0f0f0;
+}
+
+.publicacion-item:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+}
+
+.publicacion-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 15px;
+}
+
+.publicacion-title {
+    font-size: 16px;
+    font-weight: 600;
+    margin: 0;
+    color: var(--text-color);
+    line-height: 1.3;
+    flex: 1;
+    margin-right: 10px;
+}
+
+.publicacion-likes {
+    background: var(--primary-color);
+    color: white;
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    white-space: nowrap;
+}
+
+.publicacion-image {
+    width: 100%;
+    height: 200px;
+    object-fit: cover;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: transform 0.3s ease;
+}
+
+.publicacion-image:hover {
+    transform: scale(1.05);
+}
+
+.publicacion-info {
+    margin-top: 15px;
+}
+
+.publicacion-hashtags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-bottom: 10px;
+}
+
+.hashtag {
+    background: var(--light-gray);
+    padding: 4px 10px;
+    border-radius: 12px;
+    font-size: 11px;
+    color: var(--text-color);
+    font-weight: 500;
+}
+
+.publicacion-fecha {
+    font-size: 12px;
+    color: var(--gray);
+    margin: 0;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.no-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 60px 20px;
+  width: 100%;
+  grid-column: 1 / -1; 
+  column-span: all;  
+}
+
+.no-content img {
+  max-width: 200px;
+  margin-bottom: 15px;
+}
+
+.no-content p {
+  font-size: 18px;
+  color: var(--gris2);
+  font-weight: 500;
+  font-family: var(--nunito);
 }
 
 
@@ -695,7 +808,9 @@ body, html {
 
 
 
-.modal-overlay {
+
+/* OVERLAY */
+.modal-overlay-editar {
   position: fixed;
   inset: 0;
   background: rgba(0, 0, 0, 0.25);
@@ -705,7 +820,7 @@ body, html {
   z-index: 1000;
 }
 
-.modal-card {
+.edit-modal-card {
   background: #fff;
   width: 700px;
   border-radius: 14px;
@@ -713,52 +828,55 @@ body, html {
   box-shadow: 0 20px 40px rgba(0,0,0,0.2);
 }
 
-.modal-top {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 20px;
+.edit-modal-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 15px;
+    border-bottom: 1px solid var(--gris1);
 }
 
-.modal-top h2 {
-  margin: 0;
-  font-size: 22px;
+.edit-modal-top h2 {
+    margin: 0;
+    font-size: 1.5rem;
+    color: var(--negro);
+}
+.edit-modal-top-actions{
+    display: flex;
+    gap: 10px;
+    font-size: 30px;
 }
 
-.modal-top-actions {
-  display: flex;
-  gap: 10px;
-}
-
-.btn-borrar{
-    background: var(--rojo);
+.edit-modal-top-actions .btn-borrar {
+    background: transparent;
+    color: #e11d1d;
     border: none;
-    padding: 6px 16px;
-    border-radius: 6px;
     cursor: pointer;
+    padding: 8px 12px;
     font-family: var(--nunito);
 }
-
-.btn-cancelar {
-    background: var(--gris);
+.edit-modal-top-actions .btn-cancelar {
+    background: var(--gris1);
     border: none;
-    padding: 6px 14px;
+    padding: 8px 16px;
     border-radius: 6px;
     cursor: pointer;
-    font-family: var(--nunito);
 }
 
-.btn-guardar {
-    background: var(--amarillo);
+.edit-modal-top-actions .btn-guardar {
+    background: var(--amarillo); 
+    color: var(--negro);
     border: none;
-    padding: 6px 16px;
+    padding: 8px 20px;
     border-radius: 6px;
+    cursor: pointer;
     font-weight: bold;
-    cursor: pointer;
-    font-family: var(--nunito);
 }
-
-.modal-content {
+.edit-modal-top-actions .btn-guardar:hover {
+    background: var(--amarillo-oscuro);
+}
+.edit-modal-body-content {
+  margin-top: 20px;
   display: grid;
   grid-template-columns: 220px 1fr;
   gap: 24px;
@@ -801,17 +919,18 @@ body, html {
   cursor: pointer;
 }
 
-.modal-form {
+.edit-modal-form {
   display: flex;
   flex-direction: column;
+  margin-top: 10px;
 }
 
-.modal-form label {
+.edit-modal-form label {
   font-size: 14px;
   margin-bottom: 4px;
 }
 
-.modal-form input {
+.edit-modal-form input {
   margin-bottom: 12px;
   padding: 8px;
   border-radius: 6px;
