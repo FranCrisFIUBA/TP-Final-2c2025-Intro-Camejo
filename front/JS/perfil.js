@@ -181,10 +181,10 @@ publicaciones.forEach(p => {
   const card = crearCard(
     {
       ...p,
-      usuario_id: usuarioId,
       usuario_nombre: usuarioActual.nombre,
       usuario_icono: usuarioActual.icono
     },
+
     {
       onOpenModal: abrirCardModal, 
       onGoToProfile: (id) => {
@@ -227,7 +227,8 @@ publicaciones.forEach(p => {
           console.error(error);
           alert("Error de conexión con el servidor");
         }
-      }
+      },
+      showActions: true
     }
   );
 

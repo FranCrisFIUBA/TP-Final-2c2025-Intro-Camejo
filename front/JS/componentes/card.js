@@ -9,7 +9,8 @@ export function crearCard(
         onOpenModal = () => {},
         onGoToProfile = () => {},
         onEdit = () => {},
-        onDelete = () => {}
+        onDelete = () => {},
+        showActions = false
     } = {}
 ) {
     const usuarioData = localStorage.getItem("usuarioLogueado");
@@ -50,7 +51,7 @@ export function crearCard(
             <span class="author-name">${card.usuario_nombre || ''}</span>
         </div>
     `;
-    if (esDueno) {
+    if (esDueno && showActions) {
         const actions = document.createElement("div");
         actions.className = "card-actions";
 
