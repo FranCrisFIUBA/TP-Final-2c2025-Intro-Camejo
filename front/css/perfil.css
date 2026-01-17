@@ -167,20 +167,35 @@ body, html {
     grid-column: 2;
     grid-row: 2;
 }
-/* Estilo para cuando no hay pins */
-.no-pins {
-    grid-column: 1 / -1;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: #999;
-    font-size: 14px;
-    text-align: center;
-    background: #f8f9fa;
-    border-radius: 8px;
-    margin: 0;
-    height: 100%;
+
+.no-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 60px 20px;
+  width: 100%;
+  grid-column: 1 / -1; 
+  column-span: all;  
 }
+
+
+.no-content img {
+  max-width: 200px;
+  margin-bottom: 15px;
+}
+
+.no-content p {
+  font-size: 18px;
+  color: var(--gris2);
+  font-weight: 500;
+  font-family: var(--nunito);
+}
+
+
+
+
 
 .tablero-descripcion {
     font-size: 13px;

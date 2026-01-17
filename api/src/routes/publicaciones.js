@@ -2,25 +2,26 @@ import express from 'express';
 import { pool } from "../db.js";
 import {
     esquemaActualizacionPublicacion,
-    esquemaPostPublicacion
+    esquemaPostPublicacion,
+    esquemaPublicacion
 } from "../utils/esquemas/publicaciones.js";
-import {intentarConseguirPublicacionPorId} from "../utils/database/publicaciones.js"
+import {
+    getPublicacionesConBusqueda,
+    intentarConseguirPublicacionPorId
+} from "../utils/database/publicaciones.js"
 import {existeUsuarioConId} from "../utils/database/usuarios.js";
-import {imagenPublicacionUpload} from "../middlewares/storage.js";
+import {iconoUsuarioUpload, imagenPublicacionUpload} from "../middlewares/storage.js";
 import multer from "multer";
-import {eliminarImagenPublicacionPorId} from "../utils/storage/publicaciones.js";
 
 const publicaciones = express.Router();
 
 // GET /publicaciones - Obtener todas las publicaciones
 publicaciones.get('/', async (req, res) => {
     // TODO: Permitir solicitar el orden de las publicaciones, ascendente o descendente; por fecha de publicacion o likes.
-
     try {
-        const result = await pool.query(`
-            SELECT * FROM publicaciones
-            ORDER BY fecha_publicacion DESC
-        `);
+        const params = req.query;
+
+        const result = await getPublicacionesConBusqueda(params);
 
         res.status(200).json(result.rows);
     } catch (err) {
@@ -70,7 +71,6 @@ publicaciones.get('/usuario/:usuarioId', async (req, res) => {
         res.status(500).json({ error: "Error al obtener publicaciones del usuario" });
     }
 });
-
 // POST /publicaciones - Crear nueva publicación con imagen
 publicaciones.post(
     '/',
