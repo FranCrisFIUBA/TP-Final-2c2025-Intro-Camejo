@@ -214,6 +214,7 @@ publicaciones.forEach(p => {
             return;
           }
           card.remove();
+          alert("Publicación eliminada con éxito");
           if (!container.children.length) {
             container.innerHTML = `
               <div class="no-content">
