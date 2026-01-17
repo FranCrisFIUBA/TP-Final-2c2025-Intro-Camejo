@@ -15,12 +15,31 @@ const publicaciones = express.Router();
 // GET /publicaciones - Obtener todas las publicaciones
 publicaciones.get('/', async (req, res) => {
     // TODO: Permitir solicitar el orden de las publicaciones, ascendente o descendente; por fecha de publicacion o likes.
-
+    console.log("QUERY:", req.query);
     try {
-        const result = await pool.query(`
-            SELECT * FROM publicaciones
-            ORDER BY fecha_publicacion DESC
-        `);
+        const { tag } = req.query;
+
+        let result;
+
+        if (tag) {
+            result = await pool.query(
+                `
+                SELECT *
+                FROM publicaciones
+                WHERE etiquetas ILIKE $1
+                ORDER BY fecha_publicacion DESC
+                `,
+                [`%${tag}%`]
+            );
+        } else {
+            result = await pool.query(
+                `
+                SELECT *
+                FROM publicaciones
+                ORDER BY fecha_publicacion DESC
+                `
+            );
+        }
 
         res.status(200).json(result.rows);
     } catch (err) {
