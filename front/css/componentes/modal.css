@@ -112,7 +112,7 @@
   display: flex;
   flex-direction: column;
   background: white;
-  flex: 0 0 auto; /*esta linea hace que se respete el tamaño elegido de la imagen*/
+  flex: 0 0 auto;
   max-width: 800px;
 }
 .modal-image-wrapper {
@@ -176,7 +176,6 @@
     padding: 15px;
     display: flex;
     align-items: center;
-    justify-content: space-between; /* Esto empuja el contenido a los extremos */
     background: white;
     border-top: 1px solid var(--gris1);
     min-height: 80px;
@@ -271,6 +270,7 @@
     font-size: 15px;
     color: #555;
     transition: transform 0.15s ease, color 0.2s ease;
+    padding: 6px 8px;
 }
 
 .modal-like-btn .like-icon {
@@ -322,6 +322,73 @@
 
 
 
+.modal-actions {
+    margin-left: auto;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+}
+
+
+.modal-save-btn {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 14px;
+    border-radius: 10px;
+    border: none;
+    cursor: pointer;
+    font-weight: 600;
+    background: transparent;
+    color: var(--gris2);
+    size: 80px;
+     font-size: 22px;
+}
+.modal-save-btn:hover{
+    background: var(--naranja);
+    color: #fff;
+}
+
+
+
+.board-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,.45);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 3000;
+}
+
+.board-modal {
+    background: white;
+    width: 280px;
+    padding: 20px;
+    border-radius: 14px;
+}
+
+.board-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin: 12px 0;
+}
+
+.board-item {
+    cursor: pointer;
+    color: red;
+}
+
+.board-item:hover {
+    background: #eee;
+}
+
+.board-close {
+    width: 100%;
+    margin-top: 8px;
+    padding: 8px;
+}
 
 
 
@@ -410,9 +477,6 @@
   padding: 20px;
 }
 
-.no-comments p{
-  font-size: 10px;
-}
 
 .add-comment-section {
   border-top: 1px solid var(--gris1);

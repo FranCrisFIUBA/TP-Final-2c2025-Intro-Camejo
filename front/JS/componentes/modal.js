@@ -78,11 +78,15 @@ modal.innerHTML = `
                             <span class="modal-publish-date">${calcularFecha(card.fecha_edicion || card.fecha_publicacion)}</span>
                         </div>
                     </div>
-
-                    <button class="modal-like-btn ${isLiked ? 'liked' : ''}" id="btn-like-modal">
-                        <i class="${isLiked ? 'fa-solid' : 'fa-regular'} fa-heart like-icon"></i>
-                        <span class="likes-number">${card.likes_count || 0}</span>
-                    </button>
+                    <div class="modal-actions">
+                        <button class="modal-like-btn ${isLiked ? 'liked' : ''}" id="btn-like-modal">
+                            <i class="${isLiked ? 'fa-solid' : 'fa-regular'} fa-heart like-icon"></i>
+                            <span class="likes-number">${card.likes_count || 0}</span>
+                        </button>
+                        <button class="modal-save-btn" id="btn-save-board">
+                            <i class="fa-solid fa-plus add-icon"></i>
+                        </button>
+                    </div>
                 </div>
             </div>` : ''}
 
