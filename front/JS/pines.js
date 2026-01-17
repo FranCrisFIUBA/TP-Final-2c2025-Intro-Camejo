@@ -78,7 +78,54 @@ const cargarPublicaciones = async () => {
     }
 };
 
+async function renderizarPublicacionesDesdeDatos(datos) {
+    const SINPUBLIC = './img/sinPublicaciones1.png';
+    const contenedor =
+        document.querySelector(".cards-container") ||
+        document.querySelector("#cards-container");
 
+    contenedor.innerHTML = "";
+
+    if (!datos || datos.length === 0) {
+        contenedor.innerHTML = `
+            <div class="no-content">
+                <img src='${SINPUBLIC}' alt="No hay contenido">
+                <p>No se encontraron publicaciones con esa etiqueta.</p>
+            </div>`;
+        return;
+    }
+
+    for (const publicacion of datos) {
+        const usuario = await obtenerUsuarioPorId(publicacion.usuario_id);
+
+        publicacion.usuario_nombre = usuario?.nombre || 'Usuario';
+        publicacion.usuario_icono  = usuario?.icono || null;
+
+        const nuevaCard = crearCard(publicacion, {
+            onOpenModal: abrirCardModal,
+            onGoToProfile: irAlPerfil
+        });
+
+        contenedor.appendChild(nuevaCard);
+    }
+}
+
+async function buscarPublicacionesPorTag(tag) {
+    try {
+        const respuesta = await fetch(
+            `${API_BASE_URL}/publicaciones?tag=${encodeURIComponent(tag)}`
+        );
+
+        if (!respuesta.ok) {
+            throw new Error("Error buscando publicaciones");
+        }
+
+        const datos = await respuesta.json();
+        renderizarPublicacionesDesdeDatos(datos);
+    } catch (error) {
+        console.error("Error en búsqueda por etiqueta:", error);
+    }
+}
 
 
 
