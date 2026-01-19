@@ -719,3 +719,19 @@ body, html {
 .comment-avatar {
     cursor: pointer;
 }
+
+.btn-filtros {
+    background: none;
+    cursor: pointer;
+    border: none;
+}
+
+.btn-filtros img {
+  transition: filter 0.2s ease, transform 0.2s ease;
+}
+
+.btn-filtros:hover img {
+  filter: drop-shadow(0 0 6px rgba(0, 0, 0, 0.35))
+          brightness(1.1);
+  transform: scale(1.1);
+}
