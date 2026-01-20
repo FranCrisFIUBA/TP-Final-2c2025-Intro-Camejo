@@ -159,3 +159,11 @@ createBoardItem?.addEventListener('click', e => {
         location.href = `perfil.html?id=${usuarioLogueado.id}`;
     });
 }
+
+
+const btnFiltro = document.querySelector(".btn-filtros");
+const panelFiltros = document.querySelector(".filters-panel");
+
+btnFiltro.addEventListener("click", () => {
+  panelFiltros.classList.toggle("activo");
+});

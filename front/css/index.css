@@ -735,3 +735,22 @@ body, html {
           brightness(1.1);
   transform: scale(1.1);
 }
+
+.filters-panel {
+  position: absolute;
+  top: 49px; /* debajo del buscador */
+  right: 6px;             /* alineado al botón */
+  width: 320px;
+
+  background: white;
+  border: var(--border-estandar);
+  border-radius: 12px;
+  padding: 16px;
+  z-index: 100;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+  display: none;
+}
+
+.filters-panel.activo {
+  display: block;
+}
