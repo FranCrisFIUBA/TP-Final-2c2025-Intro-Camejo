@@ -55,4 +55,27 @@ likes.get('/likes/publicacion/:publicacion_id', async (req, res) => {
     }
 })
 
+
+// POST /likes/publicacion/publicacion_id
+likes.post('/likes/publicacion/', async (req, res) => {
+    try {
+        const { usuario_id, publicacion_id } = req.body;
+
+        if (!usuario_id || !publicacion_id) {
+            return res.status(400).json({ error: "Faltan campos requeridos" });
+        }
+
+        const result = await pool.query(`
+            INSERT INTO likes (usuario_id, publicacion_id)
+            VALUES ($1, $2)
+            RETURNING *
+        `, [usuario_id, publicacion_id,]);
+
+        res.status(201).json(result.rows[0]);
+    } catch (error) {
+        console.error('Error creando el like:', error);
+        res.status(500).json({ error: "Error al crear el like" });
+    }
+})
+
 export default likes
