@@ -5,6 +5,16 @@ const API_IMAGENES = API_BASE_URL + '/imagenes';
 const API_ICONOS = API_BASE_URL + '/iconos';
 const usuariosCache = new Map();
 
+let filtrosActivos = {
+    tag: null,
+    autor: null,
+    likesMin: null,
+    likesMax: null,
+    fechaMin: null,
+    fechaMax: null
+  };
+
+  
 async function obtenerUsuarioPorId(usuarioId) {
     if (usuariosCache.has(usuarioId)) {
         return usuariosCache.get(usuarioId);
@@ -498,11 +508,35 @@ document.addEventListener("DOMContentLoaded", () => {
 
     cargarPublicaciones();
 
+    const panelFiltros = document.querySelector(".filters-panel");
+    const inputAutor = panelFiltros.querySelector('input[name="autor"]');
+    const inputLikesMin = panelFiltros.querySelector('input[name="likes_minimos"]');
+    const inputLikesMax = panelFiltros.querySelector('input[name="likes_maximos"]');
+    const inputFechaMin = panelFiltros.querySelector('input[name="fecha_publicacion_minima"]');
+    const inputFechaMax = panelFiltros.querySelector('input[name="fecha_publicacion_maxima"]');
+
+    const btnApply = panelFiltros.querySelector(".btn-apply");
+    const btnClear = panelFiltros.querySelector(".btn-clear");
+
     const searchForm = document.querySelector(".search-bar");
     const searchInput = document.querySelector(".search-input");
 
-    console.log("FORM:", searchForm);
-    console.log("INPUT:", searchInput);
+    btnClear.addEventListener("click", () => {
+        inputAutor.value = "";
+        inputLikesMin.value = "";
+        inputLikesMax.value = "";
+        inputFechaMin.value = "";
+        inputFechaMax.value = "";
+
+        filtrosActivos = {
+            tag: null,
+            autor: null,
+            likesMin: null,
+            likesMax: null,
+            fechaMin: null,
+            fechaMax: null
+        };
+    });
 
     if (!searchForm || !searchInput) return;
 
