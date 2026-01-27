@@ -521,6 +521,18 @@ document.addEventListener("DOMContentLoaded", () => {
     const searchForm = document.querySelector(".search-bar");
     const searchInput = document.querySelector(".search-input");
 
+    btnApply.addEventListener("click", () => {
+        console.log("CLICK APLICAR");
+
+        filtrosActivos.autor = inputAutor.value.trim() || null;
+        filtrosActivos.likesMin = Number(inputLikesMin.value) || null;
+        filtrosActivos.likesMax = Number(inputLikesMax.value) || null;
+        filtrosActivos.fechaMin = inputFechaMin.value || null;
+        filtrosActivos.fechaMax = inputFechaMax.value || null;
+
+        panelFiltros.classList.remove("activo");
+    });
+
     btnClear.addEventListener("click", () => {
         inputAutor.value = "";
         inputLikesMin.value = "";
@@ -541,25 +553,21 @@ document.addEventListener("DOMContentLoaded", () => {
     if (!searchForm || !searchInput) return;
 
     searchForm.addEventListener("submit", (e) => {
+        console.log("SUBMIT FORM");
         e.preventDefault();
-        console.log("SUBMIT OK");
 
         const valor = searchInput.value.trim();
-
         if (!valor) {
-            cargarPublicaciones();
             return;
         }
 
         if (valor.startsWith("#")) {
-            const tag = valor.slice(1).trim();
-            if (!tag) return;
-
-            console.log("BUSCANDO TAG:", tag);
-            buscarPublicacionesPorTag(tag);
+            filtrosActivos.tag = valor.slice(1).trim() || null;
         } else {
-            cargarPublicaciones();
+            filtrosActivos.tag = null;
         }
+
+        buscarPublicacionesPorTagConFiltros(filtrosActivos);
     });
 });
 
