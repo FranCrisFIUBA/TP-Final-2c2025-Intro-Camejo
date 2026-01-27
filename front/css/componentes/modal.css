@@ -58,7 +58,7 @@
   border-radius: 16px;
   box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
   display: flex;
-  overflow: hidden; 
+  overflow: visible; 
   animation: modalAppear 0.3s ease-out;
   max-width: 95vw;
   max-height: 95vh;
@@ -114,6 +114,7 @@
   background: white;
   flex: 0 0 auto;
   max-width: 800px;
+  border-radius: 16px 0 0 16px;
 }
 .modal-image-wrapper {
   width: 100%;
@@ -123,6 +124,7 @@
   align-items: center;
   justify-content: center;
   background: #fff;
+  border-radius: 16px 0 0 0;
 }
 
 .modal-image-wrapper.ratio-1-1 {
@@ -173,12 +175,13 @@
 }
 
 .modal-author-info {
-    padding: 15px;
-    display: flex;
-    align-items: center;
-    background: white;
-    border-top: 1px solid var(--gris1);
-    min-height: 80px;
+  padding: 15px;
+  display: flex;
+  align-items: center;
+  background: white;
+  border-top: 1px solid var(--gris1);
+  min-height: 80px;
+  border-radius: 0 0 0 16px;
 }
 
 .modal-author-details {
@@ -402,6 +405,7 @@
   display: flex;
   flex-direction: column;
   overflow-y: auto;
+  border-radius: 0 16px 16px 0;
 }
 
 
