@@ -120,22 +120,51 @@ async function renderizarPublicacionesDesdeDatos(datos) {
     }
 }
 
-async function buscarPublicacionesPorTag(tag) {
-    try {
-        const respuesta = await fetch(
-            `${API_BASE_URL}/publicaciones?tag=${encodeURIComponent(tag)}`
-        );
 
-        if (!respuesta.ok) {
-            throw new Error("Error buscando publicaciones");
-        }
+async function buscarPublicacionesPorTagConFiltros(filtros) {
+    const params = new URLSearchParams();
 
-        const datos = await respuesta.json();
-        renderizarPublicacionesDesdeDatos(datos);
-    } catch (error) {
-        console.error("Error en búsqueda por etiqueta:", error);
+    if (filtros.tag) {
+        params.append("tag", filtros.tag);
+      }
+  
+    if (filtros.autor) {
+      params.append("autor", filtros.autor);
     }
-}
+  
+    if (filtros.likesMin !== null) {
+      params.append("likesMin", filtros.likesMin);
+    }
+  
+    if (filtros.likesMax !== null) {
+      params.append("likesMax", filtros.likesMax);
+    }
+  
+    if (filtros.fechaMin) {
+      params.append("fechaMin", filtros.fechaMin);
+    }
+  
+    if (filtros.fechaMax) {
+      params.append("fechaMax", filtros.fechaMax);
+    }
+  
+    try {
+      const respuesta = await fetch(
+        `${API_BASE_URL}/publicaciones?${params.toString()}`
+      );
+  
+      if (!respuesta.ok) {
+        throw new Error("Error al aplicar filtros");
+      }
+  
+      const datos = await respuesta.json();
+      renderizarPublicacionesDesdeDatos(datos);
+  
+    } catch (error) {
+      console.error("Error aplicando filtros:", error);
+    }
+  }
+
 
 
 
@@ -499,9 +528,6 @@ async function enviarComentario(publicacionId, contenido, usuarioId) {
         return false;
     }
 }
-
-
-
 
 document.addEventListener("DOMContentLoaded", () => {
     console.log("DOM LISTO");
