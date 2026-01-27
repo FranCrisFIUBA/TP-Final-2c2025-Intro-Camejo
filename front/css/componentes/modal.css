@@ -351,7 +351,7 @@
 
 
 
-.board-overlay {
+.tablero-overlay {
     position: fixed;
     inset: 0;
     background: rgba(0,0,0,.45);
@@ -361,30 +361,30 @@
     z-index: 3000;
 }
 
-.board-modal {
+.tablero-modal {
     background: white;
     width: 280px;
     padding: 20px;
     border-radius: 14px;
 }
 
-.board-list {
+.tablero-list {
     display: flex;
     flex-direction: column;
     gap: 8px;
     margin: 12px 0;
 }
 
-.board-item {
+.tablero-item {
     cursor: pointer;
     color: red;
 }
 
-.board-item:hover {
+.tablero-item:hover {
     background: #eee;
 }
 
-.board-close {
+.tablero-close {
     width: 100%;
     margin-top: 8px;
     padding: 8px;
@@ -555,4 +555,101 @@
 }
 .comment-avatar {
     cursor: pointer;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+.modal-actions {
+  position: relative; 
+}
+
+.tableros-popover {
+  position: absolute;
+  bottom: 110%;
+  right: 0;
+  width: 250px;
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+  padding: 15px;
+  z-index: 100;
+  display: none
+}
+
+.tableros-popover.active {
+  display: block;
+}
+
+.tablero-item-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 0;
+  border-bottom: 1px solid #eee;
+}
+
+.btn-add-tablero-ui {
+  width: 100%;
+  padding: 8px;
+  background: #efefef;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  margin-bottom: 10px;
+  font-weight: bold;
+}
+
+#form-nuevo-tablero {
+  display: none;
+  flex-direction: column;
+  gap: 8px;
+  padding: 10px 0;
+}
+
+#form-nuevo-tablero input{
+  width: 100%; 
+  padding: 7px 10px;
+  background-color: #fff;
+  border-radius: 6px;
+  border: 1px solid var(--gris1);
+}
+
+#form-nuevo-tablero button{
+  width: 100%; 
+  padding: 7px 10px;
+  background-color: var(--naranja);
+  border-radius: 6px;
+  border: none;
+  color: #fff;
+  font-family: var(--nunito);
+}
+
+.lista-tableros {
+  display: flex;         
+  justify-content: space-between; 
+  align-items: center;      
+  padding: 10px;           
+  width: 100%;               
+  border-bottom: 1px solid #eee;
+  font-family: var(--nunito);
+}
+
+.btn-tablero-guardar{
+  background:var(--naranja); 
+  color:white; 
+  border:none; 
+  border-radius:5px; 
+  padding: 5px 8px; 
+  cursor:pointer;
+  margin-left: 3px;
 }

@@ -50,14 +50,32 @@ export function closeCardModal() {
     }
 }
 
+async function renderizarTableros() {
+    const container = document.querySelector('.tableros-list-container');
+    const usuario = obtenerUsuarioLogueado();
+    //const res = await fetch(`${API_BASE_URL}/tableros/usuario/${usuario.id}`);
+    //const tableros = await res.json();
+    
+    // Ejemplo local para probar:
+    const tablerosEjemplo = [{id: 1, titulo: 'Favoritos'}, {id: 2, titulo: 'Inspiración'}, {id: 3, titulo: 'Animales'}, {id: 4, titulo: 'Ideas para dibuja'}];
+    
+    container.innerHTML = tablerosEjemplo.map(t => `
+        <div class="lista-tableros">
+            <span>${t.titulo}</span>
+            <button class="btn-tablero-guardar" data-id="${t.id}">
+                Guardar
+            </button>
+        </div>
+    `).join('');
+}
+
 export function abrirCardModal(card) {
     const modal = document.getElementById('card-modal');
     if (!modal) return;
 
     const imageRatio = obtenerImageRatio(card);
     const tieneImagen = !!card.imagen;
-
-const isLiked = card.usuario_dio_like; 
+    const isLiked = card.usuario_dio_like; 
 
 modal.innerHTML = `
     <div class="modal-overlay"></div>
@@ -83,7 +101,7 @@ modal.innerHTML = `
                             <i class="${isLiked ? 'fa-solid' : 'fa-regular'} fa-heart like-icon"></i>
                             <span class="likes-number">${card.likes_count || 0}</span>
                         </button>
-                        <button class="modal-save-btn" id="btn-save-board">
+                        <button class="modal-save-btn" id="btn-save-tablero">
                             <i class="fa-solid fa-plus add-icon"></i>
                         </button>
                     </div>
@@ -118,7 +136,48 @@ modal.innerHTML = `
     const btnPublicar = modal.querySelector('.comment-submit-btn');
     const inputComentario = modal.querySelector('.comment-input');
     const commentsContainer = modal.querySelector('.comments-container');
-    const modalAuthorInfo = modal.querySelector('.modal-author-info');
+    const modalActions = modal.querySelector('.modal-actions');
+    if (modalActions) {
+        const popover = document.createElement('div');
+        popover.className = 'tableros-popover';
+        popover.innerHTML = `
+            <button class="btn-add-tablero-ui">+ Crear Tablero</button>
+            <form id="form-nuevo-tablero" style="display:none;">
+                <input type="text" id="new-tablero-name" placeholder="Nombre del tablero" required>
+                <input type="text" id="new-tablero-tags" placeholder="Etiquetas">
+                <button type="submit">Crear</button>
+            </form>
+            <div class="tableros-list-container">
+                <p style="font-size:12px; color:gray; padding:10px;">Cargando tableros...</p>
+            </div>
+        `;
+        modalActions.appendChild(popover);
+
+        const btnSave = modal.querySelector('#btn-save-tablero');
+        const btnShowForm = popover.querySelector('.btn-add-tablero-ui');
+        const formTablero = popover.querySelector('#form-nuevo-tablero');
+
+        btnSave.onclick = (e) => {
+            e.stopPropagation();
+            popover.classList.toggle('active');
+            renderizarTableros(); 
+        };
+
+        btnShowForm.onclick = () => {
+            formTablero.style.display = formTablero.style.display === 'flex' ? 'none' : 'flex';
+        };
+
+        formTablero.onsubmit = async (e) => {
+            e.preventDefault();
+            const nombre = document.getElementById('new-tablero-name').value;
+            const etiquetas = document.getElementById('new-tablero-tags').value;
+            console.log("Creando tablero:", { nombre, etiquetas });
+            formTablero.reset();
+            formTablero.style.display = 'none';
+        };
+        
+        popover.onclick = (e) => e.stopPropagation();
+    }
 
     btnPublicar.onclick = async () => {
         const texto = inputComentario.value.trim();
