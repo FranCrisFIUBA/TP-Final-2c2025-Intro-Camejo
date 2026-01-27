@@ -31,13 +31,11 @@ function formatearFecha(fechaString) {
     day: 'numeric'
   });
 }
-function esPerfilDelUsuarioLogueado() {
-  const usuarioLogueado = obtenerUsuarioLogueado();
-  const usuarioPerfilId = obtenerUsuarioId();
-
-  if (!usuarioLogueado || !usuarioPerfilId) return false;
-
-  return Number(usuarioLogueado.id) === Number(usuarioPerfilId);
+function actualizarEstadistica(tipo, cantidad) {
+    const el = document.getElementById(`estadistica-${tipo}`);
+    if (el) {
+        el.textContent = Math.max(0, cantidad);
+    }
 }
 
 
@@ -155,6 +153,18 @@ function validarAccionesPerfil() {
 }
 
 
+
+
+function verificarCantPublicaciones(container) {
+    if (!container || container.children.length > 0) return;
+
+    const SINPUBLIC = './img/sinPublicaciones1.png';
+    container.innerHTML = `
+        <div class="no-content">
+            <img src="${SINPUBLIC}" alt="Sin contenido">
+            <p>Este usuario aún no tiene publicaciones</p>
+        </div>`;
+}
 async function cargarPublicacionesDeUsuario(usuarioId) {
   const container = document.getElementById('publicaciones-container');
   const SINPUBLIC = './img/sinPublicaciones1.png';
@@ -165,7 +175,7 @@ async function cargarPublicacionesDeUsuario(usuarioId) {
     if (!response.ok) throw new Error('Error al obtener publicaciones');
 
     const publicaciones = await response.json();
-
+    actualizarEstadistica('publicaciones', publicaciones ? publicaciones.length : 0); 
     if (!publicaciones || publicaciones.length === 0) {
       container.innerHTML = `
         <div class="no-content">
@@ -215,14 +225,10 @@ publicaciones.forEach(p => {
           }
           card.remove();
           alert("Publicación eliminada con éxito");
-          if (!container.children.length) {
-            container.innerHTML = `
-              <div class="no-content">
-                <img src="./img/sinPublicaciones1.png" alt="Sin contenido">
-                <p>Este usuario aún no tiene publicaciones</p>
-              </div>`;
-          }
-
+          const span = document.getElementById('estadistica-publicaciones');
+          const nuevoValor = (parseInt(span?.textContent) || 1) - 1;
+          actualizarEstadistica('publicaciones', nuevoValor);
+          verificarCantPublicaciones(container);
         } catch (error) {
           console.error(error);
           alert("Error de conexión con el servidor");
