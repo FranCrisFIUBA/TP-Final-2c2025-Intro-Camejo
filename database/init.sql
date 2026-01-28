@@ -148,6 +148,22 @@ CREATE TABLE tableros (
         ON DELETE CASCADE
 );
 
+CREATE TABLE likes (
+    id SERIAL PRIMARY KEY,
+    usuario_id INT NOT NULL,
+    publicacion_id INT NOT NULL,
+
+    FOREIGN KEY (usuario_id)
+        REFERENCES usuarios(id)
+        ON DELETE CASCADE,
+
+    FOREIGN KEY (publicacion_id)
+        REFERENCES publicaciones(id)
+        ON DELETE CASCADE,
+        
+    CONSTRAINT unique_user_like UNIQUE(usuario_id, publicacion_id)
+);
+
 CREATE TABLE suscripciones_a_usuarios (
     id SERIAL PRIMARY KEY,
     usuario_id INT NOT NULL,

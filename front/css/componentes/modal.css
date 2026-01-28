@@ -271,7 +271,7 @@
     border: none;
     cursor: pointer;
     font-size: 15px;
-    color: #555;
+    color: var(--rojo-oscuro);
     transition: transform 0.15s ease, color 0.2s ease;
     padding: 6px 8px;
 }
@@ -281,21 +281,21 @@
     transition: transform 0.2s ease, color 0.2s ease;
 }
 
-.modal-like-btn .likes-number {
+.modal-like-btn .likes-numero {
     font-size: 16px;
     font-weight: 400;
     font-family: var(--nunito);
 }
 
 .modal-like-btn:hover .like-icon,
-.modal-like-btn:hover .likes-number{
+.modal-like-btn:hover .likes-numero{
     color: var(--rojo-oscuro);
 }
-.modal-like-btn.liked {
+.modal-like-btn.likeado {
     color: var(--rojo-oscuro);
 }
 
-.modal-like-btn.liked .like-icon {
+.modal-like-btn.likeado .like-icon {
     color: var(--rojo-oscuro);
     animation: like-pop 0.25s ease;
 }

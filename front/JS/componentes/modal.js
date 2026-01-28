@@ -69,13 +69,33 @@ async function renderizarTableros() {
     `).join('');
 }
 
+async function obtenerLikes(publicacionId) {
+    const usuario = obtenerUsuarioLogueado();
+    const res = await fetch(`${API_BASE_URL}/likes/publicacion/${publicacionId}`);
+    const likes = await res.json();
+    const total = likes.length;
+
+    let usuarioLike = null;
+
+    if (usuario) {
+        usuarioLike = likes.find(l => l.usuario_id === usuario.id);
+    }
+
+    return {
+        total,
+        usuario_dio_like: !!usuarioLike,
+        like_id: usuarioLike ? usuarioLike.id : null
+    };
+}
+
+
 export function abrirCardModal(card) {
     const modal = document.getElementById('card-modal');
     if (!modal) return;
 
     const imageRatio = obtenerImageRatio(card);
     const tieneImagen = !!card.imagen;
-    const isLiked = card.usuario_dio_like; 
+    const dioLike = card.usuario_dio_like; 
 
 modal.innerHTML = `
     <div class="modal-overlay"></div>
@@ -88,7 +108,7 @@ modal.innerHTML = `
                     <img src="${API_IMAGENES}/${card.imagen}" class="modal-image">
                 </div>
                 <div class="modal-author-info">
-                    <div class="modal-author-details-wrapper" id="go-to-profile" style="display:flex; align-items:center; gap:12px; cursor:pointer;">
+                    <div class="modal-author-details-wrapper" id="irAPerfil" style="display:flex; align-items:center; gap:12px; cursor:pointer;">
                         <img src="${card.usuario_icono ? `${API_ICONOS}/${card.usuario_icono}` : AVATAR_DEFAULT}"
                              class="modal-author-avatar" onerror="this.src='${AVATAR_DEFAULT}'">
                         <div class="modal-author-details">
@@ -97,9 +117,11 @@ modal.innerHTML = `
                         </div>
                     </div>
                     <div class="modal-actions">
-                        <button class="modal-like-btn ${isLiked ? 'liked' : ''}" id="btn-like-modal">
-                            <i class="${isLiked ? 'fa-solid' : 'fa-regular'} fa-heart like-icon"></i>
-                            <span class="likes-number">${card.likes_count || 0}</span>
+                        <button class="modal-like-btn ${dioLike ? 'likeado' : ''}" 
+                                id="btn-like-modal" 
+                                data-like-id="${card.like_id || ''}">
+                            <i class="${dioLike ? 'fa-solid' : 'fa-regular'} fa-heart like-icon"></i>
+                            <span class="likes-numero">${card.likes_count || 0}</span>
                         </button>
                         <button class="modal-save-btn" id="btn-save-tablero">
                             <i class="fa-solid fa-plus add-icon"></i>
@@ -130,6 +152,26 @@ modal.innerHTML = `
 
     modal.style.display = 'block';
     document.body.style.overflow = 'hidden';
+    const likeBtnModal = modal.querySelector('#btn-like-modal');
+
+    if (likeBtnModal) {
+        obtenerLikes(card.id).then(data => {
+            const icon = likeBtnModal.querySelector('.like-icon');
+            const numero = likeBtnModal.querySelector('.likes-numero');
+
+            numero.textContent = data.total;
+
+            if (data.usuario_dio_like) {
+                likeBtnModal.classList.add('likeado');
+                likeBtnModal.dataset.likeId = data.like_id;
+                icon.className = 'fa-solid fa-heart like-icon';
+            } else {
+                likeBtnModal.classList.remove('likeado');
+                likeBtnModal.dataset.likeId = '';
+                icon.className = 'fa-regular fa-heart like-icon';
+            }
+        });
+    }
 
     cargarComentariosEnModal(card.id);
 
@@ -210,22 +252,61 @@ modal.innerHTML = `
         }
     };
 
-const goToProfileArea = modal.querySelector('#go-to-profile');
-if (goToProfileArea) {
-    goToProfileArea.onclick = () => {
-        closeCardModal();
-        irAlPerfil(card.usuario_id);
-    };
-}
+    const irPerfilUsuario = modal.querySelector('#irAPerfil');
+    if (irPerfilUsuario) {
+        irPerfilUsuario.onclick = () => {
+            closeCardModal();
+            irAlPerfil(card.usuario_id);
+        };
+    }
+    const likeBtn = modal.querySelector('#btn-like-modal');
+    if (likeBtn) {
+    likeBtn.onclick = async (e) => {
+        e.stopPropagation();
 
-const likeBtn = modal.querySelector('#btn-like-modal');
+        const usuarioLogueado = obtenerUsuarioLogueado();
+        if (!usuarioLogueado) return alert("Inicia sesión para dar like");
 
-if (likeBtn) {
-    likeBtn.addEventListener('click', () => {
         const icon = likeBtn.querySelector('.like-icon');
-        const number = likeBtn.querySelector('.likes-number');
-        /*faltan los endpoints de likes*/
-    });
+        const numero = likeBtn.querySelector('.likes-numero');
+        const isCurrentlyLiked = likeBtn.classList.contains('likeado');
+
+        try {
+            if (!isCurrentlyLiked) {
+                const res = await fetch(`${API_BASE_URL}/likes/publicacion`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        usuario_id: usuarioLogueado.id,
+                        publicacion_id: card.id
+                    })
+                });
+
+                const nuevoLike = await res.json();
+
+                likeBtn.classList.add('likeado');
+                likeBtn.dataset.likeId = nuevoLike.id;
+                icon.className = 'fa-solid fa-heart like-icon';
+
+            } else {
+                const likeId = likeBtn.dataset.likeId;
+
+                await fetch(`${API_BASE_URL}/likes/${likeId}`, {
+                    method: 'DELETE'
+                });
+
+                likeBtn.classList.remove('likeado');
+                likeBtn.dataset.likeId = '';
+                icon.className = 'fa-regular fa-heart like-icon';
+            }
+
+            const estado = await obtenerLikes(card.id);
+            numero.textContent = estado.total;
+
+        } catch (err) {
+            console.error("Error like:", err);
+        }
+    };
 }
 
     modal.querySelector('.modal-close').onclick = closeCardModal;
