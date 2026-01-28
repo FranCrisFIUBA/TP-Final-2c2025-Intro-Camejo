@@ -6,8 +6,7 @@ import {
     esquemaPublicacion
 } from "../utils/esquemas/publicaciones.js";
 import {
-    getPublicacionesConBusqueda,
-    intentarConseguirPublicacionPorId
+    getPublicacionesConBusqueda,intentarConseguirPublicacionPorId, validarParametrosDeBusqueda
 } from "../utils/database/publicaciones.js"
 import {existeUsuarioConId} from "../utils/database/usuarios.js";
 import {iconoUsuarioUpload, imagenPublicacionUpload} from "../middlewares/storage.js";
@@ -17,12 +16,14 @@ const publicaciones = express.Router();
 
 // GET /publicaciones - Obtener todas las publicaciones
 publicaciones.get('/', async (req, res) => {
-    // TODO: Permitir solicitar el orden de las publicaciones, ascendente o descendente; por fecha de publicacion o likes.
     try {
-        const params = req.query;
+        // Unificado: Usamos query strings para GET
+        const params = req.query; 
+
+        const error = validarParametrosDeBusqueda(params);
+        if (error) return res.status(400).json({ error });
 
         const result = await getPublicacionesConBusqueda(params);
-
         res.status(200).json(result.rows);
     } catch (err) {
         console.error(err);
@@ -32,17 +33,12 @@ publicaciones.get('/', async (req, res) => {
 
 // GET /publicaciones/:id - Obtener publicacion por id
 publicaciones.get('/:id', async (req, res) => {
-    // TODO: Permitir solicitar el orden de las publicaciones, ascendente o descendente; por fecha de publicacion o likes.
-
     try {
-        intentarConseguirPublicacionPorId(req.params.id)
-            .then( (publicacion) => {
-                res.status(200).json(publicacion)
-            })
-            .catch( (err) => {
-                console.error(err)
-                res.status(404).json({ error: "Publicación no encontrada" })
-            })
+        const publicacion = await intentarConseguirPublicacionPorId(req.params.id);
+        if (!publicacion) {
+            return res.status(404).json({ error: "Publicación no encontrada" });
+        }
+        res.status(200).json(publicacion);
     } catch (err) {
         console.error(err);
         res.status(500).json({ error: "Error al obtener publicación" });
