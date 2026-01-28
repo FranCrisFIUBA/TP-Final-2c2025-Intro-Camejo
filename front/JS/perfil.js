@@ -153,6 +153,32 @@ function validarAccionesPerfil() {
 }
 
 
+async function cargarLikesTotalesUsuario(publicaciones) {
+    if (!Array.isArray(publicaciones) || publicaciones.length === 0) {
+        actualizarEstadistica('likes', 0);
+        return;
+    }
+
+    try {
+        let totalLikes = 0;
+
+        await Promise.all(
+            publicaciones.map(async (pub) => {
+                const res = await fetch(`${API_BASE_URL}/likes/publicacion/${pub.id}`);
+                if (!res.ok) return;
+
+                const likes = await res.json();
+                totalLikes += likes.length;
+            })
+        );
+
+        actualizarEstadistica('likes', totalLikes);
+
+    } catch (error) {
+        console.error("Error calculando likes:", error);
+        actualizarEstadistica('likes', 0);
+    }
+}
 
 
 function verificarCantPublicaciones(container) {
@@ -176,6 +202,8 @@ async function cargarPublicacionesDeUsuario(usuarioId) {
 
     const publicaciones = await response.json();
     actualizarEstadistica('publicaciones', publicaciones ? publicaciones.length : 0); 
+    await cargarLikesTotalesUsuario(publicaciones);
+
     if (!publicaciones || publicaciones.length === 0) {
       container.innerHTML = `
         <div class="no-content">
