@@ -401,7 +401,7 @@ async function editarComentario(comentarioId, contenido) {
 
     try {
         const res = await fetch(`${API_BASE_URL}/comentarios/${comentarioId}`, {
-            method: 'PUT',
+            method: 'PATCH',
             headers: {
                 'Content-Type': 'application/json'
             },

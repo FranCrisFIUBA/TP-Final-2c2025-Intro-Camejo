@@ -176,31 +176,61 @@ async function cargarPublicacionesDeUsuario(usuarioId) {
 
     container.innerHTML = '';
 
-  const mostrarEditar = esPerfilDelUsuarioLogueado();
+publicaciones.forEach(p => {
+  const editable = esPerfilDelUsuarioLogueado();
 
-  publicaciones.forEach(p => {
-    const editable = Number(obtenerUsuarioLogueado()?.id) === Number(usuarioId);
-    const card = crearCard(
-      {
-        ...p,
-        usuario_nombre: usuarioActual.nombre,
-        usuario_icono: usuarioActual.icono
-      },
-      {
-        editable,
-        onEdit: (publicacion) => {
-          localStorage.setItem(
-            "publicacionEditar",
-            JSON.stringify(publicacion)
-          );
+  const card = crearCard(
+    {
+      ...p,
+      usuario_nombre: usuarioActual.nombre,
+      usuario_icono: usuarioActual.icono
+    },
+    {
+      editable: true,
+
+      onEdit: (publicacion) => {
+          localStorage.setItem("pinParaEditar", JSON.stringify(publicacion));
           window.location.href = "create-pin.html";
+      },
+
+      onDelete: async (publicacion) => {
+        const confirmar = confirm(
+          "¿Estás seguro de que querés eliminar esta publicación? Esta acción no se puede deshacer."
+        );
+
+        if (!confirmar) return;
+
+        try {
+          const response = await fetch(
+            `${API_BASE_URL}/publicaciones/${publicacion.id}`,
+            { method: 'DELETE' }
+          );
+
+          if (!response.ok) {
+            const err = await response.json();
+            alert(err.error || "Error al eliminar la publicación");
+            return;
+          }
+          card.remove();
+          if (!container.children.length) {
+            container.innerHTML = `
+              <div class="no-content">
+                <img src="./img/sinPublicaciones1.png" alt="Sin contenido">
+                <p>Este usuario aún no tiene publicaciones</p>
+              </div>`;
+          }
+
+        } catch (error) {
+          console.error(error);
+          alert("Error de conexión con el servidor");
         }
       }
-    );
+    }
+  );
 
+  container.appendChild(card);
+});
 
-    container.appendChild(card);
-  });
 
 
   } catch (error) {
@@ -383,8 +413,6 @@ editForm.addEventListener('submit', async (e) => {
     }
 
     const usuarioActualizado = await response.json();
-
-    // actualizar estado frontend
     usuarioActual = usuarioActualizado;
     localStorage.setItem(
       'usuarioLogueado',

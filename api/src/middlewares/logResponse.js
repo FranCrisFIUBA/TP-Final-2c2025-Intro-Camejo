@@ -1,26 +1,24 @@
-export function logResponse(req, res, next) {
+export async function logResponse(req, res, next) {
     const start = Date.now();
 
-    const originalSend = res.send;
+    // envolver res.json ANTES de que sea llamado
+    const originalJson = res.json.bind(res);
 
-    res.send = function (body) {
-        res._body = body;
-        return originalSend.call(this, body);
+    res.json = (data) => {
+        res.locals.body = data;   // guardo respuesta
+        return originalJson(data);
     };
 
     res.on("finish", () => {
         const duration = Date.now() - start;
+
         console.debug(
-            `Response: ${req.method} ${req.originalUrl} -> ${res.statusCode} (${duration}ms)`
+            `Response: ${req.method} ${req.url} -> ${res.statusCode} (estimate: ${duration}ms)`
         );
 
-        if (res._body !== undefined) {
-            try {
-                console.trace("Response Body:", res._body);
-            } catch {
-                console.trace("Response Body: [unserializable]");
-            }
-        }
+        console.trace(
+            `Response Body: ${JSON.stringify(res.locals.body)}`
+        );
     });
 
     next();

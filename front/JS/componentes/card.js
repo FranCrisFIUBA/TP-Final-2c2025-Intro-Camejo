@@ -5,13 +5,14 @@ const API_ICONOS = API_BASE_URL + '/iconos';
 
 export function crearCard(
   card,
-    {
-        onOpenModal = () => {},
-        onGoToProfile = () => {},
-        editable = false,
-        onEdit = () => {}
-    } = {}
-    ) {
+  {
+    onOpenModal = () => {},
+    onGoToProfile = () => {},
+    editable = false,
+    onEdit = () => {},
+    onDelete = () => {}
+  } = {}
+) {
     const AVATAR_DEFAULT = './img/avatar-default.jpg';
     const cardDiv = document.createElement("div");
     cardDiv.className = "card";
@@ -48,17 +49,32 @@ export function crearCard(
         </div>
     `;
     if (editable) {
-    const editBtn = document.createElement("button");
-    editBtn.className = "btn-edit-publicacion";
-    editBtn.textContent = "Editar";
+        const actions = document.createElement("div");
+        actions.className = "card-actions";
 
-    editBtn.addEventListener("click", (e) => {
-        e.stopPropagation();
-        onEdit(card);
-    });
+        const editBtn = document.createElement("button");
+        editBtn.className = "card-action-btn edit";
+        editBtn.innerHTML = `<i class="fa-solid fa-pen"></i>`;
 
-    footer.appendChild(editBtn);
-}
+        editBtn.addEventListener("click", (e) => {
+            e.stopPropagation();
+            onEdit(card);
+        });
+
+        const deleteBtn = document.createElement("button");
+        deleteBtn.className = "card-action-btn delete";
+        deleteBtn.innerHTML = `<i class="fa-solid fa-trash"></i>`;
+
+        deleteBtn.addEventListener("click", (e) => {
+            e.stopPropagation();
+            onDelete(card);
+        });
+
+        actions.appendChild(editBtn);
+        actions.appendChild(deleteBtn);
+        footer.appendChild(actions);
+    }
+
 
     const authorElement = footer.querySelector('.card-author');
 

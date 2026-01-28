@@ -4,7 +4,10 @@ import {
     esquemaActualizacionPublicacion,
     esquemaPostPublicacion
 } from "../utils/esquemas/publicaciones.js";
-import {intentarConseguirPublicacionPorId} from "../utils/database/publicaciones.js"
+import {
+    getPublicacionesConBusqueda,
+    intentarConseguirPublicacionPorId, validarParametrosDeBusqueda
+} from "../utils/database/publicaciones.js"
 import {existeUsuarioConId} from "../utils/database/usuarios.js";
 import {imagenPublicacionUpload} from "../middlewares/storage.js";
 import multer from "multer";
@@ -14,77 +17,16 @@ const publicaciones = express.Router();
 
 // GET /publicaciones - Obtener todas las publicaciones
 publicaciones.get('/', async (req, res) => {
-    console.log("QUERY:", req.query);
-
+    // TODO: Permitir solicitar el orden de las publicaciones, ascendente o descendente; por fecha de publicacion o likes.
     try {
-        const {
-            tag,
-            autor,
-            likesMin,
-            likesMax,
-            fechaMin,
-            fechaMax
-        } = req.query;
+        const params = req.body;
 
-        let query = `
-            SELECT p.*, u.nombre AS autor
-            FROM publicaciones p
-            JOIN usuarios u ON p.usuario_id = u.id
-            WHERE 1=1
-        `;
+        const error = validarParametrosDeBusqueda(params);
+        if (error)
+            return res.status(400).json({error: error});
 
-        let values = [];
-        let index = 1;
+        const result = await getPublicacionesConBusqueda(params);
 
-        // 🔹 FILTRO POR TAG
-        if (tag) {
-            query += ` AND p.etiquetas ILIKE $${index}`;
-            values.push(`%${tag}%`);
-            index++;
-        }
-
-        // 🔹 FILTRO POR AUTOR
-        if (autor) {
-            query += ` AND u.nombre ILIKE $${index}`;
-            values.push(`%${autor}%`);
-            index++;
-        }
-
-        // 🔹 LIKES MÍNIMOS
-        if (likesMin !== undefined) {
-            query += ` AND p.likes >= $${index}`;
-            values.push(Number(likesMin));
-            index++;
-        }
-
-        // 🔹 LIKES MÁXIMOS
-        if (likesMax !== undefined) {
-            query += ` AND p.likes <= $${index}`;
-            values.push(Number(likesMax));
-            index++;
-        }
-
-        // 🔹 FECHA MÍNIMA
-        if (fechaMin) {
-            query += ` AND p.fecha_publicacion >= $${index}`;
-            values.push(fechaMin);
-            index++;
-        }
-
-        // 🔹 FECHA MÁXIMA
-        if (fechaMax) {
-            query += ` AND p.fecha_publicacion <= $${index}`;
-            values.push(fechaMax);
-            index++;
-        }
-
-        query += ` ORDER BY p.fecha_publicacion DESC`;
-
-        console.log("SQL FINAL:", query);
-        console.log("VALUES:", values);
-
-
-        const result = await pool.query(query, values);
         res.status(200).json(result.rows);
 
     } catch (err) {
@@ -241,17 +183,14 @@ publicaciones.patch(
             }
 
             const datosActualizados = {
+                id: Number(id), 
                 ...req.body,
                 imagen: req.file ? req.file.filename : undefined,
-                alto_imagen: req.body.alto_imagen
-                    ? Number(req.body.alto_imagen)
-                    : undefined,
-                ancho_imagen: req.body.ancho_imagen
-                    ? Number(req.body.ancho_imagen)
-                    : undefined
+                alto_imagen: req.body.alto_imagen ? Number(req.body.alto_imagen) : undefined,
+                ancho_imagen: req.body.ancho_imagen ? Number(req.body.ancho_imagen) : undefined
             };
 
-            const parsedActualizacion = esquemaActualizacionPublicacion.safeParseAsync(datosActualizados);
+            const parsedActualizacion = await esquemaActualizacionPublicacion.safeParseAsync(datosActualizados);
 
             if (!parsedActualizacion.success) {
                 return res.status(400).json({
@@ -259,16 +198,17 @@ publicaciones.patch(
                 });
             }
 
-            if (req.file && publicacion.imagen) {
-                await eliminarImagenPublicacionPorId(publicacion.imagen);
+            const dataParaDB = { ...parsedActualizacion.data };
+            if (req.file) {
+                dataParaDB.imagen = req.file.filename;
             }
 
             const campos = [];
             const valores = [];
             let i = 1;
 
-            Object.entries(parsedActualizacion.data).forEach(([key, value]) => {
-                if (value !== undefined) {
+            Object.entries(dataParaDB).forEach(([key, value]) => {
+                if (key !== 'id' && value !== undefined) {
                     campos.push(`${key} = $${i}`);
                     valores.push(value);
                     i++;
@@ -289,9 +229,16 @@ publicaciones.patch(
             const result = await pool.query(query, valores);
 
             res.status(200).json(result.rows[0]);
-        } catch (err) {
-            console.error(err);
-            res.status(500).json({ error: "Error al actualizar publicación" });
+        } catch (err) { 
+            console.error("Error detallado:", err);
+            
+            if (err && err.issues) {
+                return res.status(400).json({ 
+                    error: "Datos inválidos", 
+                    detalles: err.issues.map(i => i.message) 
+                });
+            }
+            return res.status(500).json({ error: "Error al actualizar publicación" });
         }
     }
 );
@@ -300,22 +247,17 @@ publicaciones.patch(
 publicaciones.delete('/:id', async (req, res) => {
     try {
         const { id } = req.params;
+        const imagenEliminada = await eliminarImagenPublicacionPorId(id);
 
-        await eliminarImagenPublicacionPorId(id);
-
-        const { rowCount } = await pool.query(
-            "DELETE FROM publicaciones WHERE id = $1 RETURNING id",
-            [id]
-        );
+        const { rowCount } = await pool.query("DELETE FROM publicaciones WHERE id = $1", [id]);
 
         if (rowCount === 0) {
             return res.status(404).json({ error: "Publicación no encontrada" });
         }
 
-        res.status(200).json({ message: "Publicación eliminada" });
+        res.json({ message: "Publicación eliminada", imagenEliminada });
     } catch (err) {
-        console.error(err);
-        res.status(500).json({ error: "Error al eliminar publicación" });
+        res.status(500).json({ error: "Error al eliminar" });
     }
 });
 

@@ -36,6 +36,7 @@ CREATE TABLE publicaciones (
     ancho_imagen INT,
     fecha_publicacion TIMESTAMP NOT NULL DEFAULT now(),
     fecha_edicion TIMESTAMP NOT NULL DEFAULT now(),
+    likes INT DEFAULT 0, -- conteo de likes a modo de cache
 
     FOREIGN KEY (usuario_id)
        REFERENCES usuarios(id)
@@ -147,6 +148,20 @@ CREATE TABLE tableros (
         REFERENCES usuarios(id)
         ON DELETE CASCADE
 );
+
+CREATE TABLE likes (
+    id SERIAL PRIMARY KEY,
+    usuario_id INT NOT NULL,
+    publicacion_id INT NOT NULL,
+
+    FOREIGN KEY (usuario_id)
+        REFERENCES usuarios(id)
+        ON DELETE CASCADE,
+
+    FOREIGN KEY (publicacion_id)
+        REFERENCES publicaciones(id)
+        ON DELETE CASCADE,
+)
 
 CREATE TABLE suscripciones_a_usuarios (
     id SERIAL PRIMARY KEY,
