@@ -1,4 +1,5 @@
 import { crearCard } from './componentes/card.js';
+import { abrirCardModal } from './componentes/modal.js';
 
 const API_BASE_URL = 'http://127.0.0.1:3000';
 const API_IMAGENES = API_BASE_URL + '/imagenes';
@@ -30,13 +31,11 @@ function formatearFecha(fechaString) {
     day: 'numeric'
   });
 }
-function esPerfilDelUsuarioLogueado() {
-  const usuarioLogueado = obtenerUsuarioLogueado();
-  const usuarioPerfilId = obtenerUsuarioId();
-
-  if (!usuarioLogueado || !usuarioPerfilId) return false;
-
-  return Number(usuarioLogueado.id) === Number(usuarioPerfilId);
+function actualizarEstadistica(tipo, cantidad) {
+    const el = document.getElementById(`estadistica-${tipo}`);
+    if (el) {
+        el.textContent = Math.max(0, cantidad);
+    }
 }
 
 
@@ -154,6 +153,44 @@ function validarAccionesPerfil() {
 }
 
 
+async function cargarLikesTotalesUsuario(publicaciones) {
+    if (!Array.isArray(publicaciones) || publicaciones.length === 0) {
+        actualizarEstadistica('likes', 0);
+        return;
+    }
+
+    try {
+        let totalLikes = 0;
+
+        await Promise.all(
+            publicaciones.map(async (pub) => {
+                const res = await fetch(`${API_BASE_URL}/likes/publicacion/${pub.id}`);
+                if (!res.ok) return;
+
+                const likes = await res.json();
+                totalLikes += likes.length;
+            })
+        );
+
+        actualizarEstadistica('likes', totalLikes);
+
+    } catch (error) {
+        console.error("Error calculando likes:", error);
+        actualizarEstadistica('likes', 0);
+    }
+}
+
+
+function verificarCantPublicaciones(container) {
+    if (!container || container.children.length > 0) return;
+
+    const SINPUBLIC = './img/sinPublicaciones1.png';
+    container.innerHTML = `
+        <div class="no-content">
+            <img src="${SINPUBLIC}" alt="Sin contenido">
+            <p>Este usuario aún no tiene publicaciones</p>
+        </div>`;
+}
 async function cargarPublicacionesDeUsuario(usuarioId) {
   const container = document.getElementById('publicaciones-container');
   const SINPUBLIC = './img/sinPublicaciones1.png';
@@ -164,6 +201,8 @@ async function cargarPublicacionesDeUsuario(usuarioId) {
     if (!response.ok) throw new Error('Error al obtener publicaciones');
 
     const publicaciones = await response.json();
+    actualizarEstadistica('publicaciones', publicaciones ? publicaciones.length : 0); 
+    await cargarLikesTotalesUsuario(publicaciones);
 
     if (!publicaciones || publicaciones.length === 0) {
       container.innerHTML = `
@@ -177,17 +216,18 @@ async function cargarPublicacionesDeUsuario(usuarioId) {
     container.innerHTML = '';
 
 publicaciones.forEach(p => {
-  const editable = esPerfilDelUsuarioLogueado();
-
   const card = crearCard(
     {
       ...p,
       usuario_nombre: usuarioActual.nombre,
       usuario_icono: usuarioActual.icono
     },
-    {
-      editable: true,
 
+    {
+      onOpenModal: abrirCardModal, 
+      onGoToProfile: (id) => {
+          window.location.href = `perfil.html?id=${id}`;
+      },
       onEdit: (publicacion) => {
           localStorage.setItem("pinParaEditar", JSON.stringify(publicacion));
           window.location.href = "create-pin.html";
@@ -212,19 +252,17 @@ publicaciones.forEach(p => {
             return;
           }
           card.remove();
-          if (!container.children.length) {
-            container.innerHTML = `
-              <div class="no-content">
-                <img src="./img/sinPublicaciones1.png" alt="Sin contenido">
-                <p>Este usuario aún no tiene publicaciones</p>
-              </div>`;
-          }
-
+          alert("Publicación eliminada con éxito");
+          const span = document.getElementById('estadistica-publicaciones');
+          const nuevoValor = (parseInt(span?.textContent) || 1) - 1;
+          actualizarEstadistica('publicaciones', nuevoValor);
+          verificarCantPublicaciones(container);
         } catch (error) {
           console.error(error);
           alert("Error de conexión con el servidor");
         }
-      }
+      },
+      showActions: true
     }
   );
 

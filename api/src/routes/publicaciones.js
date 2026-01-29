@@ -2,31 +2,28 @@ import express from 'express';
 import { pool } from "../db.js";
 import {
     esquemaActualizacionPublicacion,
-    esquemaPostPublicacion
+    esquemaPostPublicacion,
+    esquemaPublicacion
 } from "../utils/esquemas/publicaciones.js";
 import {
-    getPublicacionesConBusqueda,
-    intentarConseguirPublicacionPorId, validarParametrosDeBusqueda
+    getPublicacionesConBusqueda,intentarConseguirPublicacionPorId, validarParametrosDeBusqueda
 } from "../utils/database/publicaciones.js"
 import {existeUsuarioConId} from "../utils/database/usuarios.js";
-import {imagenPublicacionUpload} from "../middlewares/storage.js";
+import {iconoUsuarioUpload, imagenPublicacionUpload} from "../middlewares/storage.js";
 import multer from "multer";
-import {eliminarImagenPublicacionPorId} from "../utils/storage/publicaciones.js";
 
 const publicaciones = express.Router();
 
 // GET /publicaciones - Obtener todas las publicaciones
 publicaciones.get('/', async (req, res) => {
-    // TODO: Permitir solicitar el orden de las publicaciones, ascendente o descendente; por fecha de publicacion o likes.
     try {
-        const params = req.body;
+        // Unificado: Usamos query strings para GET
+        const params = req.query; 
 
         const error = validarParametrosDeBusqueda(params);
-        if (error)
-            return res.status(400).json({error: error});
+        if (error) return res.status(400).json({ error });
 
         const result = await getPublicacionesConBusqueda(params);
-
         res.status(200).json(result.rows);
     } catch (err) {
         console.error(err);
@@ -36,17 +33,12 @@ publicaciones.get('/', async (req, res) => {
 
 // GET /publicaciones/:id - Obtener publicacion por id
 publicaciones.get('/:id', async (req, res) => {
-    // TODO: Permitir solicitar el orden de las publicaciones, ascendente o descendente; por fecha de publicacion o likes.
-
     try {
-        intentarConseguirPublicacionPorId(req.params.id)
-            .then( (publicacion) => {
-                res.status(200).json(publicacion)
-            })
-            .catch( (err) => {
-                console.error(err)
-                res.status(404).json({ error: "Publicación no encontrada" })
-            })
+        const publicacion = await intentarConseguirPublicacionPorId(req.params.id);
+        if (!publicacion) {
+            return res.status(404).json({ error: "Publicación no encontrada" });
+        }
+        res.status(200).json(publicacion);
     } catch (err) {
         console.error(err);
         res.status(500).json({ error: "Error al obtener publicación" });
@@ -75,7 +67,6 @@ publicaciones.get('/usuario/:usuarioId', async (req, res) => {
         res.status(500).json({ error: "Error al obtener publicaciones del usuario" });
     }
 });
-
 // POST /publicaciones - Crear nueva publicación con imagen
 publicaciones.post(
     '/',
@@ -246,14 +237,22 @@ publicaciones.patch(
 publicaciones.delete('/:id', async (req, res) => {
     try {
         const { id } = req.params;
-        const imagenEliminada = await eliminarImagenPublicacionPorId(id);
 
-        const { rowCount } = await pool.query("DELETE FROM publicaciones WHERE id = $1", [id]);
-
-        if (rowCount === 0) {
+        const publicacion = await intentarConseguirPublicacionPorId(id);
+        if (!publicacion) {
             return res.status(404).json({ error: "Publicación no encontrada" });
         }
+        await pool.query(
+            "DELETE FROM publicaciones WHERE id = $1",
+            [id]
+        );
 
+        let imagenEliminada = false;
+        try {
+            imagenEliminada = await eliminarImagenPublicacionPorId(id);
+        } catch (e) {
+            console.error("Error borrando imagen:", e.message);
+        }
         res.json({ message: "Publicación eliminada", imagenEliminada });
     } catch (err) {
         res.status(500).json({ error: "Error al eliminar" });

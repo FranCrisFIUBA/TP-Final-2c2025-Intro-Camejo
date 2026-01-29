@@ -1,63 +1,92 @@
 * {
     box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    height: 100vh;
+    background: url("../img/registro-fondo.png") no-repeat center center fixed;
+    background-size: cover;
+    font-family: var(--nunito-bold), sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.login-container {
+    width: 100%;
+    max-width: 400px;
+    padding: 20px;
 }
 
 form {
-    width: 500px;
-    height: 350px;
-    margin: 50px,auto;
+    padding: 40px;
     text-align: center;
+    border: var(--border-estandar);
+    border-radius: 30px;
+    background: var(--blanco);
 }
 
 input {
-    width: 52%;
-    height: 30px;
-    margin-bottom: 8px;
-    margin-left: 8px;
-    margin-right: 8px ;
-    border-radius: 5px;
-    border: 2px solid var(--negro);
-    background-color: transparent;
+    width: 100%; 
+    padding: 12px 15px;
+    background-color: var(--blanco);
+    border-radius: 8px;
+    border: var(--border-estandar);
 }
 
+input[type="date"] {
+    width: 35%;
+    color: #6c757d;
+}
+
+
 .label-usuario {
-    margin-right: 205px;
     font-family: var(--nunito-bold);
     color: var(--negro);
 }
 
 .label-contraseña {
-    margin-right: 179px;
     font-family: var(--nunito-bold);
     color: var(--negro);
 }
 
 #caja-usuario {
-    margin-bottom: 20px;
+    margin-bottom: 15px;
 }
 
 #campo-loguearse {
-    width: 15%;
-    height: 10%;
+    width: 100%;
+    height: 45px;
     margin-top: 10px;
+    margin-bottom: 5px;
     font-size: 16px;
     font-family: var(--nunito-bold);
     color: var(--negro);
     border-radius: 8px;
-    border: 2px solid #555;
+    border: var(--border-estandar);
     background-color: var(--amarillo);
+    cursor: pointer;
+    transition: transform 0.2s, background-color 0.2s;
+}
+
+#campo-loguearse:hover {
+    background-color: var(--amarillo-oscuro); 
+    transform: translateY(-2px);
 }
 
 p {
-    color: red;
-    font-family: var(--nunito-bold);
+    color: var(--rojo-oscuro);
+    font-family: var(--nunito-bold); 
+    margin-top: 1px;
 }
 
-p a {
-    color: red;
+p a{
+    color: var(--rojo-oscuro);
     text-decoration: none;
+    cursor: pointer;
 }
-
 p a:hover {
     color: var(--morado-oscuro);
     text-decoration: underline;
@@ -66,18 +95,11 @@ p a:hover {
 }
 
 
-body {
-    height: 100vh;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    background: url("../img/registro-fondo.png") no-repeat center center fixed ;
-    font-family: var(--nunito-bold);
-}
 
 
 h1 {
     font-family:var(--nunito-bold);
+    font-size: 32px;
+    margin-bottom: 30px;
     color: var(--negro);
-    font-size: 45px;
 }

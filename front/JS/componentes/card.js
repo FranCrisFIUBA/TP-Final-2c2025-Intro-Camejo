@@ -4,15 +4,18 @@ const API_IMAGENES = API_BASE_URL + '/imagenes';
 const API_ICONOS = API_BASE_URL + '/iconos';
 
 export function crearCard(
-  card,
-  {
-    onOpenModal = () => {},
-    onGoToProfile = () => {},
-    editable = false,
-    onEdit = () => {},
-    onDelete = () => {}
-  } = {}
+    card,
+    {
+        onOpenModal = () => {},
+        onGoToProfile = () => {},
+        onEdit = () => {},
+        onDelete = () => {},
+        showActions = false
+    } = {}
 ) {
+    const usuarioData = localStorage.getItem("usuarioLogueado");
+    const usuarioLogueado = usuarioData ? JSON.parse(usuarioData) : null;
+    const esDueno = usuarioLogueado && Number(usuarioLogueado.id) === Number(card.usuario_id);
     const AVATAR_DEFAULT = './img/avatar-default.jpg';
     const cardDiv = document.createElement("div");
     cardDiv.className = "card";
@@ -48,7 +51,7 @@ export function crearCard(
             <span class="author-name">${card.usuario_nombre || ''}</span>
         </div>
     `;
-    if (editable) {
+    if (esDueno && showActions) {
         const actions = document.createElement("div");
         actions.className = "card-actions";
 

@@ -7,6 +7,7 @@ const mensajeError = document.getElementById("mensaje-error-aviso");
 formRegistro.addEventListener("submit", async (e) => {
     e.preventDefault();
     mensajeError.textContent = "";
+    mensajeError.style.color = "#ac2b2b";
 
     const usuario = formRegistro.usuario.value.trim();
     const email = formRegistro.email.value.trim();
