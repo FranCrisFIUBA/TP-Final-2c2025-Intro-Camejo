@@ -13,6 +13,7 @@ export async function intentarConseguirPublicacionPorId(id) {
 export async function getPublicacionesConBusqueda(params) {
     const {
         autor_id,
+        autor,
         etiquetas,
         likes_minimos, likes_maximos,
         fecha_minima, fecha_maxima,
@@ -27,8 +28,15 @@ export async function getPublicacionesConBusqueda(params) {
         queryParams.push(value);
         condiciones.push(sql.replace("?", `$${queryParams.length}`));
     };
-
-    if (autor_id !== undefined)         addCond("usuario_id = ?", autor_id);
+    
+    if (autor) {
+        queryParams.push(`%${autor}%`);
+        condiciones.push(`u.nombre ILIKE $${queryParams.length}`);
+    }
+    if (autor_id !== undefined && !isNaN(autor_id)) {
+        addCond("p.usuario_id = ?", Number(autor_id));
+    }
+    
     if (likes_minimos !== undefined)    addCond("likes >= ?", likes_minimos);
     if (likes_maximos !== undefined)    addCond("likes <= ?", likes_maximos);
     if (fecha_minima !== undefined)     addCond("fecha_publicacion >= ?", fecha_minima);
@@ -39,13 +47,25 @@ export async function getPublicacionesConBusqueda(params) {
     if (ancho_maximo !== undefined)     addCond("ancho <= ?", ancho_maximo);
 
     // TODO: implementar busqueda por etiquetas
+    if (etiquetas !== undefined) {
+        addCond("etiquetas ILIKE ?", `%${etiquetas}%`);
+    }
+    const baseQuery = `
+    SELECT p.*
+    FROM publicaciones p
+    JOIN usuarios u ON p.usuario_id = u.id
+`;
+
 
     const query =
         condiciones.length === 0
-            ?`SELECT * FROM publicaciones`
-            :`SELECT * FROM publicaciones WHERE ${condiciones.join(" AND ")}`
-    ;
+            ? baseQuery
+            : `${baseQuery} WHERE ${condiciones.join(" AND ")}`;
 
+    console.log("QUERY FINAL:", query);
+    console.log("PARAMS:", queryParams);
+
+    
     return pool.query(query, queryParams);
 }
 

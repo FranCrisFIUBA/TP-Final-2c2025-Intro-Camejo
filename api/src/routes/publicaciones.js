@@ -18,8 +18,19 @@ const publicaciones = express.Router();
 // GET /publicaciones - Obtener todas las publicaciones
 publicaciones.get('/', async (req, res) => {
     // TODO: Permitir solicitar el orden de las publicaciones, ascendente o descendente; por fecha de publicacion o likes.
+    console.log("REQ.QUERY COMPLETO:", req.query);
     try {
-        const params = req.body;
+        const params = {
+            etiquetas: req.query.tag,
+            autor: req.query.autor,
+            /*autor_id: req.query.autor,*/
+            likes_minimos: req.query.likesMin,
+            likes_maximos: req.query.likesMax,
+            fecha_minima: req.query.fechaMin,
+            fecha_maxima: req.query.fechaMax,
+        };    
+        
+        console.log("PARAMS RECIBIDOS EN BACKEND:", params);
 
         const error = validarParametrosDeBusqueda(params);
         if (error)
@@ -38,6 +49,8 @@ publicaciones.get('/', async (req, res) => {
 // GET /publicaciones/:id - Obtener publicacion por id
 publicaciones.get('/:id', async (req, res) => {
     // TODO: Permitir solicitar el orden de las publicaciones, ascendente o descendente; por fecha de publicacion o likes.
+    console.log("QUERY:", req.query);
+
 
     try {
         intentarConseguirPublicacionPorId(req.params.id)
