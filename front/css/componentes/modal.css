@@ -393,6 +393,25 @@
     padding: 8px;
 }
 
+.btn-tablero-guardar {
+    background-color: var(--naranja);
+    color: #fff;
+    padding: 6px 12px;
+    border-radius: 8px;
+    border: none;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    font-family: var(--nunito);
+}
+.btn-tablero-guardar.guardado {
+    background-color: #27a65c;
+    color: #fff;         
+    font-weight: bold;
+}
+
+.btn-tablero-guardar.guardado:hover {
+    background-color: #27a65cc8; 
+}
 
 
 
@@ -646,14 +665,4 @@
   width: 100%;               
   border-bottom: 1px solid #eee;
   font-family: var(--nunito);
-}
-
-.btn-tablero-guardar{
-  background:var(--naranja); 
-  color:white; 
-  border:none; 
-  border-radius:5px; 
-  padding: 5px 8px; 
-  cursor:pointer;
-  margin-left: 3px;
 }

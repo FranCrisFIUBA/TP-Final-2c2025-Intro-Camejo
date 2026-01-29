@@ -6,6 +6,93 @@ const API_IMAGENES = API_BASE_URL + '/imagenes';
 const API_ICONOS = API_BASE_URL + '/iconos';
 let usuarioActual = null;
 
+async function cargarTableros(usuarioId) {
+  const container = document.getElementById('tableros-container');
+
+  if (!container) {
+    console.log("No existe #tableros-container");
+    return;
+  }
+
+  try {
+    console.log("Cargando tableros reales...");
+
+    const res = await fetch(`${API_BASE_URL}/tableros/usuario/${usuarioId}`);
+    const tableros = await res.ok ? await res.json() : [];
+
+    console.log("Tableros:", tableros);
+
+    if (!tableros.length) {
+      container.innerHTML = `<p>Este usuario aún no tiene tableros</p>`;
+      return;
+    }
+
+    container.innerHTML = '';
+
+    for (const tablero of tableros) {
+      let publicaciones = [];
+
+      try {
+        const r = await fetch(`${API_BASE_URL}/tableros/tablero/${tablero.id}/publicaciones`);
+        publicaciones = r.ok ? await r.json() : [];
+      } catch (e) {
+        publicaciones = [];
+      }
+
+      console.log("Publicaciones tablero", tablero.id, publicaciones);
+
+      const imagenes = publicaciones
+        .filter(p => p.imagen)
+        .slice(0, 3)
+        .map(p => {
+          if (p.imagen.startsWith("http")) return p.imagen;
+          if (p.imagen.startsWith("/imagenes")) return API_BASE_URL + p.imagen;
+          if (p.imagen.startsWith("/")) return API_BASE_URL + p.imagen;
+          return `${API_IMAGENES}/${p.imagen}`;
+        });
+
+      console.log("Imagenes armadas:", imagenes);
+
+      const div = document.createElement('div');
+      div.className = 'tablero-item';
+
+      div.innerHTML = `
+        <div class="tablero-header">
+          <span class="tablero-title">${tablero.titulo}</span>
+          <span class="tablero-count">${tablero.cantidad_pins} pins</span>
+        </div>
+
+        <div class="tablero-preview ${imagenes.length ? '' : 'no-content'}">
+          ${
+            imagenes.length
+              ? imagenes.map((img, i) => `
+                  <div class="tablero-preview-slot">
+                    <img 
+                      class="tablero-preview-img" 
+                      src="${img}" 
+                      loading="lazy"
+                      onerror="console.log('No carga:', this.src)"
+                    >
+                  </div>
+                `).join('')
+              : `<p>Sin pins aún</p>`
+          }
+        </div>
+
+        <p class="tablero-descripcion">${tablero.etiquetas || ''}</p>
+      `;
+
+      container.appendChild(div);
+    }
+
+  } catch (err) {
+    console.error(err);
+    container.innerHTML = `<p>Error cargando tableros</p>`;
+  }
+}
+
+
+
 function obtenerUsuarioLogueado() {
   const data = localStorage.getItem("usuarioLogueado");
   return data ? JSON.parse(data) : null;
@@ -60,6 +147,11 @@ function configurarNavegacion() {
                     
                 case 'Tableros':
                     document.querySelector('.tableros-content').style.display = 'block';
+                    const usuario = obtenerUsuarioLogueado();
+                    if (usuario) {
+                      cargarTableros(usuario.id);
+                    }
+
                     break;
                     
                 case 'Búsquedas personalizadas':
@@ -152,7 +244,7 @@ function validarAccionesPerfil() {
   }
 }
 
-
+// funcion para contar el total de likes de todas las publicaciones de un usuario
 async function cargarLikesTotalesUsuario(publicaciones) {
     if (!Array.isArray(publicaciones) || publicaciones.length === 0) {
         actualizarEstadistica('likes', 0);
@@ -359,7 +451,6 @@ btnBorrar.addEventListener('click', async () => {
         );
 
         if (response.ok) {
-            // Limpia sesión local antes de redirigir
             localStorage.removeItem('usuario');
             localStorage.removeItem('token');
 

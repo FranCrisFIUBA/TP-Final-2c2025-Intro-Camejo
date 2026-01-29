@@ -50,23 +50,81 @@ export function closeCardModal() {
     }
 }
 
+async function quitarDelTablero(tableroId, publicacionId) {
+  await fetch(`${API_BASE_URL}/tableros/${tableroId}/publicaciones/${publicacionId}`, {
+    method: "DELETE"
+  });
+}
+
+
+async function eliminarTablero(tableroId) {
+  if (!confirm("¿Eliminar tablero?")) return;
+
+  await fetch(`${API_BASE_URL}/tableros/${tableroId}`, {
+    method: "DELETE"
+  });
+
+  cargarTableros(obtenerUsuarioLogueado().id);
+}
+
+
+async function obtenerTablerosGuardados(publicacionId) {
+  const usuario = obtenerUsuarioLogueado();
+  if (!usuario) return [];
+
+  const res = await fetch(
+    `${API_BASE_URL}/tableros/publicacion/${publicacionId}/usuario/${usuario.id}`
+  );
+
+  return await res.json();
+}
+
+
+
+
+
+
 async function renderizarTableros() {
-    const container = document.querySelector('.tableros-list-container');
-    const usuario = obtenerUsuarioLogueado();
-    //const res = await fetch(`${API_BASE_URL}/tableros/usuario/${usuario.id}`);
-    //const tableros = await res.json();
-    
-    // Ejemplo local para probar:
-    const tablerosEjemplo = [{id: 1, titulo: 'Favoritos'}, {id: 2, titulo: 'Inspiración'}, {id: 3, titulo: 'Animales'}, {id: 4, titulo: 'Ideas para dibuja'}];
-    
-    container.innerHTML = tablerosEjemplo.map(t => `
+  const container = document.querySelector('.tableros-list-container');
+  const usuario = obtenerUsuarioLogueado();
+  const publicacionId = window.publicacionActualId;
+
+  if (!usuario || !publicacionId) return;
+
+  try {
+    // 1. Pedimos todos los tableros del usuario
+    const resTableros = await fetch(`${API_BASE_URL}/tableros/usuario/${usuario.id}`);
+    const tableros = await resTableros.json();
+
+    // 2. Pedimos los IDs de los tableros donde ya está guardada esta publicación
+    const resEstados = await fetch(`${API_BASE_URL}/tableros/usuario/${usuario.id}/publicacion/${publicacionId}/estados`);
+    const idsDondeEstaGuardado = await resEstados.json(); // Ejemplo: [5, 8]
+
+    if (!tableros.length) {
+      container.innerHTML = `<p style="padding:10px;">No tenés tableros aún</p>`;
+      return;
+    }
+
+    container.innerHTML = tableros.map(t => {
+      // Si el ID del tablero está en la lista de "guardados", marcamos como true
+      const estaGuardado = idsDondeEstaGuardado.includes(t.id);
+      
+      return `
         <div class="lista-tableros">
-            <span>${t.titulo}</span>
-            <button class="btn-tablero-guardar" data-id="${t.id}">
-                Guardar
-            </button>
+          <span>${t.titulo}</span>
+          <button class="btn-tablero-guardar ${estaGuardado ? 'guardado' : ''}" 
+                  data-id="${t.id}" 
+                  data-guardado="${estaGuardado}">
+            ${estaGuardado ? '✔ Guardado' : 'Guardar'}
+          </button>
         </div>
-    `).join('');
+      `;
+    }).join('');
+
+  } catch (err) {
+    console.error(err);
+    container.innerHTML = `<p>Error al cargar tableros</p>`;
+  }
 }
 
 async function obtenerLikes(publicacionId) {
@@ -90,6 +148,7 @@ async function obtenerLikes(publicacionId) {
 
 
 export function abrirCardModal(card) {
+    window.publicacionActualId = card.id;
     const modal = document.getElementById('card-modal');
     if (!modal) return;
 
@@ -194,9 +253,9 @@ modal.innerHTML = `
             </div>
         `;
         modalActions.appendChild(popover);
-
+        const containerTableros = popover.querySelector('.tableros-list-container');
         const btnSave = modal.querySelector('#btn-save-tablero');
-        const btnShowForm = popover.querySelector('.btn-add-tablero-ui');
+        const btnCrearTablero = popover.querySelector('.btn-add-tablero-ui');
         const formTablero = popover.querySelector('#form-nuevo-tablero');
 
         btnSave.onclick = (e) => {
@@ -205,18 +264,95 @@ modal.innerHTML = `
             renderizarTableros(); 
         };
 
-        btnShowForm.onclick = () => {
+        btnCrearTablero.onclick = () => {
             formTablero.style.display = formTablero.style.display === 'flex' ? 'none' : 'flex';
         };
 
-        formTablero.onsubmit = async (e) => {
+// Busca esta parte dentro de abrirCardModal:
+containerTableros.addEventListener("click", async (e) => {
+    const btn = e.target.closest(".btn-tablero-guardar");
+    if (!btn) return;
+
+    const tableroId = btn.dataset.id;
+    const publicacionId = window.publicacionActualId;
+
+    if (!publicacionId) return alert("No hay publicación seleccionada");
+
+    const estaGuardado = btn.dataset.guardado === "true";
+
+    try {
+        if (!estaGuardado) {
+            const res = await fetch(`${API_BASE_URL}/tableros/${tableroId}/publicaciones`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ publicacion_id: publicacionId })
+            });
+
+            if (res.ok) {
+                btn.textContent = "✔ Guardado";
+                btn.dataset.guardado = "true";
+                btn.classList.add("guardado"); 
+            } else {
+                const data = await res.json();
+                alert(data.error || "Error al guardar");
+            }
+
+        } else {
+            const res = await fetch(`${API_BASE_URL}/tableros/${tableroId}/publicaciones/${publicacionId}`, { 
+                method: "DELETE" 
+            });
+
+            if (res.ok) {
+                btn.textContent = "Guardar";
+                btn.dataset.guardado = "false";
+                btn.classList.remove("guardado"); 
+            } else {
+                alert("Error al quitar del tablero");
+            }
+        }
+    } catch (err) {
+        console.error(err);
+        alert("Error de conexión");
+    }
+});
+
+        formTablero.addEventListener('submit', async (e) => {
             e.preventDefault();
-            const nombre = document.getElementById('new-tablero-name').value;
-            const etiquetas = document.getElementById('new-tablero-tags').value;
-            console.log("Creando tablero:", { nombre, etiquetas });
-            formTablero.reset();
-            formTablero.style.display = 'none';
-        };
+
+            const usuario = obtenerUsuarioLogueado();
+            if (!usuario) return alert("No estás logueado");
+
+            const titulo = document.getElementById('new-tablero-name').value.trim();
+            const etiquetas = document.getElementById('new-tablero-tags').value.trim();
+
+            if (!titulo) return alert("Ingresá un nombre");
+
+            try {
+                const res = await fetch(`${API_BASE_URL}/tableros`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    usuario_id: usuario.id,
+                    titulo,
+                    etiquetas
+                })
+                });
+
+                if (!res.ok) {
+                const err = await res.json();
+                return alert(err.error || "Error creando tablero");
+                }
+
+                formTablero.reset();
+                formTablero.style.display = "none";
+
+                await renderizarTableros();
+            } catch (err) {
+                console.error(err);
+                alert("Error de conexión");
+            }
+            });
+
         
         popover.onclick = (e) => e.stopPropagation();
     }

@@ -193,6 +193,22 @@ CREATE TABLE listas_guardadas (
         ON DELETE CASCADE
 );
 
+CREATE TABLE tableros_publicaciones (
+    id SERIAL PRIMARY KEY,
+    tablero_id INT NOT NULL,
+    publicacion_id INT NOT NULL,
+
+    FOREIGN KEY (tablero_id)
+        REFERENCES tableros(id)
+        ON DELETE CASCADE,
+
+    FOREIGN KEY (publicacion_id)
+        REFERENCES publicaciones(id)
+        ON DELETE CASCADE,
+
+    UNIQUE (tablero_id, publicacion_id)
+);
+
 CREATE TABLE tableros_guardados (
     id SERIAL PRIMARY KEY,
     usuario_id INT NOT NULL,

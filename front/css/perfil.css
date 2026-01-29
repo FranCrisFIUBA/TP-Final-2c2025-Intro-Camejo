@@ -97,13 +97,13 @@ body, html {
     flex-direction: column;
     gap: 12px;
     box-shadow: 0px 2px 8px rgba(0, 0, 0, 0.1);
-    background-color: #fdfbf7;
+    background-color: #fff;
     transition: all 0.3s ease;
     overflow: hidden;
 }
 
 .tablero-item:hover {
-    transform: translateY(-5px);
+    transform: translateY(-3px);
     box-shadow: 0px 8px 20px rgba(0, 0, 0, 0.15);
 }
 
@@ -117,15 +117,15 @@ body, html {
 .tablero-title {
     font-size: 18px;
     font-weight: 600;
-    color: var(--negro);
+    color: #000000;
     line-height: 1.3;
     flex: 1;
 }
 
 .tablero-count {
     font-size: 12px;
-    color: var(--gris2);
-    background: #f0f0f0;
+    background: #f0f2f5;
+    color: var(--azul);
     padding: 4px 8px;
     border-radius: 12px;
     white-space: nowrap;
@@ -565,93 +565,6 @@ body, html {
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-/* Estilos para las publicaciones */
-.tableros-container {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-    gap: 20px;
-    padding: 20px;
-}
-
-.tablero-item {
-    background: white;
-    border-radius: 12px;
-    padding: 15px;
-    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-    transition: transform 0.2s ease;
-}
-
-.tablero-item:hover {
-    transform: translateY(-5px);
-}
-
-.tablero-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 10px;
-}
-
-.tablero-title {
-    font-size: 16px;
-    font-weight: 600;
-    margin: 0;
-    color: var(--text-color);
-}
-
-.tablero-count {
-    background: var(--primary-color);
-    color: white;
-    padding: 4px 8px;
-    border-radius: 12px;
-    font-size: 12px;
-} 
-
-.tablero-preview-img {
-    width: 100%;
-    height: 150px;
-    object-fit: cover;
-    border-radius: 8px;
-}
-
-.publicacion-hashtags {
-    margin: 10px 0;
-    display: flex;
-    flex-wrap: wrap;
-    gap: 5px;
-}
-
-.hashtag-mini {
-    background: var(--light-gray);
-    padding: 2px 8px;
-    border-radius: 10px;
-    font-size: 11px;
-    color: var(--text-color);
-}
-
-.publicacion-fecha {
-    font-size: 12px;
-    color: var(--gray);
-    margin: 0;
-}
-
-.no-tableros {
-    text-align: center;
-    padding: 40px;
-    color: var(--gray);
-    font-style: italic;
-}
 
 
 
