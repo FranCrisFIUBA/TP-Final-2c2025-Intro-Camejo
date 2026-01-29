@@ -131,6 +131,24 @@ body, html {
     white-space: nowrap;
 }
 
+.tablero-descripcion {
+    color: var(--gris3);
+    overflow: hidden;
+    padding: 5px;
+}
+
+.tablero-hashtag {
+  background: #f0f2f5;
+  color: var(--azul);
+  padding: 4px 12px;
+  border-radius: 16px;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  margin-right: 3px;
+}
+
 .tablero-preview {
     display: grid;
     grid-template-columns: 2fr 1fr;
@@ -190,17 +208,6 @@ body, html {
   color: var(--gris2);
   font-weight: 500;
   font-family: var(--nunito);
-}
-
-
-.tablero-descripcion {
-    font-size: 13px;
-    color: var(--gris3);
-    margin: 0;
-    line-height: 1.4;
-    display: -webkit-box;
-    -webkit-box-orient: vertical;
-    overflow: hidden;
 }
 
 .tablero-privado {
@@ -669,15 +676,6 @@ body, html {
     flex-wrap: wrap;
     gap: 6px;
     margin-bottom: 10px;
-}
-
-.hashtag {
-    background: var(--light-gray);
-    padding: 4px 10px;
-    border-radius: 12px;
-    font-size: 11px;
-    color: var(--text-color);
-    font-weight: 500;
 }
 
 .publicacion-fecha {

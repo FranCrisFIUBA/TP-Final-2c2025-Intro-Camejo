@@ -6,6 +6,13 @@ const API_IMAGENES = API_BASE_URL + '/imagenes';
 const API_ICONOS = API_BASE_URL + '/iconos';
 let usuarioActual = null;
 
+
+function listarHashtags(etiquetas) {
+    if (!etiquetas) return '';
+    return etiquetas.split(',').map(tag => `<span class="tablero-hashtag">#${tag.trim()}</span>`).join('');
+}
+
+
 async function cargarTableros(usuarioId) {
   const container = document.getElementById('tableros-container');
 
@@ -75,11 +82,11 @@ async function cargarTableros(usuarioId) {
                     >
                   </div>
                 `).join('')
-              : `<p>Sin pins aún</p>`
+              : `<p class="tablero-vacio">Tablero vacío</p>`
           }
         </div>
 
-        <p class="tablero-descripcion">${tablero.etiquetas || ''}</p>
+        <p class="tablero-descripcion">${listarHashtags(tablero.etiquetas) || ''}</p>
       `;
 
       container.appendChild(div);
@@ -168,15 +175,6 @@ document.addEventListener('DOMContentLoaded', function() {
         configurarNavegacion();
     }, 100);
 });
-
-function listarHashtags(etiquetas) {
-  if (!etiquetas) return '';
-  return etiquetas
-    .split(',')
-    .map(tag => `<span class="hashtag">#${tag.trim()}</span>`)
-    .join('');
-}
-
 
 async function cargarPerfilUsuario() {
   const usuarioId = obtenerUsuarioId();

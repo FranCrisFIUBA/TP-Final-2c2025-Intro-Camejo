@@ -92,13 +92,11 @@ async function renderizarTableros() {
   if (!usuario || !publicacionId) return;
 
   try {
-    // 1. Pedimos todos los tableros del usuario
     const resTableros = await fetch(`${API_BASE_URL}/tableros/usuario/${usuario.id}`);
     const tableros = await resTableros.json();
 
-    // 2. Pedimos los IDs de los tableros donde ya está guardada esta publicación
     const resEstados = await fetch(`${API_BASE_URL}/tableros/usuario/${usuario.id}/publicacion/${publicacionId}/estados`);
-    const idsDondeEstaGuardado = await resEstados.json(); // Ejemplo: [5, 8]
+    const idsDondeEstaGuardado = await resEstados.json();
 
     if (!tableros.length) {
       container.innerHTML = `<p style="padding:10px;">No tenés tableros aún</p>`;
@@ -106,7 +104,6 @@ async function renderizarTableros() {
     }
 
     container.innerHTML = tableros.map(t => {
-      // Si el ID del tablero está en la lista de "guardados", marcamos como true
       const estaGuardado = idsDondeEstaGuardado.includes(t.id);
       
       return `
@@ -268,7 +265,6 @@ modal.innerHTML = `
             formTablero.style.display = formTablero.style.display === 'flex' ? 'none' : 'flex';
         };
 
-// Busca esta parte dentro de abrirCardModal:
 containerTableros.addEventListener("click", async (e) => {
     const btn = e.target.closest(".btn-tablero-guardar");
     if (!btn) return;
