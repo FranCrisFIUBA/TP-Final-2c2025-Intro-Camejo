@@ -156,7 +156,7 @@ function configurarNavegacion() {
                     document.querySelector('.tableros-content').style.display = 'block';
                     const usuario = obtenerUsuarioLogueado();
                     if (usuario) {
-                      cargarTableros(usuario.id);
+                      cargarTableros(usuarioId);
                     }
 
                     break;
