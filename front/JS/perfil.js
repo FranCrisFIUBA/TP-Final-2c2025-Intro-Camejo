@@ -12,22 +12,15 @@ function listarHashtags(etiquetas) {
     return etiquetas.split(',').map(tag => `<span class="tablero-hashtag">#${tag.trim()}</span>`).join('');
 }
 
-
 async function cargarTableros(usuarioId) {
   const container = document.getElementById('tableros-container');
+  const usuarioLogueado = obtenerUsuarioLogueado();
 
-  if (!container) {
-    console.log("No existe #tableros-container");
-    return;
-  }
+  if (!container) return;
 
   try {
-    console.log("Cargando tableros reales...");
-
     const res = await fetch(`${API_BASE_URL}/tableros/usuario/${usuarioId}`);
     const tableros = await res.ok ? await res.json() : [];
-
-    console.log("Tableros:", tableros);
 
     if (!tableros.length) {
       container.innerHTML = `<p>Este usuario aún no tiene tableros</p>`;
@@ -36,29 +29,22 @@ async function cargarTableros(usuarioId) {
 
     container.innerHTML = '';
 
+    const esMiPerfil = usuarioLogueado && Number(usuarioLogueado.id) === Number(usuarioId);
+
     for (const tablero of tableros) {
       let publicaciones = [];
-
       try {
         const r = await fetch(`${API_BASE_URL}/tableros/tablero/${tablero.id}/publicaciones`);
         publicaciones = r.ok ? await r.json() : [];
-      } catch (e) {
-        publicaciones = [];
-      }
-
-      console.log("Publicaciones tablero", tablero.id, publicaciones);
+      } catch (e) { publicaciones = []; }
 
       const imagenes = publicaciones
         .filter(p => p.imagen)
         .slice(0, 3)
         .map(p => {
           if (p.imagen.startsWith("http")) return p.imagen;
-          if (p.imagen.startsWith("/imagenes")) return API_BASE_URL + p.imagen;
-          if (p.imagen.startsWith("/")) return API_BASE_URL + p.imagen;
           return `${API_IMAGENES}/${p.imagen}`;
         });
-
-      console.log("Imagenes armadas:", imagenes);
 
       const div = document.createElement('div');
       div.className = 'tablero-item';
@@ -66,6 +52,8 @@ async function cargarTableros(usuarioId) {
       div.innerHTML = `
         <div class="tablero-header">
           <span class="tablero-title">${tablero.titulo}</span>
+          
+          ${esMiPerfil ? `
           <div class="card-actions">
             <button class="card-action-btn edit" title="Editar">
               <i class="fa-solid fa-pen"></i>
@@ -74,6 +62,7 @@ async function cargarTableros(usuarioId) {
               <i class="fa-solid fa-trash"></i>
             </button>
           </div>
+          ` : ''}
         </div>
 
         <div class="tablero-info-secundaria">
@@ -102,7 +91,6 @@ async function cargarTableros(usuarioId) {
     container.innerHTML = `<p>Error cargando tableros</p>`;
   }
 }
-
 
 
 function obtenerUsuarioLogueado() {
