@@ -66,32 +66,37 @@ async function cargarTableros(usuarioId) {
       div.innerHTML = `
         <div class="tablero-header">
           <span class="tablero-title">${tablero.titulo}</span>
+          <div class="card-actions">
+            <button class="card-action-btn edit" title="Editar">
+              <i class="fa-solid fa-pen"></i>
+            </button>
+            <button class="card-action-btn delete" title="Eliminar">
+              <i class="fa-solid fa-trash"></i>
+            </button>
+          </div>
+        </div>
+
+        <div class="tablero-info-secundaria">
           <span class="tablero-count">${tablero.cantidad_pins} pins</span>
         </div>
 
         <div class="tablero-preview ${imagenes.length ? '' : 'no-content'}">
           ${
             imagenes.length
-              ? imagenes.map((img, i) => `
+              ? imagenes.map((img) => `
                   <div class="tablero-preview-slot">
-                    <img 
-                      class="tablero-preview-img" 
-                      src="${img}" 
-                      loading="lazy"
-                      onerror="console.log('No carga:', this.src)"
-                    >
+                    <img class="tablero-preview-img" src="${img}" loading="lazy">
                   </div>
                 `).join('')
               : `<p class="tablero-vacio">Tablero vacío</p>`
           }
         </div>
-
         <p class="tablero-descripcion">${listarHashtags(tablero.etiquetas) || ''}</p>
       `;
 
       container.appendChild(div);
     }
-
+    
   } catch (err) {
     console.error(err);
     container.innerHTML = `<p>Error cargando tableros</p>`;

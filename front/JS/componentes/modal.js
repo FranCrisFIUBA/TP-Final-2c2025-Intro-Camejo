@@ -48,6 +48,7 @@ export function closeCardModal() {
         modal.style.display = 'none';
         document.body.style.overflow = 'auto';
     }
+    window.location.reload();
 }
 
 async function quitarDelTablero(tableroId, publicacionId) {
@@ -99,7 +100,7 @@ async function renderizarTableros() {
     const idsDondeEstaGuardado = await resEstados.json();
 
     if (!tableros.length) {
-      container.innerHTML = `<p style="padding:10px;">No tenés tableros aún</p>`;
+      container.innerHTML = `<p class="mensaje-sinTableros" >No tenés tableros aún</p>`;
       return;
     }
 

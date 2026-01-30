@@ -378,14 +378,6 @@
     margin: 12px 0;
 }
 
-.tablero-item {
-    cursor: pointer;
-    color: red;
-}
-
-.tablero-item:hover {
-    background: #eee;
-}
 
 .tablero-close {
     width: 100%;
@@ -665,4 +657,12 @@
   width: 100%;               
   border-bottom: 1px solid #eee;
   font-family: var(--nunito);
+}
+
+.mensaje-sinTableros{
+  font-size: 14px;
+  color: var(--gris2);
+  padding: 5px;
+  align-items: center;
+  font-family: var(--nunito-ligth);
 }

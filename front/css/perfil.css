@@ -21,7 +21,6 @@ body, html {
     grid-template-columns: 80px 1fr 300px;
 }
 
-/* ===== GRID SIN NAVBAR ===== */
 .container.sin-navbar {
     grid-template-columns: 1fr 300px;
 }
@@ -36,7 +35,7 @@ body, html {
     background: transparent;
     border-radius: 8px;
     box-shadow: 8px 5px 10px rgba(0,0,0,0.1);
-    color: var(--negro);
+    color: #000000;
 }
 
 .nav-option {
@@ -51,7 +50,6 @@ body, html {
 
 .nav-option.active {
     background: var(--amarillo);
-    color: var(--negro);
     border: var(--border-estandar);
 }
 
@@ -95,7 +93,7 @@ body, html {
     padding: 12px;
     display: flex;
     flex-direction: column;
-    gap: 12px;
+    gap: 7px;
     box-shadow: 0px 2px 8px rgba(0, 0, 0, 0.1);
     background-color: #fff;
     transition: all 0.3s ease;
@@ -111,7 +109,7 @@ body, html {
     display: flex;
     justify-content: space-between;
     align-items: flex-start;
-    gap: 10px;
+    gap: 6px;
 }
 
 .tablero-title {
@@ -209,23 +207,6 @@ body, html {
   font-weight: 500;
   font-family: var(--nunito);
 }
-
-.tablero-privado {
-    display: inline-flex;
-    align-items: center;
-    gap: 4px;
-    font-size: 12px;
-    color: var(--gris3);
-    background: #f0f0f0;
-    padding: 4px 8px;
-    border-radius: 12px;
-    align-self: flex-start;
-}
-
-.tablero-privado i {
-    font-size: 10px;
-}
-
 /* cuando no hay tableros */
 .no-tableros {
     text-align: center;
@@ -234,8 +215,6 @@ body, html {
     padding: 40px 20px;
     grid-column: 1 / -1;
 }
-
-
 
 
 
