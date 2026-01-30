@@ -196,7 +196,7 @@ body, html {
 }
 
 .no-content img {
-  max-width: 200px;
+  max-width: 300px;
   margin-bottom: 15px;
 }
 
@@ -664,32 +664,6 @@ body, html {
     align-items: center;
     gap: 5px;
 }
-
-.no-content {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  text-align: center;
-  padding: 60px 20px;
-  width: 100%;
-  grid-column: 1 / -1; 
-  column-span: all;  
-}
-
-.no-content img {
-  max-width: 200px;
-  margin-bottom: 15px;
-}
-
-.no-content p {
-  font-size: 18px;
-  color: var(--gris2);
-  font-weight: 500;
-  font-family: var(--nunito);
-}
-
-
 
 
 

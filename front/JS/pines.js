@@ -38,7 +38,7 @@ const cargarPublicaciones = async () => {
         if (!respuesta.ok) throw new Error(`Error: ${respuesta.status}`);
 
         const datos = await respuesta.json();
-        const SINPUBLIC = './img/sinPublicaciones.png';
+        const SINPUBLIC = './img/sinPublicaciones1.png';
         const contenedor = document.querySelector(".cards-container") || document.querySelector("#cards-container");
 
         if (!contenedor) {
