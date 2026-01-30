@@ -21,9 +21,14 @@ async function cargarTableros(usuarioId) {
   try {
     const res = await fetch(`${API_BASE_URL}/tableros/usuario/${usuarioId}`);
     const tableros = await res.ok ? await res.json() : [];
-
+    actualizarEstadistica('tableros', tableros.length);
     if (!tableros.length) {
-      container.innerHTML = `<p>Este usuario aún no tiene tableros</p>`;
+    const SINTAB = './img/sinTableros.png';
+    container.innerHTML = `
+        <div class="no-content">
+            <img src="${SINTAB}" alt="Sin contenido">
+            <p>Este usuario aún no tiene ningún tablero</p>
+        </div>`;
       return;
     }
 
@@ -51,7 +56,7 @@ async function cargarTableros(usuarioId) {
 
       div.innerHTML = `
         <div class="tablero-header">
-          <span class="tablero-title">${tablero.titulo}</span>
+          <span class="tablero-titulo">${tablero.titulo}</span>
           
           ${esMiPerfil ? `
           <div class="card-actions">
@@ -83,7 +88,57 @@ async function cargarTableros(usuarioId) {
         <p class="tablero-descripcion">${listarHashtags(tablero.etiquetas) || ''}</p>
       `;
 
+     if (esMiPerfil) {
+        const btnDelete = div.querySelector('.card-action-btn.delete');
+        const btnEdit = div.querySelector('.card-action-btn.edit');
+
+        btnDelete.addEventListener('click', async () => {
+          if (!confirm(`¿Estás seguro de que quieres eliminar el tablero "${tablero.titulo}"?`)) return;
+          
+          try {
+            const response = await fetch(`${API_BASE_URL}/tableros/${tablero.id}`, { method: 'DELETE' });
+            if (response.ok) {
+              div.remove();
+              alert("Tablero eliminado");
+            } else {
+              alert("Error al eliminar el tablero");
+            }
+          } catch (error) {
+            console.error(error);
+          }
+        });
+
+        btnEdit.addEventListener('click', async () => {
+          const nuevoTitulo = prompt("Nuevo nombre del tablero:", tablero.titulo);
+          const nuevasEtiquetas = prompt("Nuevas etiquetas (separadas por coma):", tablero.etiquetas || "");
+
+          if (nuevoTitulo === null) return; 
+
+          try {
+            const response = await fetch(`${API_BASE_URL}/tableros/${tablero.id}`, {
+              method: 'PATCH',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ 
+                titulo: nuevoTitulo, 
+                etiquetas: nuevasEtiquetas 
+              })
+            });
+
+            if (response.ok) {
+              const actualizado = await response.json();
+              // Actualizar la interfaz sin recargar
+              div.querySelector('.tablero-titulo').textContent = actualizado.titulo;
+              div.querySelector('.tablero-descripcion').innerHTML = listarHashtags(actualizado.etiquetas);
+              alert("Tablero actualizado");
+            }
+          } catch (error) {
+            console.error("Error al editar:", error);
+          }
+        });
+      }
+
       container.appendChild(div);
+  
     }
     
   } catch (err) {
@@ -188,7 +243,11 @@ async function cargarPerfilUsuario() {
 
     mostrarDatosUsuario(usuario);
     cargarPublicacionesDeUsuario(usuario.id);
-
+    const resTab = await fetch(`${API_BASE_URL}/tableros/usuario/${usuarioId}`);
+    if (resTab.ok) {
+        const tableros = await resTab.json();
+        actualizarEstadistica('tableros', tableros.length);
+    }
     setTimeout(validarAccionesPerfil, 0);
 
   } catch (error) {
@@ -267,7 +326,7 @@ async function cargarLikesTotalesUsuario(publicaciones) {
 function verificarCantPublicaciones(container) {
     if (!container || container.children.length > 0) return;
 
-    const SINPUBLIC = './img/sinPublicaciones1.png';
+    const SINPUBLIC = './img/sinPublicaciones.png';
     container.innerHTML = `
         <div class="no-content">
             <img src="${SINPUBLIC}" alt="Sin contenido">
@@ -276,7 +335,7 @@ function verificarCantPublicaciones(container) {
 }
 async function cargarPublicacionesDeUsuario(usuarioId) {
   const container = document.getElementById('publicaciones-container');
-  const SINPUBLIC = './img/sinPublicaciones1.png';
+  const SINPUBLIC = './img/sinPublicaciones.png';
   if (!container) return;
 
   try {

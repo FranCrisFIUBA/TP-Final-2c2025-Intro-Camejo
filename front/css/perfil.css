@@ -112,18 +112,17 @@ body, html {
     gap: 6px;
 }
 
-.tablero-title {
-    font-size: 18px;
-    font-weight: 600;
-    color: #000000;
-    line-height: 1.3;
+.tablero-titulo {
+    font-size: 25px;
+    color: var(--negro);
     flex: 1;
+    font-family: var(--nunito);
 }
 
 .tablero-count {
     font-size: 12px;
-    background: #f0f2f5;
-    color: var(--azul);
+    background: var(--azul);
+    color: #fff;
     padding: 4px 8px;
     border-radius: 12px;
     white-space: nowrap;

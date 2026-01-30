@@ -200,7 +200,54 @@ tableros.post("/:idTablero/publicaciones", async (req, res) => {
 });
 
 
+// PATCH /tableros/:idTablero - Actualizar título y etiquetas de un tablero
+tableros.patch("/:idTablero", async (req, res) => {
+  try {
+    const { idTablero } = req.params;
+    const { titulo, etiquetas } = req.body;
+    const tableroPrevio = await pool.query(
+      "SELECT id FROM tableros WHERE id = $1",
+      [idTablero]
+    );
 
+    if (tableroPrevio.rowCount === 0) {
+      return res.status(404).json({ error: "Tablero no encontrado" });
+    }
+    const campos = [];
+    const valores = [];
+    let i = 1;
+
+    if (titulo !== undefined) {
+      campos.push(`titulo = $${i++}`);
+      valores.push(titulo);
+    }
+
+    if (etiquetas !== undefined) {
+      campos.push(`etiquetas = $${i++}`);
+      valores.push(etiquetas);
+    }
+
+    // Si no enviaron nada para actualizar
+    if (campos.length === 0) {
+      return res.status(400).json({ error: "No se proporcionaron campos para actualizar" });
+    }
+    campos.push(`fecha_edicion = CURRENT_TIMESTAMP`);
+    valores.push(idTablero);
+    const query = `
+      UPDATE tableros
+      SET ${campos.join(", ")}
+      WHERE id = $${i}
+      RETURNING *
+    `;
+
+    const result = await pool.query(query, valores);
+    res.status(200).json(result.rows[0]);
+
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "Error al actualizar el tablero" });
+  }
+});
 
 // DELETE /tableros/:idTablero/publicaciones/:idPublicacion  Elimina la relación entre una publicacion y un tablero
 tableros.delete("/:idTablero/publicaciones/:idPublicacion", async (req, res) => {
