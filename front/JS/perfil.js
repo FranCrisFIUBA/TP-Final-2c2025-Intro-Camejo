@@ -12,10 +12,71 @@ function listarHashtags(etiquetas) {
     return etiquetas.split(',').map(tag => `<span class="tablero-hashtag">#${tag.trim()}</span>`).join('');
 }
 
+async function verPublicacionesTablero(tablero, usuarioId) {
+    const container = document.getElementById('tableros-container');
+    const navPerfil = document.querySelector('.navigation-options');
+    
+    container.style.display = 'block';
+
+    if (navPerfil) navPerfil.style.display = 'none';
+
+    container.innerHTML = `
+      <div class="tablero-detalle-header">
+        <button id="btn-atras-tableros" class="btn btn-atras" style="margin-bottom:10px;">
+          <i class="fa-solid fa-arrow-left"></i> Volver a tableros
+        </button>
+        <h2>${tablero.titulo}</h2>
+        <div class="tablero-hashtags-container">
+          ${listarHashtags(tablero.etiquetas)}
+        </div>
+      </div>
+
+      <div id="publicaciones-tablero-grid" class="publicaciones-container"></div>
+    `;
+
+    document.getElementById('btn-atras-tableros').onclick = () => {
+        if (navPerfil) navPerfil.style.display = 'flex';
+        container.style.display = 'grid';
+        cargarTableros(usuarioId); 
+    };
+
+    const grid = document.getElementById('publicaciones-tablero-grid');
+    try {
+        const res = await fetch(`${API_BASE_URL}/tableros/tablero/${tablero.id}/publicaciones`);
+        const publicaciones = await res.json();
+
+        if (publicaciones.length === 0) {
+            grid.innerHTML = " <div class='no-content'><img src='./img/tablero-vacio.png' alt='sin contenido'> <p>Este tablero no tiene publicaciones aún.</p>";
+            return;
+        }
+
+        publicaciones.forEach(p => {
+  const card = crearCard(
+    {
+      ...p,
+      usuario_nombre: p.usuario_nombre || usuarioActual?.nombre,
+      usuario_icono: p.usuario_icono || usuarioActual?.icono
+    },
+    {
+      onOpenModal: abrirCardModal,
+      onGoToProfile: (id) => window.location.href = `perfil.html?id=${id}`,
+      showActions: false
+    }
+  );
+
+  grid.appendChild(card);
+});
+
+    } catch (error) {
+        console.error("Error al cargar pins del tablero:", error);
+    }
+}
+
 async function cargarTableros(usuarioId) {
   const container = document.getElementById('tableros-container');
+  container.style.display = 'grid';
   const usuarioLogueado = obtenerUsuarioLogueado();
-
+  
   if (!container) return;
 
   try {
@@ -87,6 +148,10 @@ async function cargarTableros(usuarioId) {
         </div>
         <p class="tablero-descripcion">${listarHashtags(tablero.etiquetas) || ''}</p>
       `;
+          
+      div.querySelector('.tablero-preview').onclick = () => {
+        verPublicacionesTablero(tablero, usuarioId);
+      };
 
      if (esMiPerfil) {
         const btnDelete = div.querySelector('.card-action-btn.delete');
@@ -126,7 +191,6 @@ async function cargarTableros(usuarioId) {
 
             if (response.ok) {
               const actualizado = await response.json();
-              // Actualizar la interfaz sin recargar
               div.querySelector('.tablero-titulo').textContent = actualizado.titulo;
               div.querySelector('.tablero-descripcion').innerHTML = listarHashtags(actualizado.etiquetas);
               alert("Tablero actualizado");

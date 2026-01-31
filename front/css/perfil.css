@@ -6,7 +6,7 @@
 
 body, html {
     height: 100%;
-    background: #fffaf0;
+    background: var(--blanco);
     font-family: var(--nunito);
 }
 
@@ -14,17 +14,17 @@ body, html {
     display: grid;
     grid-template-columns: 80px 1fr 300px;/* izquierda | centro | derecha */ 
     height: 100vh;
-    gap: 20px;
-    padding: 20px;
+    gap: 10px;
+    padding: 10px;
 }
 .container.con-navbar {
-    grid-template-columns: 80px 1fr 300px;
+    grid-template-columns: 70px 1fr 300px;
 }
 
 .container.sin-navbar {
-    grid-template-columns: 1fr 300px;
+    grid-template-columns: 1fr 400px;
 }
-/* Sección izquierda */ 
+
 .izq-section {
     flex: 3;
 }
@@ -182,7 +182,7 @@ body, html {
     grid-column: 2;
     grid-row: 2;
 }
-/* Estilo para cuando no hay pins */
+
 .no-content {
   display: flex;
   flex-direction: column;
@@ -797,4 +797,36 @@ body, html {
   padding: 8px;
   border-radius: 6px;
   border: 1px solid #ccc;
+}
+
+
+
+
+
+
+
+
+
+#publicaciones-tablero-grid {
+  display: block;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); 
+  gap: 20px;
+}
+
+.tablero-detalle-header {
+    width: 100%;
+    margin-bottom: 30px;
+    display: block; 
+    margin-left: 10px;
+    font-size: 28px;
+}
+
+.tablero-hashtags-container {
+    margin-top: 10px;
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+.btn-atras{
+    background: var(--amarillo);
 }
