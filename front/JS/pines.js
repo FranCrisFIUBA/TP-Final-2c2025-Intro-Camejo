@@ -607,8 +607,9 @@ async function enviarComentario(publicacionId, contenido, usuarioId) {
 }
 
 document.addEventListener("DOMContentLoaded", () => {
-    console.log("DOM LISTO");
+    const usuarioLogueado = JSON.parse(localStorage.getItem("usuarioLogueado"));
 
+    console.log("DOM LISTO");
     cargarPublicaciones();
 
     const panelFiltros = document.querySelector(".filters-panel");
@@ -655,7 +656,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     if (!searchForm || !searchInput) return;
 
-    searchForm.addEventListener("submit", (e) => {
+    searchForm.addEventListener("submit", async (e) => {
         console.log("SUBMIT FORM");
         e.preventDefault();
 
@@ -671,6 +672,13 @@ document.addEventListener("DOMContentLoaded", () => {
         }
 
         buscarPublicacionesPorTagConFiltros(filtrosActivos);
+
+        if (esBusquedaPersonalizada(filtrosActivos)) {
+            await guardarBusquedaPersonalizada({
+                ...filtrosActivos,
+                usuario_id: usuarioLogueado.id
+            });
+        }
     });
 });
 
