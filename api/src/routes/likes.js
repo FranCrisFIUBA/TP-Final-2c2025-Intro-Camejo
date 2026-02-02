@@ -6,97 +6,110 @@ import {eliminarImagenPublicacionPorId} from "../utils/storage/publicaciones.js"
 const likes = express.Router();
 
 // GET /likes
-likes.get('/likes', async (req, res) => {
+likes.get('/', async (req, res) => {
     try {
-        const { count_only } = req.query;
+        const countOnly = req.query.count_only === 'true';
 
-        const result = count_only === true
-            ? await pool.query('SELECT * FROM likes')
-            : await pool.query('SELECT COUNT(*) FROM likes');
+        const query = countOnly
+            ? 'SELECT COUNT(*)::int FROM likes'
+            : 'SELECT * FROM likes';
 
+        const result = await pool.query(query);
+        if (countOnly) {
+            return res.status(200).json({ total: result.rows[0].count });
+        }
+        
         res.status(200).json(result.rows);
     } catch (err) {
         console.error(err);
         res.status(500).json({ error: "Error del servidor al obtener los likes" });
     }
-})
+});
 
 // GET /likes/usuario/usuario_id
-likes.get('/likes/usuario/:usuario_id', async (req, res) => {
+likes.get('/usuario/:usuario_id', async (req, res) => {
     try {
         const { usuario_id } = req.params;
-        const { count_only } = req.query;
+        const countOnly = req.query.count_only === 'true';
+        const query = countOnly
+            ? 'SELECT COUNT(*)::int FROM likes WHERE usuario_id = $1'
+            : 'SELECT * FROM likes WHERE usuario_id = $1';
 
-        const result = count_only === true
-            ? await pool.query('SELECT * FROM likes WHERE usuario_id = ?', [usuario_id])
-            : await pool.query('SELECT COUNT(*) FROM likes  WHERE usuario_id = ?', [usuario_id]);
-
+        const result = await pool.query(query, [usuario_id]);
         res.status(200).json(result.rows);
     } catch (err) {
         console.error(err);
         res.status(500).json({ error: "Error del servidor al obtener los likes del usuario" });
     }
-})
-
+});
 
 // GET /likes/publicacion/publicacion_id
-likes.get('/likes/publicacion/:publicacion_id', async (req, res) => {
+likes.get('/publicacion/:publicacion_id', async (req, res) => {
     try {
         const { publicacion_id } = req.params;
-        const { count_only } = req.query;
+        const countOnly = req.query.count_only === 'true';
 
-        const result = count_only === true
-            ? await pool.query('SELECT * FROM likes WHERE publicacion_id = ?', [publicacion_id])
-            : await pool.query('SELECT COUNT(*) FROM likes  WHERE publicacion_id = ?', [publicacion_id]);
+        const query = countOnly
+            ? 'SELECT COUNT(*)::int FROM likes WHERE publicacion_id = $1'
+            : 'SELECT * FROM likes WHERE publicacion_id = $1';
 
-        res.status(200).json(result.rows);
+        const result = await pool.query(query, [publicacion_id]);
+
+        if (countOnly) {
+            return res.json({ total: result.rows[0].count });
+        }
+
+        res.json(result.rows);
     } catch (err) {
         console.error(err);
-        res.status(500).json({ error: "Error del servidor al obtener los likes de la publicacion" });
+        res.status(500).json({ error: "Error al obtener likes" });
     }
-})
+});
+
 
 
 // POST /likes/publicacion/
-likes.post('/likes/publicacion/', async (req, res) => {
+likes.post('/publicacion', async (req, res) => {
     try {
         const { usuario_id, publicacion_id } = req.body;
 
-        if (!usuario_id || !publicacion_id) {
-            return res.status(400).json({ error: "Faltan campos requeridos" });
+        const existe = await pool.query(
+            'SELECT id FROM likes WHERE usuario_id = $1 AND publicacion_id = $2',
+            [usuario_id, publicacion_id]
+        );
+
+        if (existe.rowCount > 0) {
+            return res.status(200).json(existe.rows[0]);
         }
 
         const result = await pool.query(`
             INSERT INTO likes (usuario_id, publicacion_id)
             VALUES ($1, $2)
             RETURNING *
-        `, [usuario_id, publicacion_id,]);
+        `, [usuario_id, publicacion_id]);
 
         res.status(201).json(result.rows[0]);
     } catch (error) {
-        console.error('Error creando el like:', error);
-        res.status(500).json({ error: "Error al crear el like" });
+        console.error(error);
+        res.status(500).json({ error: "Error al crear like" });
     }
-})
+});
+
 
 // DELETE /likes/:id
-likes.delete('/likes/:id', async (req, res) => {
+likes.delete('/:id', async (req, res) => {
     try {
         const { id } = req.params;
+        const result = await pool.query('DELETE FROM likes WHERE id = $1 RETURNING *', [id]);
 
-        const result = await pool.query('DELETE FROM likes WHERE id = ?', [id]);
-
-
-        if (result.rows.length === 0) {
+        if (result.rowCount === 0) {
             return res.status(404).json({ error: "Like no encontrado" });
         }
 
-        const likeEliminado = result.rows[0];
-
-        res.json({ message: "Like eliminado", likeEliminado });
+        res.json({ message: "Like eliminado", likeEliminado: result.rows[0] });
     } catch (err) {
+        console.error(err);
         res.status(500).json({ error: "Error al eliminar" });
     }
-})
-
+});
 export default likes

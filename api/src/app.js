@@ -5,6 +5,7 @@ import publicacionesRouter from "./routes/publicaciones.js";
 import listasRouter from "./routes/listas.js";
 import comentariosRouter from "./routes/comentarios.js";
 import likesRouter from "./routes/likes.js";
+import tablerosRouter from "./routes/tableros.js";
 import {logRequest} from "./middlewares/logRequest.js";
 import {logResponse} from "./middlewares/logResponse.js";
 import {dataDiagnostic} from "./routes/diagnostics/dataDiagnostic.js";
@@ -40,6 +41,7 @@ app
     .use("/listas", listasRouter)
     .use("/comentarios", comentariosRouter)
     .use("/likes", likesRouter)
+    .use("/tableros", tablerosRouter)
     .use("/imagenes", express.static(IMAGENES_PATH))
     .use('/iconos', express.static(ICONOS_PATH));
 

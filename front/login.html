@@ -9,20 +9,17 @@
     <title>Iniciar Sesión</title>
 </head>
 <body>
-    <div>
+    <div class="login-container">
         <form id="form-login" novalidate>
             <h1>Iniciar Sesión</h1>
             <div id="caja-usuario">
-            <label class="label-usuario">Usuario</label> <br>
-            <input type="text" name="usuario" required> <br>
+            <input type="text" name="usuario" placeholder="Nombre de Usuario" required> <br>
             </div>
             <div id="caja-contraseña">
-            <label class="label-contrasenia">Contraseña</label> <br>
-            <input type="password" name="contrasenia" required> <br>
+            <input type="password" name="contrasenia" placeholder="Contraseña" required> <br>
             </div>
-            <div id="mensaje-login">
-            </div>
-            <button type="submit" id="campo-loguearse">entrar</button> <br>
+            <div id="mensaje-login"></div>
+            <button type="submit" id="campo-loguearse">Entrar</button> <br>
             <p>¿No tienes una cuenta?<br><a href="register.html">Registrate</a></p>
 
         </form>

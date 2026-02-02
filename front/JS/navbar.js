@@ -84,7 +84,47 @@ function inicializarNavbar() {
     const boardInput = document.getElementById('board-name');
     const cancelBoardBtn = document.getElementById('cancel-board');
     const createBoardBtn = document.getElementById('create-board');
-   
+    const tagsInput = document.getElementById('board-tags'); 
+
+    createBoardBtn?.addEventListener('click', async () => {
+        const titulo = boardInput.value.trim();
+        const etiquetas = tagsInput ? tagsInput.value.trim() : "";
+
+        if (!titulo) {
+            return alert('Ingresá un nombre para el tablero');
+        }
+
+        try {
+            const res = await fetch(`${API_BASE}/tableros`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    usuario_id: usuarioLogueado.id,
+                    titulo: titulo,
+                    etiquetas: etiquetas 
+                })
+            });
+
+            if (!res.ok) {
+                const err = await res.json();
+                return alert(err.error || "Error creando tablero");
+            }
+
+            boardInput.value = '';
+            if(tagsInput) tagsInput.value = '';
+            cerrarformTablero();
+            
+            if (window.location.pathname.includes('perfil.html')) {
+                location.reload(); 
+            } else {
+                alert("¡Tablero creado con éxito!");
+            }
+
+        } catch (err) {
+            console.error("Error al crear tablero:", err);
+            alert("Error de conexión");
+        }
+    });
     function abrirformTablero() {
         cerrarDropdown();
         boardform.classList.add('show');
