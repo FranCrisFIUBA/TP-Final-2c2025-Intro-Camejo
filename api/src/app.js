@@ -2,6 +2,7 @@ import dotenv from 'dotenv';
 import express from 'express';
 import usuariosRouter from "./routes/usuarios.js";
 import publicacionesRouter from "./routes/publicaciones.js";
+import listasRouter from "./routes/listas.js";
 import comentariosRouter from "./routes/comentarios.js";
 import likesRouter from "./routes/likes.js";
 import {logRequest} from "./middlewares/logRequest.js";
@@ -36,6 +37,7 @@ app
     .use(noCache)
     .use("/usuarios", usuariosRouter)
     .use("/publicaciones", publicacionesRouter)
+    .use("/listas", listasRouter)
     .use("/comentarios", comentariosRouter)
     .use("/likes", likesRouter)
     .use("/imagenes", express.static(IMAGENES_PATH))
