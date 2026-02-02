@@ -195,6 +195,43 @@ async function buscarPublicacionesPorTagConFiltros(filtros) {
     return partes.join(" · ");
   }
 
+
+async function guardarBusquedaPersonalizada(filtros) {
+  const usuarioLogueado = JSON.parse(localStorage.getItem("usuarioLogueado"));
+
+  console.log("USUARIO LOGUEADO EN GUARDAR:", usuarioLogueado);
+
+  if (!usuarioLogueado || !usuarioLogueado.id) {
+    console.warn("No hay usuario logueado, no se guarda la búsqueda");
+    return;
+  }
+
+  const body = {
+      usuario_id: usuarioLogueado.id,
+      titulo: armarTituloBusqueda(filtros),
+      etiquetas: filtros.tag,
+    
+      autor: filtros.autor,
+      likes_min: filtros.likesMin,
+      likes_max: filtros.likesMax,
+    
+      fecha_publicacion_min: filtros.fechaMin,
+      fecha_publicacion_max: filtros.fechaMax
+    };
+    
+
+  console.log("BODY QUE SE ENVÍA:", body);
+
+  await fetch(`${API_BASE_URL}/listas`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify(body)
+  });
+}
+
+
 function esBusquedaPersonalizada(filtros) {
   const tieneTag = !!filtros.tag;
   const tieneFiltrosExtra =
