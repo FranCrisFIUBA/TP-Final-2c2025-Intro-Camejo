@@ -919,27 +919,27 @@ body, html {
   }
   
 .globito-busqueda {
-  background: #ffffff;
-  border-radius: 12px;
-  padding: 14px 16px;
-
-  display: inline-flex;          
-  flex-direction: column;
-  gap: 6px;
-
-  max-width: 320px;
-  flex: 0 0 auto;             
-  width: fit-content;           
-
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
-  border: 1px solid #e5e5e5;
+    background: #ffffff;
+    border-radius: 12px;
+    padding: 14px 16px;
+  
+    display: inline-flex;          
+    flex-direction: column;
+    gap: 6px;
+  
+    max-width: 320px;
+    flex: 0 0 auto;             
+    width: fit-content;           
+  
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
+    border: 1px solid #e5e5e5;
 }
 
 
 
 .globito-busqueda:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 8px 18px rgba(0, 0, 0, 0.12);
+    transform: translateY(-3px);
+    box-shadow: 0 8px 18px rgba(0, 0, 0, 0.12);
 }
 
 .globito-header {
@@ -951,30 +951,30 @@ body, html {
   }
 
 .globito-header strong {
-  font-weight: 600;
-  color: #111;
+    font-weight: 600;
+    color: #111;
 }
 
 .globito-header span {
-  font-weight: 700;
-  margin-left: 0;       
+    font-weight: 700;
+    margin-left: 0;       
 }
 
 .globito-body {
-  font-size: 16px;
-  color: #333;
+    font-size: 16px;
+    color: #333;
 }
 
 .globito-body strong {
-  display: inline;
-  margin-bottom: 4px;
-  font-size: 16px;
-  font-weight: 600;
+    display: inline;
+    margin-bottom: 4px;
+    font-size: 16px;
+    font-weight: 600;
 }
 
 .globito-body small {
-  font-size: 16px;
-  line-height: 1.4;
+    font-size: 16px;
+    line-height: 1.4;
 }
 
 .globito-header > div {
@@ -983,3 +983,19 @@ body, html {
     align-items: center;
     flex-wrap: wrap;
 }
+
+.btn-eliminar-busqueda {
+    background: transparent;
+    border: none;
+    color: #999;
+    font-size: 16px;
+    cursor: pointer;
+    line-height: 1;
+    padding: 0;
+    flex-shrink: 0;
+  }
+  
+.btn-eliminar-busqueda:hover {
+    color: #e74c3c;
+}
+    
