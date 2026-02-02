@@ -502,3 +502,17 @@ async function cargarBusquedasPersonalizadas() {
 document.addEventListener("DOMContentLoaded", () => {
   cargarBusquedasPersonalizadas();
 });
+
+async function eliminarBusqueda(listaId) {
+  if (!confirm('¿Eliminar esta búsqueda personalizada?')) return;
+
+  const res = await fetch(`${API_BASE_URL}/listas/${listaId}`, {
+    method: 'DELETE'
+  });
+
+  if (res.ok) {
+    cargarBusquedasPersonalizadas(); 
+  } else {
+    alert('Error al eliminar la búsqueda');
+  }
+}
