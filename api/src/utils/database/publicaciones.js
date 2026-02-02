@@ -20,46 +20,60 @@ export async function getPublicacionesConBusqueda(params) {
         ancho_minimo, ancho_maximo,
     } = params;
 
-    const condiciones = [];
+    const condicionesWhere = [];
+    const condicionesHaving = [];
     const queryParams = [];
 
-    const addCond = (sql, value) => {
+    const addWhere = (sql, value) => {
         queryParams.push(value);
-        condiciones.push(sql.replace("?", `$${queryParams.length}`));
+        condicionesWhere.push(sql.replace("?", `$${queryParams.length}`));
+    };
+
+    const addHaving = (sql, value) => {
+        queryParams.push(value);
+        condicionesHaving.push(sql.replace("?", `$${queryParams.length}`));
     };
     
     if (autor) {
         queryParams.push(`%${autor}%`);
-        condiciones.push(`u.nombre ILIKE $${queryParams.length}`);
+        condicionesWhere.push(`u.nombre ILIKE $${queryParams.length}`);
     }
     if (autor_id !== undefined && !isNaN(autor_id)) {
-        addCond("p.usuario_id = ?", Number(autor_id));
+        addWhere("p.usuario_id = ?", Number(autor_id));
     }
     
-    if (likes_minimos !== undefined)    addCond("likes >= ?", likes_minimos);
-    if (likes_maximos !== undefined)    addCond("likes <= ?", likes_maximos);
-    if (fecha_minima !== undefined)     addCond("fecha_publicacion >= ?", fecha_minima);
-    if (fecha_maxima !== undefined)     addCond("fecha_publicacion <= ?", fecha_maxima);
-    if (alto_minimo !== undefined)      addCond("alto >= ?", alto_minimo);
-    if (alto_maximo !== undefined)      addCond("alto <= ?", alto_maximo);
-    if (ancho_minimo !== undefined)     addCond("ancho >= ?", ancho_minimo);
-    if (ancho_maximo !== undefined)     addCond("ancho <= ?", ancho_maximo);
+    if (likes_minimos !== undefined)    addHaving("COUNT(l.id) >= ?", likes_minimos);
+    if (likes_maximos !== undefined)    addHaving("COUNT(l.id) <= ?", likes_maximos);
+    if (fecha_minima !== undefined)     addWhere("p.fecha_publicacion >= ?", fecha_minima);
+    if (fecha_maxima !== undefined)     addWhere("p.fecha_publicacion <= ?", fecha_maxima);
+    if (alto_minimo !== undefined)      addWhere("p.alto >= ?", alto_minimo);
+    if (alto_maximo !== undefined)      addWhere("p.alto <= ?", alto_maximo);
+    if (ancho_minimo !== undefined)     addWhere("p.ancho >= ?", ancho_minimo);
+    if (ancho_maximo !== undefined)     addWhere("p.ancho <= ?", ancho_maximo);
 
     // TODO: implementar busqueda por etiquetas
     if (etiquetas !== undefined) {
-        addCond("etiquetas ILIKE ?", `%${etiquetas}%`);
+        addWhere("etiquetas ILIKE ?", `%${etiquetas}%`);
     }
-    const baseQuery = `
-    SELECT p.*
-    FROM publicaciones p
-    JOIN usuarios u ON p.usuario_id = u.id
-`;
+    
+    let query = `
+        SELECT 
+            p.*,
+            COUNT(l.id)::int AS likes_count
+        FROM publicaciones p
+        JOIN usuarios u ON p.usuario_id = u.id
+        LEFT JOIN likes l ON l.publicacion_id = p.id
+    `;
 
+    if (condicionesWhere.length > 0) {
+        query += ` WHERE ${condicionesWhere.join(" AND ")}`;
+    }
 
-    const query =
-        condiciones.length === 0
-            ? baseQuery
-            : `${baseQuery} WHERE ${condiciones.join(" AND ")}`;
+    query += ` GROUP BY p.id`;
+
+    if (condicionesHaving.length > 0) {
+        query += ` HAVING ${condicionesHaving.join(" AND ")}`;
+    }
 
     console.log("QUERY FINAL:", query);
     console.log("PARAMS:", queryParams);
