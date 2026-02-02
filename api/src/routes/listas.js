@@ -69,4 +69,20 @@ listas.post("/", async (req, res) => {
     }
 });
 
+listas.delete("/:id", async (req, res) => {
+    try {
+      const { id } = req.params;
+  
+      await pool.query(
+        'DELETE FROM listas WHERE id = $1',
+        [id]
+      );
+  
+      res.json({ ok: true });
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({ error: 'Error al eliminar la lista' });
+    }
+  });
+
 export default listas;
