@@ -160,9 +160,11 @@ body {
   border-radius: 6px;
   cursor: pointer;
   font-weight: 500;
+  font-family: var(--nunito);
+  color: var(--negro);
 }
 .cancel-btn {
-  background: #ddd;
+  background: var(--gris1);
 }
 .form-group {
   display: flex;
