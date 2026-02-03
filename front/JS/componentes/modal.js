@@ -146,6 +146,7 @@ async function obtenerLikes(publicacionId) {
 
 
 export function abrirCardModal(card) {
+    const usuarioLogueado = obtenerUsuarioLogueado();
     window.publicacionActualId = card.id;
     const modal = document.getElementById('card-modal');
     if (!modal) return;
@@ -180,9 +181,11 @@ modal.innerHTML = `
                             <i class="${dioLike ? 'fa-solid' : 'fa-regular'} fa-heart like-icon"></i>
                             <span class="likes-numero">${card.likes_count || 0}</span>
                         </button>
+                        ${usuarioLogueado ? `
                         <button class="modal-save-btn" id="btn-save-tablero">
                             <i class="fa-solid fa-plus add-icon"></i>
                         </button>
+                        ` : ``}
                     </div>
                 </div>
             </div>` : ''}
@@ -196,12 +199,17 @@ modal.innerHTML = `
                         <h3>Comentarios <span class="comments-count"></span></h3>
                     </div>
                     <div class="comments-container"></div>
-                    <div class="add-comment-section">
-                        <div class="comment-input-container">
-                            <textarea class="comment-input" placeholder="Añade un comentario..." rows="3"></textarea>
-                            <button class="comment-submit-btn">Publicar</button>
+                    ${usuarioLogueado ? `
+                        <div class="add-comment-section">
+                            <div class="comment-input-container">
+                                <textarea class="comment-input" placeholder="Añade un comentario..." rows="3"></textarea>
+                                <button class="comment-submit-btn">Publicar</button>
+                            </div>
                         </div>
-                    </div>
+                        ` : `
+                        <div class="add-comment-section disabled" style="border-top: 1px solid #fff;">
+                        </div>
+                        `}
                 </div>
             </div>
         </div>
@@ -256,11 +264,13 @@ modal.innerHTML = `
         const btnCrearTablero = popover.querySelector('.btn-add-tablero-ui');
         const formTablero = popover.querySelector('#form-nuevo-tablero');
 
-        btnSave.onclick = (e) => {
-            e.stopPropagation();
-            popover.classList.toggle('active');
-            renderizarTableros(); 
-        };
+        if (btnSave) {
+            btnSave.onclick = (e) => {
+                e.stopPropagation();
+                popover.classList.toggle('active');
+                renderizarTableros(); 
+            };
+        }
 
         btnCrearTablero.onclick = () => {
             formTablero.style.display = formTablero.style.display === 'flex' ? 'none' : 'flex';
@@ -354,36 +364,43 @@ containerTableros.addEventListener("click", async (e) => {
         popover.onclick = (e) => e.stopPropagation();
     }
 
-    btnPublicar.onclick = async () => {
-        const texto = inputComentario.value.trim();
-        const usuarioLogueado = obtenerUsuarioLogueado();
-        if (!usuarioLogueado) return alert("Debes iniciar sesión para comentar");
-        if (!texto) return;
+    if (btnPublicar && inputComentario) {
+        btnPublicar.onclick = async () => {
+            const texto = inputComentario.value.trim();
+            const usuarioLogueado = obtenerUsuarioLogueado();
+            if (!usuarioLogueado) return alert("Debes iniciar sesión para comentar");
+            if (!texto) return;
 
-        btnPublicar.disabled = true;
-        const exito = await enviarComentario(card.id, texto, usuarioLogueado.id);
-        if (exito) {
-            inputComentario.value = "";
-            await cargarComentariosEnModal(card.id);
-        }
-        btnPublicar.disabled = false;
-    };
+            btnPublicar.disabled = true;
+            const exito = await enviarComentario(card.id, texto, usuarioLogueado.id);
+            if (exito) {
+                inputComentario.value = "";
+                await cargarComentariosEnModal(card.id);
+            }
+            btnPublicar.disabled = false;
+        };
+    }
 
-    commentsContainer.onclick = async (e) => {
-        const id = e.target.dataset.id;
-        if (e.target.classList.contains('btn-delete-comment')) {
-            if (confirm('¿Eliminar comentario?')) {
-                if (await borrarComentario(id)) e.target.closest('.comment-item').remove();
+
+
+    if (commentsContainer) {
+        commentsContainer.onclick = async (e) => {
+            const id = e.target.dataset.id;
+            if (e.target.classList.contains('btn-delete-comment')) {
+                if (confirm('¿Eliminar comentario?')) {
+                    if (await borrarComentario(id)) e.target.closest('.comment-item').remove();
+                }
             }
-        }
-        if (e.target.classList.contains('btn-edit-comment')) {
-            const textEl = e.target.closest('.comment-item').querySelector('.comment-text');
-            const nuevo = prompt('Editar:', textEl.textContent);
-            if (nuevo && nuevo.trim() && await editarComentario(id, nuevo.trim())) {
-                textEl.textContent = nuevo.trim();
+            if (e.target.classList.contains('btn-edit-comment')) {
+                const textEl = e.target.closest('.comment-item').querySelector('.comment-text');
+                const nuevo = prompt('Editar:', textEl.textContent);
+                if (nuevo && nuevo.trim() && await editarComentario(id, nuevo.trim())) {
+                    textEl.textContent = nuevo.trim();
+                }
             }
-        }
-    };
+        };
+    }
+
 
     const irPerfilUsuario = modal.querySelector('#irAPerfil');
     if (irPerfilUsuario) {
@@ -515,7 +532,6 @@ async function editarComentario(id, contenido) {
     });
     return res.ok;
 }
-
 
 
 
