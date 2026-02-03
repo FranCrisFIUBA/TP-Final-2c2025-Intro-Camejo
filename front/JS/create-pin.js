@@ -172,7 +172,6 @@ formPublicacion.addEventListener("submit", async (e) => {
         url = `${API_PUBLICACIONES}/${pinParaEditar.id}`;
         metodo = "PATCH";
         console.log("Editando pin:", pinParaEditar.id);
-        // Añade este console.log antes del fetch en create-pin.js
 console.log("Archivo seleccionado:", fileInput.files[0]);
 console.log("Campos en FormData:");
 for (let pair of formData.entries()) {

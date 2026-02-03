@@ -1,5 +1,4 @@
-import {pool} from "../../db.js";
-import {esquemaPublicacion} from "../esquemas/publicaciones.js";
+import { pool } from "../../db.js";
 
 export async function intentarConseguirPublicacionPorId(id) {
     const { rows } = await pool.query("SELECT * FROM publicaciones WHERE id = $1", [id]);
@@ -7,13 +6,12 @@ export async function intentarConseguirPublicacionPorId(id) {
 }
 
 /**
- * @param params Parametros de busqueda. Se deben validar con validarParametrosDeBusqueda antes de usarlos en el metodo
+ * @param params Parametros de busqueda.
  * @returns {Promise<*>}
  */
 export async function getPublicacionesConBusqueda(params) {
     const {
         autor_id,
-        etiquetas,
         likes_minimos, likes_maximos,
         fecha_minima, fecha_maxima,
         alto_minimo, alto_maximo,
@@ -40,38 +38,34 @@ export async function getPublicacionesConBusqueda(params) {
 
     // TODO: implementar busqueda por etiquetas
 
-    const query =
-        condiciones.length === 0
-            ?`SELECT * FROM publicaciones`
-            :`SELECT * FROM publicaciones WHERE ${condiciones.join(" AND ")}`
-    ;
+    const query = condiciones.length === 0
+        ? `SELECT * FROM publicaciones`
+        : `SELECT * FROM publicaciones WHERE ${condiciones.join(" AND ")}`;
 
     return pool.query(query, queryParams);
 }
 
 /**
  * @param params Parametros de busqueda
- * @returns {*} Si hay un error devuelve un string describiendolo o undefined en caso contrario.
+ * @returns {string|undefined} Error o undefined si es válido
  */
 export function validarParametrosDeBusqueda(params) {
     const {
         autor_id,
-        etiquetas, // TODO: Validar etiquetas
         likes_minimos, likes_maximos,
         fecha_minima, fecha_maxima,
         alto_minimo, alto_maximo,
         ancho_minimo, ancho_maximo,
     } = params;
 
-    const returnIfTrue = (condition, value) => {
-        if (condition) return value
-    };
+    const returnIfTrue = (condition, value) => condition ? value : undefined;
 
-    const assetMinMax = (min, max, minLowerThanZero, maxLowerThanZero, minGreaterThanMax) => {
-        return returnIfTrue(min !== undefined && min < 0, minLowerThanZero)
-            || returnIfTrue(max !== undefined && max < 0, maxLowerThanZero)
-            || returnIfTrue(min !== undefined && max !== undefined && min > max, minGreaterThanMax);
-    }
+    const assetMinMax = (min, max, minErr, maxErr, rangeErr) => {
+        if (min !== undefined && min < 0) return minErr;
+        if (max !== undefined && max < 0) return maxErr;
+        if (min !== undefined && max !== undefined && min > max) return rangeErr;
+        return undefined;
+    };
 
     return returnIfTrue(autor_id !== undefined && autor_id < 0, "Id del autor invalido")
         || assetMinMax(likes_minimos, likes_maximos, "Likes minimos < 0", "Likes maximos < 0", "Likes minimos > Likes maximos")

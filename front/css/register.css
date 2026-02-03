@@ -67,18 +67,25 @@ input[type="date"] {
     margin-top: 5px;
     margin-bottom: 5px;
     background-color: var(--amarillo);
-    font-family: var(--nunito);
+    font-family: var(--nunito-bold);
     color: var(--negro);
+    cursor: pointer;
+    transition: transform 0.2s, background-color 0.2s;
+}
+
+.campo-registrarse:hover {
+    background-color: var(--amarillo-oscuro); 
+    transform: translateY(-2px);
 }
 
 p {
-    color: var(--naranja);
+    color: var(--rojo-oscuro);
     font-family: var(--nunito-bold); 
     margin-top: 1px;
 }
 
 p a{
-    color: var(--naranja);
+    color: var(--rojo-oscuro);
     text-decoration: none;
     cursor: pointer;
 }

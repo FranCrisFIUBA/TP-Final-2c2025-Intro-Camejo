@@ -3,7 +3,7 @@ document.getElementById("form-login").addEventListener("submit", async (e) => {
 
   const mensaje = document.getElementById("mensaje-login");
   mensaje.textContent = "";
-  mensaje.style.color = "red";
+  mensaje.style.color = "#ac2b2b";
 
   const datos = {
     usuario: e.target.usuario.value.trim(),

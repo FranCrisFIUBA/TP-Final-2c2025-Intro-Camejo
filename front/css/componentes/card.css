@@ -44,63 +44,52 @@
 }
 
 .card-author {
-    display: flex;
-    align-items: center;
-    gap: 8px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
 }
 
 .author-avatar {
-    width: 24px;
-    height: 24px;
-    border-radius: 50%;
-    object-fit: cover;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  object-fit: cover;
 }
 
 .author-name {
-    font-size: 13px;
-    color: var(--negro);
+  font-size: 15px;
+  color: var(--negro);
 }
 
 .card-actions {
-    display: flex;
-    gap: 10px;
+  display: flex;
+  gap: 10px;
 }
 
 .action-btn {
-    background: none;
-    border: none;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    gap: 4px;
-    font-size: 13px;
-    color: var(--negro);
-    transition: color 0.2s;
+  background: none;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 13px;
+  color: var(--negro);
+  transition: color 0.2s;
 }
 
 .action-btn:hover {
-    color: var(--naranja);
+  color: var(--naranja);
 }
 
 .action-icon {
-    width: 16px;
-    height: 16px;
-} 
-.like-btn, .modal-like-btn {
-    position: relative;
-    z-index: 10;
-    cursor: pointer;
-    background: transparent;
+  width: 16px;
+  height: 16px;
 }
 
 .card-actions {
-    pointer-events: auto;
+  pointer-events: auto;
 }
-
-.like-btn *, .modal-like-btn * {
-    pointer-events: none;
-}
-
 
 
 
@@ -117,7 +106,14 @@
   font-size: 14px;
   padding: 6px;
   border-radius: 6px;
-  color: #555;
+}
+
+.card-action-btn.edit{
+  color: #1e8fffb4;
+}
+
+.card-action-btn.delete{
+  color: #e53835bd;
 }
 
 .card-action-btn.edit:hover {

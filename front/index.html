@@ -3,8 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="css/variables.css">
     <link rel="stylesheet" href="css/componentes/card.css">
+     <link rel="stylesheet" href="css/componentes/modal.css">
     <link rel="stylesheet" href="css/index.css">
     <link rel="icon" href="img/logo-transp.png" type="image/x-icon">
     <title>Imago-★</title>
@@ -19,8 +21,45 @@
                         <img src="img/search_24dp_47413E_FILL0_wght400_GRAD0_opsz24.svg">
                     </span>
                     <input class="search-input" type="search" aria-label="Buscar contenido"/>
+                    <button type="button" class="btn-filtros" aria-label="Filtros">
+                        <img src="img/page_info_24dp_1F1F1F_FILL0_wght400_GRAD0_opsz24.svg">
+                    </button>
+                    
                 </form>
-
+                <section class="filters-panel" >
+                    <h3>Filtros</h3>
+    
+                    <label>
+                    Autor
+                    <input type="text" name="autor" placeholder="Nombre de usuario">
+                    </label> <br>
+            
+                    <label>
+                    Likes mínimos
+                    <input type="number" name="likes_minimos" min="0">
+                    </label> <br>
+            
+                    <label>
+                    Likes máximos
+                    <input type="number" name="likes_maximos" min="0">
+                    </label> <br>
+            
+                    <label>
+                    Fecha desde
+                    <input type="date" name="fecha_publicacion_minima">
+                    </label> <br>
+            
+                    <label>
+                    Fecha hasta
+                    <input type="date" name="fecha_publicacion_maxima">
+                    </label> <br>
+            
+                    <div class="filters-actions">
+                    <button type="button" class="btn-clear">Limpiar</button>
+                    <button type="button" class="btn-apply">Aplicar</button>
+                    </div>
+            
+                </section>
                 <div class="auth-buttons">
                     <a href="login.html" class="btn-auth btn-login">Iniciar sesión</a>
                     <a href="register.html" class="btn-auth btn-register">Registrarse</a>

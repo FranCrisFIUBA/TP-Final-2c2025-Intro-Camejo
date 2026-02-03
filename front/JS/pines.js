@@ -1,10 +1,18 @@
 import { crearCard } from './componentes/card.js';
-
+import { abrirCardModal } from './componentes/modal.js';
 const API_BASE_URL = 'http://127.0.0.1:3000';
-const API_IMAGENES = API_BASE_URL + '/imagenes';
-const API_ICONOS = API_BASE_URL + '/iconos';
 const usuariosCache = new Map();
 
+let filtrosActivos = {
+    tag: null,
+    autor: null,
+    likesMin: null,
+    likesMax: null,
+    fechaMin: null,
+    fechaMax: null
+  };
+
+  
 async function obtenerUsuarioPorId(usuarioId) {
     if (usuariosCache.has(usuarioId)) {
         return usuariosCache.get(usuarioId);
@@ -24,8 +32,6 @@ async function obtenerUsuarioPorId(usuarioId) {
         return null;
     }
 }
-
-// Función para obtener las publicaciones
 const cargarPublicaciones = async () => {
     try {
         const respuesta = await fetch(`${API_BASE_URL}/publicaciones`);
@@ -33,9 +39,7 @@ const cargarPublicaciones = async () => {
 
         const datos = await respuesta.json();
         const SINPUBLIC = './img/sinPublicaciones1.png';
-        const contenedor =
-            document.querySelector(".cards-container") ||
-            document.querySelector("#cards-container");
+        const contenedor = document.querySelector(".cards-container") || document.querySelector("#cards-container");
 
         if (!contenedor) {
             console.error("No se encontró el contenedor en el HTML");
@@ -48,16 +52,13 @@ const cargarPublicaciones = async () => {
             contenedor.innerHTML = `
                 <div class="no-content">
                     <img src='${SINPUBLIC}' alt="No hay contenido">
-                    <i class="fas fa-folder-open"></i>
                     <p>Aún no se ha hecho ninguna publicación. ¡Sé el primero en compartir algo!</p>
                 </div>`;
             return; 
         }
 
-
         for (const publicacion of datos) {
             const usuario = await obtenerUsuarioPorId(publicacion.usuario_id);
-
             publicacion.usuario_nombre = usuario?.nombre || 'Usuario';
             publicacion.usuario_icono  = usuario?.icono || null;
 
@@ -79,162 +80,90 @@ const cargarPublicaciones = async () => {
 };
 
 
+async function renderizarPublicacionesDesdeDatos(datos) {
+    const SINPUBLIC = './img/sinPublicaciones1.png';
+    const contenedor =
+        document.querySelector(".cards-container") ||
+        document.querySelector("#cards-container");
+
+    contenedor.innerHTML = "";
+
+    if (!datos || datos.length === 0) {
+        contenedor.innerHTML = `
+            <div class="no-content">
+                <img src='${SINPUBLIC}' alt="No hay contenido">
+                <p>No se encontraron publicaciones con esa etiqueta.</p>
+            </div>`;
+        return;
+    }
+
+    for (const publicacion of datos) {
+        const usuario = await obtenerUsuarioPorId(publicacion.usuario_id);
+
+        publicacion.usuario_nombre = usuario?.nombre || 'Usuario';
+        publicacion.usuario_icono  = usuario?.icono || null;
+
+        const nuevaCard = crearCard(publicacion, {
+            onOpenModal: abrirCardModal,
+            onGoToProfile: irAlPerfil
+        });
+
+        contenedor.appendChild(nuevaCard);
+    }
+}
+
+
+async function buscarPublicacionesPorTagConFiltros(filtros) {
+    const params = new URLSearchParams();
+
+    if (filtros.tag) {
+        params.append("tag", filtros.tag);
+      }
+  
+    if (filtros.autor) {
+      params.append("autor", filtros.autor);
+    }
+  
+    if (filtros.likesMin !== null) {
+      params.append("likesMin", filtros.likesMin);
+    }
+  
+    if (filtros.likesMax !== null) {
+      params.append("likesMax", filtros.likesMax);
+    }
+  
+    if (filtros.fechaMin) {
+      params.append("fechaMin", filtros.fechaMin);
+    }
+  
+    if (filtros.fechaMax) {
+      params.append("fechaMax", filtros.fechaMax);
+    }
+  
+    try {
+      const respuesta = await fetch(
+        `${API_BASE_URL}/publicaciones?${params.toString()}`
+      );
+  
+      if (!respuesta.ok) {
+        throw new Error("Error al aplicar filtros");
+      }
+  
+      const datos = await respuesta.json();
+      renderizarPublicacionesDesdeDatos(datos);
+  
+    } catch (error) {
+      console.error("Error aplicando filtros:", error);
+    }
+  }
+
 
 
 
 function irAlPerfil(usuarioId) {
     window.location.href = `perfil.html?id=${usuarioId}`;
-    console.log(`Redirigiendo al perfil del usuario ID: ${usuarioId}`);
 }
 
-
-
-
-function obtenerImageRatio(card) {
-    if (card.ancho_imagen == null || card.alto_imagen == null) {
-        return 'original';
-    }
-
-    if (card.ancho_imagen === card.alto_imagen) {
-        return '1-1';
-    }
-
-    if (card.ancho_imagen === 1920 && card.alto_imagen === 1080) {
-        return '16-9';
-    }
-
-    if (card.ancho_imagen === 1080 && card.alto_imagen === 1350) {
-        return '4-5';
-    }
-
-    return 'original';
-}
-
-
-
-function abrirCardModal(card) {
-    const modal = document.getElementById('card-modal');
-    if (!modal) return;
-
-    const AVATAR_DEFAULT = './img/avatar-default.jpg';
-    const imageRatio = obtenerImageRatio(card);
-    const tieneImagen = !!card.imagen;
-
-    modal.innerHTML = `
-        <div class="modal-overlay"></div>
-        <div class="modal-content">
-            <button class="modal-close">&times;</button>
-            <div class="modal-body">
-            ${tieneImagen ? `
-            <div class="modal-image-section">
-                <div class="modal-image-wrapper ratio-${imageRatio}">
-                    <img 
-                        src="${API_IMAGENES}/${card.imagen}" 
-                        class="modal-image"
-                        alt=""
-                    >
-                </div>
-
-                <div class="modal-author-info">
-                    <img src="${card.usuario_icono ? `${API_ICONOS}/${card.usuario_icono}` : AVATAR_DEFAULT}"
-                        class="modal-author-avatar"
-                        onerror="this.src='${AVATAR_DEFAULT}'">
-                    <div class="modal-author-details">
-                        <span class="modal-author-name">${card.usuario_nombre}</span>
-                        <span class="modal-publish-date">${calcularFecha(card.fecha_edicion)}</span>
-                    </div>
-                </div>
-            </div>
-            ` : ''}
-
-                <div class="modal-comments-section">
-                        <div class="modal-details">
-                            <h2 class="modal-title">${card.titulo || 'Sin título'}</h2>
-                            ${card.etiquetas ? `<div class="modal-hashtags">${listarHashtags(card.etiquetas)}</div>` : ''}
-                        </div>
-                        
-                        <div class="comments-header">
-                            <h3>Comentarios</h3>
-                            
-                        </div>
-                        
-                        <div class="comments-container">
-                            
-                        </div>
-                        
-                        <div class="add-comment-section">
-                            <div class="comment-input-container">
-                                <textarea 
-                                    class="comment-input" 
-                                    placeholder="Añade un comentario..."
-                                    rows="3"
-                                ></textarea>
-                                <button class="comment-submit-btn">Publicar</button>
-                            </div>
-                        </div>
-                    </div>
-            </div>
-        </div>
-    `;
-
-    modal.style.display = 'block';
-    document.body.style.overflow = 'hidden';
-    
-    cargarComentariosEnModal(card.id);
-    const btnPublicar = modal.querySelector('.comment-submit-btn');
-    const inputComentario = modal.querySelector('.comment-input');
-    const modalAuthorInfo = modal.querySelector('.modal-author-info');
-    btnPublicar.onclick = async () => {
-        const texto = inputComentario.value.trim();
-        if (!texto) return;
-
-        const usuarioLogueado = obtenerUsuarioLogueado();
-
-        if (!usuarioLogueado || !usuarioLogueado.id) {
-            alert("Debes iniciar sesión para comentar");
-            return;
-        }
-
-        btnPublicar.disabled = true;
-        btnPublicar.textContent = "Publicando...";
-
-        const exito = await enviarComentario(
-            card.id,
-            texto,
-            usuarioLogueado.id
-        );
-
-        if (exito) {
-            inputComentario.value = "";
-            await cargarComentariosEnModal(card.id);
-        }
-
-        btnPublicar.disabled = false;
-        btnPublicar.textContent = "Publicar";
-    };
-
-
-
-    modalAuthorInfo.addEventListener('click', (e) => {
-            e.stopPropagation();
-            irAlPerfil(card.usuario_id);
-    });
-    
-    inputComentario.onkeydown = (e) => {
-    if (e.key === 'Enter' && !e.shiftKey) {
-        e.preventDefault();
-        btnPublicar.click(); 
-    }
-    };
-    modal.querySelector('.modal-close').onclick = closeCardModal;
-    modal.querySelector('.modal-overlay').onclick = closeCardModal;
-}
-
-function closeCardModal() {
-    const modal = document.getElementById('card-modal');
-    modal.style.display = 'none';
-    document.body.style.overflow = 'auto';
-}
 
 
 function calcularFecha(fechaInput) {
@@ -275,13 +204,6 @@ function calcularFecha(fechaInput) {
     return "hace un momento";
 }
 
-function listarHashtags(etiquetas) {
-    if (!etiquetas) return '';
-    return etiquetas.split(',')
-        .map(tag => `<span class="hashtag">#${tag.trim()}</span>`)
-        .join('');
-}
-
 
 async function borrarComentario(comentarioId) {
     const usuarioLogueado = obtenerUsuarioLogueado();
@@ -315,7 +237,7 @@ async function editarComentario(comentarioId, contenido) {
 
     try {
         const res = await fetch(`${API_BASE_URL}/comentarios/${comentarioId}`, {
-            method: 'PATCH',
+            method: 'PUT',
             headers: {
                 'Content-Type': 'application/json'
             },
@@ -338,73 +260,6 @@ async function editarComentario(comentarioId, contenido) {
     }
 }
 
-async function cargarComentariosEnModal(publicacionId) {
-    const container = document.querySelector('.comments-container');
-    const countElement = document.querySelector('.comments-count');
-    const AVATAR_DEFAULT = './img/avatar-default.jpg';
-
-    try {
-        const res = await fetch(`${API_BASE_URL}/comentarios/publicacion/${publicacionId}`);
-        const comentarios = await res.json();
-
-        if (countElement) countElement.textContent = `${comentarios.length} comentarios`;
-
-        if (comentarios.length === 0) {
-            container.innerHTML = '<p class="no-comments">No hay comentarios aún. ¡Sé el primero!</p>';
-            return;
-        }
-
-        const usuarioLogueado = obtenerUsuarioLogueado();
-
-        container.innerHTML = comentarios.map(comentario => {
-            const esAutor = usuarioLogueado && usuarioLogueado.id === comentario.usuario_id;
-
-            return `
-                <div class="comment-item" data-id="${comentario.id}">
-                    <div class="comment-author">
-                        <img src="${comentario.avatar ? `${API_ICONOS}/${comentario.avatar}` : AVATAR_DEFAULT}"
-                        class="comment-avatar"
-                        data-user-id="${comentario.usuario_id}"
-                        onerror="this.src='${AVATAR_DEFAULT}'">
-                        <div class="comment-content">
-                            <div class="comment-header">
-                                <span class="comment-author-name">${comentario.author}</span>
-
-                                ${esAutor ? `
-                                    <div class="comment-actions">
-                                        <button class="btn-edit-comment" data-id="${comentario.id}">Editar</button>
-                                        <button class="btn-delete-comment" data-id="${comentario.id}">Borrar</button>
-                                    </div>
-                                ` : ''}
-                            </div>
-
-                            <p class="comment-text">${comentario.text}</p>
-                            <span class="comment-date">${calcularFecha(comentario.date)}</span>
-                        </div>
-                    </div>
-                </div>
-            `;
-        }).join('');
-        container.scrollTop = container.scrollHeight;
-
-
-    } catch (err) {
-        console.error("Error cargando comentarios:", err);
-        container.innerHTML = '<p class="no-comments">Error al conectar con el servidor.</p>';
-    }
-
-    document.addEventListener('click', (e) => {
-        const avatar = e.target.closest('.comment-avatar');
-        if (!avatar) return;
-
-        const userId = avatar.dataset.userId;
-        if (!userId) return;
-        e.stopPropagation();
-
-        irAlPerfil(userId);
-    });
-
-}
 
 
 
@@ -443,9 +298,74 @@ async function enviarComentario(publicacionId, contenido, usuarioId) {
     }
 }
 
+document.addEventListener("DOMContentLoaded", () => {
+    console.log("DOM LISTO");
 
+    cargarPublicaciones();
 
-cargarPublicaciones();
+    const panelFiltros = document.querySelector(".filters-panel");
+    const inputAutor = panelFiltros.querySelector('input[name="autor"]');
+    const inputLikesMin = panelFiltros.querySelector('input[name="likes_minimos"]');
+    const inputLikesMax = panelFiltros.querySelector('input[name="likes_maximos"]');
+    const inputFechaMin = panelFiltros.querySelector('input[name="fecha_publicacion_minima"]');
+    const inputFechaMax = panelFiltros.querySelector('input[name="fecha_publicacion_maxima"]');
+
+    const btnApply = panelFiltros.querySelector(".btn-apply");
+    const btnClear = panelFiltros.querySelector(".btn-clear");
+
+    const searchForm = document.querySelector(".search-bar");
+    const searchInput = document.querySelector(".search-input");
+
+    btnApply.addEventListener("click", () => {
+        console.log("CLICK APLICAR");
+
+        filtrosActivos.autor = inputAutor.value.trim() || null;
+        filtrosActivos.likesMin = Number(inputLikesMin.value) || null;
+        filtrosActivos.likesMax = Number(inputLikesMax.value) || null;
+        filtrosActivos.fechaMin = inputFechaMin.value || null;
+        filtrosActivos.fechaMax = inputFechaMax.value || null;
+
+        panelFiltros.classList.remove("activo");
+    });
+
+    btnClear.addEventListener("click", () => {
+        inputAutor.value = "";
+        inputLikesMin.value = "";
+        inputLikesMax.value = "";
+        inputFechaMin.value = "";
+        inputFechaMax.value = "";
+
+        filtrosActivos = {
+            tag: null,
+            autor: null,
+            likesMin: null,
+            likesMax: null,
+            fechaMin: null,
+            fechaMax: null
+        };
+    });
+
+    if (!searchForm || !searchInput) return;
+
+    searchForm.addEventListener("submit", (e) => {
+        console.log("SUBMIT FORM");
+        e.preventDefault();
+
+        const valor = searchInput.value.trim();
+        if (!valor) {
+            return;
+        }
+
+        if (valor.startsWith("#")) {
+            filtrosActivos.tag = valor.slice(1).trim() || null;
+        } else {
+            filtrosActivos.tag = null;
+        }
+
+        buscarPublicacionesPorTagConFiltros(filtrosActivos);
+    });
+});
+
 
 document.addEventListener('click', async (e) => {
 
