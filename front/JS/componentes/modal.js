@@ -51,35 +51,6 @@ export function closeCardModal() {
     window.location.reload();
 }
 
-async function quitarDelTablero(tableroId, publicacionId) {
-  await fetch(`${API_BASE_URL}/tableros/${tableroId}/publicaciones/${publicacionId}`, {
-    method: "DELETE"
-  });
-}
-
-
-async function eliminarTablero(tableroId) {
-  if (!confirm("¿Eliminar tablero?")) return;
-
-  await fetch(`${API_BASE_URL}/tableros/${tableroId}`, {
-    method: "DELETE"
-  });
-
-  cargarTableros(obtenerUsuarioLogueado().id);
-}
-
-
-async function obtenerTablerosGuardados(publicacionId) {
-  const usuario = obtenerUsuarioLogueado();
-  if (!usuario) return [];
-
-  const res = await fetch(
-    `${API_BASE_URL}/tableros/publicacion/${publicacionId}/usuario/${usuario.id}`
-  );
-
-  return await res.json();
-}
-
 
 
 
@@ -385,17 +356,38 @@ containerTableros.addEventListener("click", async (e) => {
 
     if (commentsContainer) {
         commentsContainer.onclick = async (e) => {
-            const id = e.target.dataset.id;
-            if (e.target.classList.contains('btn-delete-comment')) {
-                if (confirm('¿Eliminar comentario?')) {
-                    if (await borrarComentario(id)) e.target.closest('.comment-item').remove();
+            const btnDelete = e.target.closest('.btn-delete-comment');
+            const btnEdit = e.target.closest('.btn-edit-comment');
+            if (!btnDelete && !btnEdit) return;
+            e.preventDefault();
+            e.stopPropagation(); 
+            e.stopImmediatePropagation();
+
+            const id = (btnDelete || btnEdit).dataset.id;
+
+            if (btnDelete) {
+                if (confirm('¿Esta seguro de eliminar este comentario?')) {
+                    btnDelete.disabled = true; 
+                    if (await borrarComentario(id)) {
+                        btnDelete.closest('.comment-item').remove();
+                    } else {
+                        btnDelete.disabled = false;
+                    }
                 }
             }
-            if (e.target.classList.contains('btn-edit-comment')) {
-                const textEl = e.target.closest('.comment-item').querySelector('.comment-text');
+            if (btnEdit) {
+                const commentItem = btnEdit.closest('.comment-item');
+                const textEl = commentItem.querySelector('.comment-text');
                 const nuevo = prompt('Editar:', textEl.textContent);
-                if (nuevo && nuevo.trim() && await editarComentario(id, nuevo.trim())) {
-                    textEl.textContent = nuevo.trim();
+                
+                if (nuevo !== null && nuevo.trim() !== "" && nuevo.trim() !== textEl.textContent) {
+                    btnEdit.disabled = true;
+                    const exito = await editarComentario(id, nuevo.trim());
+                    
+                    if (exito) {
+                        textEl.textContent = nuevo.trim();
+                    }
+                    btnEdit.disabled = false;
                 }
             }
         };
