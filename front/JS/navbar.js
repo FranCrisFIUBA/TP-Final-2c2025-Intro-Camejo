@@ -160,17 +160,6 @@ function inicializarNavbar() {
     });
     cancelBoardBtn?.addEventListener('click', cerrarformTablero);
 
-    createBoardBtn?.addEventListener('click', () => {
-        const nombre = boardInput.value.trim();
-
-        if (!nombre) {
-            alert('Ingresá un nombre para el tablero');
-            return;
-        }
-
-        console.log('Crear tablero:', nombre);
-        cerrarformTablero();
-    });
     createBoardItem?.addEventListener('click', e => {
         e.preventDefault();
         abrirformTablero();
