@@ -1,7 +1,6 @@
 // routes/likes.js
 import express from 'express';
 import { pool } from "../db.js";
-import {eliminarImagenPublicacionPorId} from "../utils/storage/publicaciones.js";
 
 const likes = express.Router();
 
