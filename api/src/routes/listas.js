@@ -3,7 +3,11 @@ import express from 'express';
 import { pool } from "../db.js";
 import {getPublicacionesConBusqueda, validarParametrosDeBusqueda} from "../utils/database/publicaciones.js";
 import {intentarConseguirUsuarioPorId} from "../utils/database/usuarios.js";
-import {intentarConseguirListaPorId} from "../utils/database/listas.js";
+import {
+    intentarConseguirListaPorId,
+    intentarConseguirListaPorIdUsuario,
+    intentarConseguirListasPorIdUsuario
+} from "../utils/database/listas.js";
 
 const listas = express.Router();
 
@@ -40,7 +44,14 @@ listas.get("/:id", async (req, res) => {
 // GET /usuario/:usuario_id
 // Obtiene todas las listas de un usuario
 listas.get("/usuario/:usuario_id", async (req, res) => {
-
+    try {
+        const { usuario_id } = req.params;
+        const listas = await intentarConseguirListasPorIdUsuario(usuario_id);
+        res.status(200).send(listas);
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ error: "Error del servidor al obtener una lista" });
+    }
 });
 
 // GET /:id/publicaciones
