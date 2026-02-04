@@ -8,3 +8,9 @@ export async function intentarConseguirListaPorId(id) {
 
     return result.rows[0]
 }
+
+export async function intentarConseguirListasPorIdUsuario(id) {
+    const result = await pool.query("SELECT * FROM listas WHERE usuario_id = $1", [id])
+    return result.rows
+}
+
