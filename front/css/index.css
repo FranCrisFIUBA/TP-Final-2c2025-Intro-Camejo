@@ -737,21 +737,117 @@ body, html {
   transform: scale(1.1);
 }
 
-.filters-panel {
+.filters-panel{
   position: absolute;
-  top: 49px; /* debajo del buscador */
-  right: 6px;             /* alineado al botón */
-  width: 320px;
-
-  background: white;
-  border: var(--border-estandar);
-  border-radius: 12px;
-  padding: 16px;
+  top: 50px; 
+  right: 30px;        
+  width: 360px; 
+  background: #fff;
+  border: 1px solid #e0e0e0;
+  border-radius: 12px; 
+  padding: 20px;
   z-index: 100;
-  box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+  box-shadow: 0 10px 30px rgba(0,0,0,0.1);
   display: none;
+  font-family: var(--nunito);
 }
 
 .filters-panel.activo {
-  display: block;
+  display: flex;
+  flex-direction: column;
+  gap: 16px; 
+}
+
+.filters-panel h3 {
+  margin: 0 0 5px 0;
+  font-size: 1.1rem;
+  font-weight: 700;
+}
+
+.filter-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.filter-group label {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--gris3);
+}
+
+.filter-row {
+  display: flex;
+  gap: 10px;
+}
+
+.filter-row .filter-group {
+  flex: 1;
+}
+
+.filters-panel input {
+  width: 100%; 
+  padding: 10px;
+  background-color: #f9f9f9;
+  border-radius: 8px;
+  border: 1px solid var(--gris1);
+  font-size: 14px;
+  box-sizing: border-box; 
+  transition: border-color 0.2s, background-color 0.2s;
+}
+
+.date-range {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 130px;
+}
+
+.date-range span {
+  color: var(--gris3);
+}
+
+.filters-actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.filters-actions button {
+  flex: 1;
+  padding: 10px;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  border: 1px solid transparent;
+}
+
+.btn-apply {
+  background: var(--amarillo);
+  color: var(--negro);
+}
+
+.btn-apply:hover {
+  filter: brightness(0.95);
+  transform: translateY(-1px);
+}
+
+.btn-clear {
+  background: #f0f0f0;
+  color: #666;
+}
+
+.btn-clear:hover {
+  filter: brightness(0.95);
+}
+
+.btn-save {
+  background: var(--verde);
+  color: var(--negro);
+}
+
+.btn-save:hover{
+  filter: brightness(0.95);
+  transform: translateY(-1px);
 }
