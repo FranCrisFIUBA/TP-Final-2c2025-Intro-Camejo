@@ -1,9 +1,14 @@
 import { crearCard } from './componentes/card.js';
 import { abrirCardModal } from './componentes/modal.js';
+import {
+    API_ICONOS_URL,
+    API_IMAGENES_URL,
+    API_LIKES_URL,
+    API_PUBLICACIONES_URL,
+    API_TABLEROS_URL,
+    API_USUARIOS_URL
+} from "./api";
 
-const API_BASE_URL = 'http://127.0.0.1:3000';
-const API_IMAGENES = API_BASE_URL + '/imagenes';
-const API_ICONOS = API_BASE_URL + '/iconos';
 let usuarioActual = null;
 
 
@@ -42,7 +47,7 @@ async function verPublicacionesTablero(tablero, usuarioId) {
 
     const grid = document.getElementById('publicaciones-tablero-grid');
     try {
-        const res = await fetch(`${API_BASE_URL}/tableros/tablero/${tablero.id}/publicaciones`);
+        const res = await fetch(`${API_TABLEROS_URL}/tablero/${tablero.id}/publicaciones`);
         const publicaciones = await res.json();
 
         if (publicaciones.length === 0) {
@@ -80,7 +85,7 @@ async function cargarTableros(usuarioId) {
   if (!container) return;
 
   try {
-    const res = await fetch(`${API_BASE_URL}/tableros/usuario/${usuarioId}`);
+    const res = await fetch(`${API_TABLEROS_URL}/usuario/${usuarioId}`);
     const tableros = await res.ok ? await res.json() : [];
     actualizarEstadistica('tableros', tableros.length);
     if (!tableros.length) {
@@ -100,7 +105,7 @@ async function cargarTableros(usuarioId) {
     for (const tablero of tableros) {
       let publicaciones = [];
       try {
-        const r = await fetch(`${API_BASE_URL}/tableros/tablero/${tablero.id}/publicaciones`);
+        const r = await fetch(`${API_TABLEROS_URL}/tablero/${tablero.id}/publicaciones`);
         publicaciones = r.ok ? await r.json() : [];
       } catch (e) { publicaciones = []; }
 
@@ -109,7 +114,7 @@ async function cargarTableros(usuarioId) {
         .slice(0, 3)
         .map(p => {
           if (p.imagen.startsWith("http")) return p.imagen;
-          return `${API_IMAGENES}/${p.imagen}`;
+          return `${API_IMAGENES_URL}/${p.imagen}`;
         });
 
       const div = document.createElement('div');
@@ -161,7 +166,7 @@ async function cargarTableros(usuarioId) {
           if (!confirm(`¿Estás seguro de que quieres eliminar el tablero "${tablero.titulo}"?`)) return;
           
           try {
-            const response = await fetch(`${API_BASE_URL}/tableros/${tablero.id}`, { method: 'DELETE' });
+            const response = await fetch(`${API_TABLEROS_URL}/${tablero.id}`, { method: 'DELETE' });
             if (response.ok) {
               div.remove();
               alert("Tablero eliminado");
@@ -180,7 +185,7 @@ async function cargarTableros(usuarioId) {
           if (nuevoTitulo === null) return; 
 
           try {
-            const response = await fetch(`${API_BASE_URL}/tableros/${tablero.id}`, {
+            const response = await fetch(`${API_TABLEROS_URL}/${tablero.id}`, {
               method: 'PATCH',
               headers: { 'Content-Type': 'application/json' },
               body: JSON.stringify({ 
@@ -224,7 +229,7 @@ function obtenerUsuarioId() {
 
 function resolverIcono(icono) {
   if (!icono) return './img/avatar-default.jpg';
-  return `${API_ICONOS}/${icono}`;
+  return `${API_ICONOS_URL}/${icono}`;
 }
 
 function formatearFecha(fechaString) {
@@ -313,7 +318,7 @@ async function cargarPerfilUsuario() {
   if (!usuarioId) return;
 
   try {
-    const response = await fetch(`${API_BASE_URL}/usuarios/${usuarioId}`);
+    const response = await fetch(`${API_USUARIOS_URL}/${usuarioId}`);
     if (!response.ok) throw new Error('Usuario no encontrado');
 
     const json = await response.json();
@@ -327,7 +332,7 @@ async function cargarPerfilUsuario() {
 
     mostrarDatosUsuario(usuario);
     cargarPublicacionesDeUsuario(usuario.id);
-    const resTab = await fetch(`${API_BASE_URL}/tableros/usuario/${usuarioId}`);
+    const resTab = await fetch(`${API_TABLEROS_URL}/usuario/${usuarioId}`);
     if (resTab.ok) {
         const tableros = await resTab.json();
         actualizarEstadistica('tableros', tableros.length);
@@ -390,7 +395,7 @@ async function cargarLikesTotalesUsuario(publicaciones) {
 
         await Promise.all(
             publicaciones.map(async (pub) => {
-                const res = await fetch(`${API_BASE_URL}/likes/publicacion/${pub.id}`);
+                const res = await fetch(`${API_LIKES_URL}/publicacion/${pub.id}`);
                 if (!res.ok) return;
 
                 const likes = await res.json();
@@ -423,7 +428,7 @@ async function cargarPublicacionesDeUsuario(usuarioId) {
   if (!container) return;
 
   try {
-    const response = await fetch(`${API_BASE_URL}/publicaciones/usuario/${usuarioId}`);
+    const response = await fetch(`${API_PUBLICACIONES_URL}/usuario/${usuarioId}`);
     if (!response.ok) throw new Error('Error al obtener publicaciones');
 
     const publicaciones = await response.json();
@@ -468,7 +473,7 @@ publicaciones.forEach(p => {
 
         try {
           const response = await fetch(
-            `${API_BASE_URL}/publicaciones/${publicacion.id}`,
+            `${API_PUBLICACIONES_URL}/${publicacion.id}`,
             { method: 'DELETE' }
           );
 
@@ -580,7 +585,7 @@ btnBorrar.addEventListener('click', async () => {
 
     try {
         const response = await fetch(
-            `${API_BASE_URL}/usuarios/${user.id}`,
+            `${API_USUARIOS_URL}/${user.id}`,
             { method: 'DELETE' }
         );
 
@@ -662,7 +667,7 @@ editForm.addEventListener('submit', async (e) => {
 
   try {
     const response = await fetch(
-      `${API_BASE_URL}/usuarios/${usuarioLogueado.id}`,
+      `${API_USUARIOS_URL}/${usuarioLogueado.id}`,
       {
         method: 'PATCH',
         body: formData
