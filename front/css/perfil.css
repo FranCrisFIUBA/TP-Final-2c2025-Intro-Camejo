@@ -495,6 +495,23 @@ body, html {
     margin-top: 20px;
 }
 
+}
+
+.btn-eliminar-busqueda {
+    background: transparent;
+    border: none;
+    color: #999;
+    font-size: 16px;
+    cursor: pointer;
+    line-height: 1;
+    padding: 0;
+    flex-shrink: 0;
+  }
+  
+.btn-eliminar-busqueda:hover {
+  color: #e74c3c;
+}
+
 .busqueda-card {
     padding: 15px;
     border-radius: 12px;
