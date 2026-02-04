@@ -2,26 +2,146 @@
 @api_url = http://localhost:3000
 @publicaciones_url = {{api_url}}/publicaciones
 
-###
+### User 1 - 9736.gif
 POST {{publicaciones_url}}/
-Content-Type: multipart/form-data; boundary=boundary123
+Content-Type: multipart/form-data; boundary=b1
 
---boundary123
+--b1
 Content-Disposition: form-data; name="usuario_id"
 
 1
---boundary123
+--b1
 Content-Disposition: form-data; name="titulo"
 
-Ahhhhh
---boundary123
+Post 1 - gif
+--b1
 Content-Disposition: form-data; name="etiquetas"
 
-jueguitos
---boundary123
-Content-Disposition: form-data; name="imagen"; filename="1.jpg"
+gif,test
+--b1
+Content-Disposition: form-data; name="imagen"; filename="9736.gif"
+Content-Type: image/gif
+
+< ../../imagenes/9736.gif
+--b1--
+###
+
+### User 2 - 62836.jpg
+POST {{publicaciones_url}}/
+Content-Type: multipart/form-data; boundary=b2
+
+--b2
+Content-Disposition: form-data; name="usuario_id"
+
+2
+--b2
+Content-Disposition: form-data; name="titulo"
+
+Post 2 - jpg
+--b2
+Content-Disposition: form-data; name="etiquetas"
+
+foto,test
+--b2
+Content-Disposition: form-data; name="imagen"; filename="62836.jpg"
 Content-Type: image/jpeg
 
-< ../../iconos/capibara123.png
---boundary123--
+< ../../imagenes/62836.jpg
+--b2--
+###
+
+### User 3 - ahhh.jpg
+POST {{publicaciones_url}}/
+Content-Type: multipart/form-data; boundary=b3
+
+--b3
+Content-Disposition: form-data; name="usuario_id"
+
+3
+--b3
+Content-Disposition: form-data; name="titulo"
+
+Post 3 - ahhh
+--b3
+Content-Disposition: form-data; name="etiquetas"
+
+random
+--b3
+Content-Disposition: form-data; name="imagen"; filename="ahhh.jpg"
+Content-Type: image/jpeg
+
+< ../../imagenes/ahhh.jpg
+--b3--
+###
+
+### User 1 - hytale.jpg
+POST {{publicaciones_url}}/
+Content-Type: multipart/form-data; boundary=b4
+
+--b4
+Content-Disposition: form-data; name="usuario_id"
+
+1
+--b4
+Content-Disposition: form-data; name="titulo"
+
+Hytale jpg
+--b4
+Content-Disposition: form-data; name="etiquetas"
+
+hytale,game
+--b4
+Content-Disposition: form-data; name="imagen"; filename="hytale.jpg"
+Content-Type: image/jpeg
+
+< ../../imagenes/hytale.jpg
+--b4--
+###
+
+### User 2 - hytale.png
+POST {{publicaciones_url}}/
+Content-Type: multipart/form-data; boundary=b5
+
+--b5
+Content-Disposition: form-data; name="usuario_id"
+
+2
+--b5
+Content-Disposition: form-data; name="titulo"
+
+Hytale png
+--b5
+Content-Disposition: form-data; name="etiquetas"
+
+hytale,game
+--b5
+Content-Disposition: form-data; name="imagen"; filename="hytale.png"
+Content-Type: image/png
+
+< ../../imagenes/hytale.png
+--b5--
+###
+
+### User 3 - prince_of_persia.png
+POST {{publicaciones_url}}/
+Content-Type: multipart/form-data; boundary=b6
+
+--b6
+Content-Disposition: form-data; name="usuario_id"
+
+3
+--b6
+Content-Disposition: form-data; name="titulo"
+
+Prince of Persia
+--b6
+Content-Disposition: form-data; name="etiquetas"
+
+game,classic
+--b6
+Content-Disposition: form-data; name="imagen"; filename="prince_of_persia.png"
+Content-Type: image/png
+
+< ../../imagenes/prince_of_persia.png
+--b6--
 ###
