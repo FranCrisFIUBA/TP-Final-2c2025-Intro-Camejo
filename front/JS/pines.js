@@ -1,6 +1,6 @@
 import { crearCard } from './componentes/card.js';
 import { abrirCardModal } from './componentes/modal.js';
-import {API_COMENTARIOS_URL, API_PUBLICACIONES_URL, API_USUARIOS_URL} from "./api";
+import {API_COMENTARIOS_URL, API_PUBLICACIONES_URL, API_USUARIOS_URL} from "./api.js";
 const usuariosCache = new Map();
 
 let filtrosActivos = {

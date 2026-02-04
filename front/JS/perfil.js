@@ -7,7 +7,7 @@ import {
     API_PUBLICACIONES_URL,
     API_TABLEROS_URL,
     API_USUARIOS_URL
-} from "./api";
+} from "./api.js";
 
 let usuarioActual = null;
 

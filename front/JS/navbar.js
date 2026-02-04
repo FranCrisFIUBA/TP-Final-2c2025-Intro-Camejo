@@ -1,4 +1,4 @@
-import {API_ICONOS_URL, API_TABLEROS_URL} from "./api";
+import {API_ICONOS_URL, API_TABLEROS_URL} from "./api.js";
 
 document.addEventListener('DOMContentLoaded', () => {
     const container = document.querySelector('.container');

@@ -1,4 +1,4 @@
-import {API_USUARIOS_URL} from "./api";
+import {API_USUARIOS_URL} from "./api.js";
 
 document.getElementById("form-login").addEventListener("submit", async (e) => {
   e.preventDefault();

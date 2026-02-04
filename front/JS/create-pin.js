@@ -1,4 +1,4 @@
-import {API_IMAGENES_URL, API_PUBLICACIONES_URL} from "./api";
+import {API_IMAGENES_URL, API_PUBLICACIONES_URL} from "./api.js";
 
 const formPublicacion = document.getElementById("form-publicacion");
 const fileInput = document.getElementById("file-input");

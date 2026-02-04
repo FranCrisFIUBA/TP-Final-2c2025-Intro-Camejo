@@ -1,4 +1,4 @@
-import {API_USUARIOS_URL} from "./api";
+import {API_USUARIOS_URL} from "./api.js";
 
 const formRegistro = document.getElementById("form-registro");
 const mensajeError = document.getElementById("mensaje-error-aviso");
