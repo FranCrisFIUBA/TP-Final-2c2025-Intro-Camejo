@@ -79,7 +79,7 @@ CREATE TABLE likes (
 
     FOREIGN KEY (publicacion_id)
         REFERENCES publicaciones(id)
-        ON DELETE CASCADE,
+        ON DELETE CASCADE
 );
 
 CREATE TABLE suscripciones_a_usuarios (
