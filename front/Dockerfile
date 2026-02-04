@@ -19,9 +19,9 @@ RUN chmod -R 755 /usr/share/nginx/html
 
 EXPOSE 80
 
-# Generar config.js con envsubst y luego iniciar nginx
-CMD ["/bin/sh", "-c", "\
+# Generar config.js y default.conf con envsubst y luego iniciar nginx
+CMD sh -c "\
   envsubst '\$API_URL' < /etc/nginx/templates/default.conf.template > /etc/nginx/conf.d/default.conf && \
   envsubst '\$API_URL' < /usr/share/nginx/html/JS/config.js.template > /usr/share/nginx/html/JS/config.js && \
   nginx -g 'daemon off;' \
-"]
+"
