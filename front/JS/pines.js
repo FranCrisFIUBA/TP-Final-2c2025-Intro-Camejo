@@ -157,6 +157,36 @@ async function buscarPublicacionesPorTagConFiltros(filtros) {
     }
   }
 
+function armarTituloBusqueda(filtros) {
+  const partes = [];
+
+  if (filtros.tag) {
+    partes.push(`#${filtros.tag}`);
+  }
+
+  if (filtros.autor) {
+    partes.push(`Autor: ${filtros.autor}`);
+  }
+
+  if (filtros.likesMin !== null) {
+    partes.push(`Likes ≥ ${filtros.likesMin}`);
+  }
+
+  if (filtros.likesMax !== null) {
+    partes.push(`Likes ≤ ${filtros.likesMax}`);
+  }
+
+  if (filtros.fechaMin) {
+    partes.push(`Desde ${filtros.fechaMin}`);
+  }
+
+  if (filtros.fechaMax) {
+    partes.push(`Hasta ${filtros.fechaMax}`);
+  }
+
+  return partes.join(" · ");
+} 
+
 
 
 
