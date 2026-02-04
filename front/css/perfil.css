@@ -504,12 +504,6 @@ body, html {
     margin-top: 20px;
 }
 
-#lista-busquedas {
-    display: flex;
-    flex-direction: column;
-    gap: 15px;
-}
-
 .busqueda-card {
     padding: 15px;
     border-radius: 12px;
@@ -829,4 +823,78 @@ body, html {
 }
 .btn-atras{
     background: var(--amarillo);
+}
+
+#lista-busquedas {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 16px;
+    margin-top: 20px; 
+    align-items: flex-start;
+  }
+  
+.globito-busqueda {
+  background: #ffffff;
+  border-radius: 12px;
+  padding: 14px 16px;
+
+  display: inline-flex;          
+  flex-direction: column;
+  gap: 6px;
+
+  max-width: 320px;
+  flex: 0 0 auto;             
+  width: fit-content;           
+
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
+  border: 1px solid #e5e5e5;
+}
+
+
+
+.globito-busqueda:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 18px rgba(0, 0, 0, 0.12);
+}
+
+.globito-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    width: 100%;
+  }
+
+.globito-header strong {
+  font-weight: 600;
+  color: #111;
+}
+
+.globito-header span {
+  font-weight: 700;
+  margin-left: 0;       
+}
+
+.globito-body {
+  font-size: 16px;
+  color: #333;
+}
+
+.globito-body strong {
+  display: inline;
+  margin-bottom: 4px;
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.globito-body small {
+  font-size: 16px;
+  line-height: 1.4;
+}
+
+.globito-header > div {
+    display: flex;
+    gap: 6px;
+    align-items: center;
+    flex-wrap: wrap;
 }
