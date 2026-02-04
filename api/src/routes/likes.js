@@ -65,28 +65,17 @@ likes.get('/publicacion/:publicacion_id', async (req, res) => {
     }
 });
 
-
-
-
 // POST /likes/publicacion/
 likes.post('/publicacion', async (req, res) => {
     try {
         const { usuario_id, publicacion_id } = req.body;
 
         const result = await pool.query(`
-            WITH inserted_like AS (
-                INSERT INTO likes (usuario_id, publicacion_id)
-                VALUES ($1, $2)
-                ON CONFLICT (usuario_id, publicacion_id) DO NOTHING /* evita que se actualice la publicacion si falla la creacion del like. */
-                RETURNING *
-            ),
-            updated_pub AS (
-                UPDATE publicaciones
-                SET likes = likes + 1
-                FROM inserted_like
-                WHERE publicaciones.id = inserted_like.publicacion_id
-            )
-            SELECT * FROM inserted_like;
+            INSERT INTO likes (usuario_id, publicacion_id)
+            VALUES ($1, $2)
+                /* UNIQUE genera conflico cuando ya existia un like con los mismos valores */
+                ON CONFLICT (usuario_id, publicacion_id) DO NOTHING
+            RETURNING *;
         `, [usuario_id, publicacion_id]);
 
         // Ya existía el like
@@ -94,7 +83,6 @@ likes.post('/publicacion', async (req, res) => {
             return res.status(200).json({ alreadyLiked: true });
         }
 
-        // Devuelve solo el like
         res.status(201).json(result.rows[0]);
 
     } catch (error) {
@@ -103,49 +91,21 @@ likes.post('/publicacion', async (req, res) => {
     }
 });
 
-
-// DELETE /likes/:id
-likes.delete('/:id', async (req, res) => {
-    try {
-        const { id } = req.params;
-        const result = await pool.query('DELETE FROM likes WHERE id = $1 RETURNING *', [id]);
-
-        if (result.rowCount === 0) {
-            return res.status(404).json({ error: "Like no encontrado" });
-        }
-
-        res.json({ message: "Like eliminado", likeEliminado: result.rows[0] });
-    } catch (err) {
-        console.error(err);
-        res.status(500).json({ error: "Error al eliminar" });
-    }
-});
-
 // DELETE /likes/:id
 likes.delete('/:id', async (req, res) => {
     try {
         const { id } = req.params;
 
         const result = await pool.query(`
-            WITH deleted_like AS (
-                DELETE FROM likes
-                WHERE id = $1
-                RETURNING *
-            ),
-            updated_pub AS (
-                UPDATE publicaciones
-                SET likes = likes - 1
-                FROM deleted_like
-                WHERE publicaciones.id = deleted_like.publicacion_id
-            )
-            SELECT * FROM deleted_like;
+            DELETE FROM likes
+            WHERE id = $1
+            RETURNING *;
         `, [id]);
 
         if (result.rowCount === 0) {
             return res.status(404).json({ error: "Like no encontrado" });
         }
 
-        // Devuelve solo el like eliminado
         res.json(result.rows[0]);
 
     } catch (err) {
