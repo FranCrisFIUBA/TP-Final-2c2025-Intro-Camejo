@@ -282,10 +282,30 @@ function configurarNavegacion() {
 }
 
 document.addEventListener('DOMContentLoaded', function() {
+    cargarPerfilUsuario();
+    configurarNavegacion();
+
     setTimeout(() => {
-        cargarPerfilUsuario();
-        configurarNavegacion();
-    }, 100);
+        const urlParams = new URLSearchParams(window.location.search);
+        const tab = urlParams.get('tab');
+
+        if (tab === 'busquedas') {
+            const opciones = document.querySelectorAll('.nav-option');
+            opciones.forEach(option => {
+                if (option.textContent.trim().toLowerCase() === 'búsquedas personalizadas') {
+                    option.click();
+                }
+            });
+        }
+        if (tab === 'tableros') {
+            const opciones = document.querySelectorAll('.nav-option');
+            opciones.forEach(option => {
+                if (option.textContent.trim().toLowerCase() === 'tableros') {
+                    option.click();
+                }
+            });
+        }
+    }, 50); 
 });
 
 async function cargarPerfilUsuario() {
