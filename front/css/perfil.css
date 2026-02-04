@@ -495,12 +495,6 @@ body, html {
     margin-top: 20px;
 }
 
-#lista-busquedas {
-    display: flex;
-    flex-direction: column;
-    gap: 15px;
-}
-
 .busqueda-card {
     padding: 15px;
     border-radius: 12px;
