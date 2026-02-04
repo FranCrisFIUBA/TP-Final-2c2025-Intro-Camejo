@@ -5,6 +5,7 @@ const usuariosCache = new Map();
 
 let filtrosActivos = {
     tag: null,
+    autorId: null,
     autor: null,
     likesMin: null,
     likesMax: null,
@@ -120,24 +121,24 @@ async function buscarPublicacionesPorTagConFiltros(filtros) {
         params.append("tag", filtros.tag);
       }
   
-    if (filtros.autor) {
-      params.append("autor", filtros.autor);
+    if (filtros.autorId) {
+      params.append("autor_id", filtros.autorId);
     }
   
     if (filtros.likesMin !== null) {
-      params.append("likesMin", filtros.likesMin);
+      params.append("likes_minimos", filtros.likesMin);
     }
   
     if (filtros.likesMax !== null) {
-      params.append("likesMax", filtros.likesMax);
+      params.append("likes_maximos", filtros.likesMax);
     }
   
     if (filtros.fechaMin) {
-      params.append("fechaMin", filtros.fechaMin);
+      params.append("fecha_minima", filtros.fechaMin);
     }
   
     if (filtros.fechaMax) {
-      params.append("fechaMax", filtros.fechaMax);
+      params.append("fecha_maxima", filtros.fechaMax);
     }
   
     try {
@@ -165,8 +166,9 @@ async function obtenerAutorIdPorNombre(nombre) {
 
       const usuarios = await resp.json();  
       const usuario = usuarios.find(
-          u => u.nombre.toLowerCase() === nombre.toLowerCase()
+        u => u.nombre === nombre
       );
+      
 
       return usuario ? usuario.id : null;
 
@@ -221,7 +223,7 @@ async function guardarBusquedaPersonalizada(filtros) {
         titulo: armarTituloBusqueda(filtros),
         etiquetas: filtros.tag,
       
-        autor: filtros.autor,
+        autor_id: filtros.autorId,
         likes_min: filtros.likesMin,
         likes_max: filtros.likesMax,
       
@@ -414,12 +416,27 @@ document.addEventListener("DOMContentLoaded", () => {
     const searchForm = document.querySelector(".search-bar");
     const searchInput = document.querySelector(".search-input");
 
-    btnApply.addEventListener("click", () => {
+    btnApply.addEventListener("click", async () => {
         console.log("CLICK APLICAR");
 
-        filtrosActivos.autor = inputAutor.value.trim() || null;
-        filtrosActivos.likesMin = Number(inputLikesMin.value) || null;
-        filtrosActivos.likesMax = Number(inputLikesMax.value) || null;
+        const nombreAutor = inputAutor.value.trim();
+
+        if (nombreAutor) {
+            filtrosActivos.autorId = await obtenerAutorIdPorNombre(nombreAutor);
+            filtrosActivos.autor = nombreAutor;
+          } else {
+            filtrosActivos.autorId = null;
+            filtrosActivos.autor = null;
+          }
+    
+        filtrosActivos.likesMin = inputLikesMin.value
+            ? Number(inputLikesMin.value)
+            : null;
+    
+        filtrosActivos.likesMax = inputLikesMax.value
+            ? Number(inputLikesMax.value)
+            : null;
+    
         filtrosActivos.fechaMin = inputFechaMin.value || null;
         filtrosActivos.fechaMax = inputFechaMax.value || null;
 
@@ -436,6 +453,7 @@ document.addEventListener("DOMContentLoaded", () => {
         filtrosActivos = {
             tag: null,
             autor: null,
+            autorId: null,
             likesMin: null,
             likesMax: null,
             fechaMin: null,
