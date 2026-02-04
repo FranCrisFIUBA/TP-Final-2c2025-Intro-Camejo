@@ -1,4 +1,5 @@
 import {pool} from "../../db.js";
+import {getPublicacionesConBusqueda, validarParametrosDeBusqueda} from "./publicaciones.js";
 
 export async function intentarConseguirListaPorId(id) {
     const result = await pool.query("SELECT * FROM listas WHERE id = $1", [id])
@@ -14,3 +15,12 @@ export async function intentarConseguirListasPorIdUsuario(id) {
     return result.rows
 }
 
+export async function obtenerPublicacionesPorLista(id) {
+    const lista = await intentarConseguirListaPorId(id);
+    if (!lista) {
+        return Promise.reject(`No existe la lista con id ${id}`)
+    }
+
+    // no se validan los parametros de la busqueda. todas las listas almacenadas se validan previamente
+    return getPublicacionesConBusqueda(lista)
+}
