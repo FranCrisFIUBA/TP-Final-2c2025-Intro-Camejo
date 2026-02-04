@@ -7,42 +7,31 @@ document.addEventListener('DOMContentLoaded', () => {
 
     if (!container) return;
 
-    // Manejo de estado de navegación (Clases de layout)
     if (!usuarioLogueado) {
-        container.classList.replace('con-navbar', 'sin-navbar');
+        container.classList.remove('con-navbar');
+        container.classList.add('sin-navbar');
+
         if (navbarContainer) {
             navbarContainer.innerHTML = '';
             navbarContainer.style.display = 'none';
         }
-        controlarAuthButtons(null);
+
+        controlarAuthButtons();
         return;
     }
 
-    container.classList.replace('sin-navbar', 'con-navbar');
+    container.classList.remove('sin-navbar');
+    container.classList.add('con-navbar');
+
     cargarNavbar();
+    controlarAuthButtons();
 });
 
-// --- FUNCIONES DE UTILIDAD ---
 
 function obtenerUsuarioLogueado() {
     const data = localStorage.getItem("usuarioLogueado");
     return data ? JSON.parse(data) : null;
 }
-
-// Función centralizada para navegar limpiando datos temporales
-function navegarA(url, limpiarPin = true) {
-    if (limpiarPin) localStorage.removeItem("pinParaEditar");
-    location.href = url;
-}
-
-function controlarAuthButtons(usuario) {
-    const authButtons = document.querySelector('.auth-buttons');
-    if (authButtons) {
-        authButtons.classList.toggle('hidden', !!usuario);
-    }
-}
-
-// --- CARGA Y LÓGICA DE NAVBAR ---
 
 function cargarNavbar() {
     fetch('./navbar.html')
@@ -54,81 +43,55 @@ function cargarNavbar() {
             container.innerHTML = html;
             container.style.display = 'block';
 
-            // Una vez que el HTML existe en el DOM, inicializamos todo
             inicializarNavbar();
-            controlarAuthButtons(obtenerUsuarioLogueado());
         })
         .catch(err => console.error('Error loading navbar:', err));
 }
 
+
+function controlarAuthButtons() {
+    const authButtons = document.querySelector('.auth-buttons');
+    if (!authButtons) return;
+
+    const usuarioLogueado = obtenerUsuarioLogueado();
+    authButtons.classList.toggle('hidden', !!usuarioLogueado);
+}
+
+
 function inicializarNavbar() {
+    const sidebar = document.querySelector(".sidebar");
+    if (!sidebar) return;
+
+    sidebar.style.display = "flex";
+
     const usuarioLogueado = obtenerUsuarioLogueado();
     if (!usuarioLogueado) return;
 
-    // 1. Referencias de Elementos (Agrupadas)
-    const el = {
-        sidebar: document.querySelector(".sidebar"),
-        avatarImg: document.querySelector(".user-avatar img"),
-        addButton: document.getElementById('add-button'),
-        dropdownMenu: document.getElementById('dropdown-menu'),
-        overlay: document.getElementById('overlay'),
-        profileButton: document.getElementById('profile-button'),
-        boardForm: document.getElementById('board-form'),
-        createBoardBtn: document.getElementById('create-board'),
-        btnFiltro: document.querySelector(".btn-filtros"),
-        panelFiltros: document.querySelector(".filters-panel")
-    };
 
-    if (el.sidebar) el.sidebar.style.display = "flex";
-
-    // 2. Configuración de Avatar
-    if (el.avatarImg) {
-        el.avatarImg.src = usuarioLogueado.icono
+    const avatarImg = document.querySelector(".user-avatar img");
+    if (avatarImg) {
+        avatarImg.src = usuarioLogueado.icono
             ? `${API_BASE}/iconos/${usuarioLogueado.icono}`
             : "./img/avatar-default.jpg";
     }
+    const addButton = document.getElementById('add-button');
+    const dropdownMenu = document.getElementById('dropdown-menu');
+    const overlay = document.getElementById('overlay');
+    const profileButton = document.getElementById('profile-button');
+    const createBoardItem = document.querySelector('.dropdown-item[href="create-board.html"]');
+    const boardform = document.getElementById('board-form');
+    const boardInput = document.getElementById('board-name');
+    const cancelBoardBtn = document.getElementById('cancel-board');
+    const createBoardBtn = document.getElementById('create-board');
+    const tagsInput = document.getElementById('board-tags'); 
 
-    // 3. EVENTOS DE NAVEGACIÓN (Usando la función centralizada)
-    document.querySelector(".logo")?.addEventListener("click", () => navegarA("index.html"));
-    document.querySelector(".icon-bar.home")?.addEventListener("click", () => navegarA("index.html"));
-    
-    document.querySelector(".icon-bar.search")?.addEventListener("click", () => {
-        navegarA(`perfil.html?id=${usuarioLogueado.id}&tab=busquedas`);
-    });
-
-    document.querySelector(".icon-bar.boards")?.addEventListener("click", () => {
-        navegarA(`perfil.html?id=${usuarioLogueado.id}&tab=tableros`);
-    });
-
-    el.profileButton?.addEventListener("click", () => {
-        navegarA(`perfil.html?id=${usuarioLogueado.id}`, false); // No limpia pin aquí si no quieres
-    });
-
-    // 4. LÓGICA DE UI (Dropdowns y Filtros)
-    el.addButton?.addEventListener('click', (e) => {
-        e.stopPropagation();
-        el.dropdownMenu?.classList.toggle('show');
-        el.overlay?.classList.toggle('show');
-    });
-
-    el.btnFiltro?.addEventListener("click", () => {
-        el.panelFiltros?.classList.toggle("activo");
-    });
-
-    // Cerrar todo al hacer clic en el overlay
-    el.overlay?.addEventListener('click', () => {
-        el.dropdownMenu?.classList.remove('show');
-        el.boardForm?.classList.remove('show');
-        el.overlay?.classList.remove('show');
-    });
-
-    // 5. EVENTO CREAR TABLERO (Resumido)
-    el.createBoardBtn?.addEventListener('click', async () => {
-        const boardInput = document.getElementById('board-name');
-        const tagsInput = document.getElementById('board-tags');
+    createBoardBtn?.addEventListener('click', async () => {
         const titulo = boardInput.value.trim();
+        const etiquetas = tagsInput ? tagsInput.value.trim() : "";
 
-        if (!titulo) return alert('Ingresá un nombre para el tablero');
+        if (!titulo) {
+            return alert('Ingresá un nombre para el tablero');
+        }
 
         try {
             const res = await fetch(`${API_BASE}/tableros`, {
@@ -136,15 +99,110 @@ function inicializarNavbar() {
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({
                     usuario_id: usuarioLogueado.id,
-                    titulo,
-                    etiquetas: tagsInput?.value.trim() || ""
+                    titulo: titulo,
+                    etiquetas: etiquetas 
                 })
             });
 
-            if (res.ok) {
-                if (window.location.pathname.includes('perfil.html')) location.reload();
-                else alert("¡Tablero creado!");
+            if (!res.ok) {
+                const err = await res.json();
+                return alert(err.error || "Error creando tablero");
             }
-        } catch (err) { console.error(err); }
+
+            boardInput.value = '';
+            if(tagsInput) tagsInput.value = '';
+            cerrarformTablero();
+            
+            if (window.location.pathname.includes('perfil.html')) {
+                location.reload(); 
+            } else {
+                alert("¡Tablero creado con éxito!");
+            }
+
+        } catch (err) {
+            console.error("Error al crear tablero:", err);
+            alert("Error de conexión");
+        }
+    });
+
+    function abrirformTablero() {
+        cerrarDropdown();
+        boardform.classList.add('show');
+        overlay.classList.add('show');
+        boardInput.value = '';
+        boardInput.focus();
+    }
+
+    function cerrarformTablero() {
+        boardform.classList.remove('show');
+        overlay.classList.remove('show');
+    }
+
+    function cerrarDropdown() {
+        dropdownMenu?.classList.remove('show');
+        overlay?.classList.remove('show');
+    }
+
+    function toggleDropdown() {
+        dropdownMenu?.classList.toggle('show');
+        overlay?.classList.toggle('show');
+    }
+
+    addButton?.addEventListener('click', e => {
+        e.preventDefault();
+        e.stopPropagation();
+        toggleDropdown();
+    });
+
+    overlay?.addEventListener('click', () => {
+        cerrarDropdown();
+        cerrarformTablero();
+    });
+    cancelBoardBtn?.addEventListener('click', cerrarformTablero);
+
+    createBoardItem?.addEventListener('click', e => {
+        e.preventDefault();
+        abrirformTablero();
+    });
+
+
+    document.querySelectorAll('.dropdown-item').forEach(item => {
+        item.addEventListener('click', (e) => {
+            const href = item.getAttribute('href');
+            
+            if (href === 'create-pin.html') {
+                localStorage.removeItem("pinParaEditar");
+            }
+            
+            cerrarDropdown();
+        });
+    });
+    document.querySelector(".logo")?.addEventListener("click", () => {
+        localStorage.removeItem("pinParaEditar");
+        location.href = "index.html";
+    });
+
+    document.querySelector(".icon-bar.home")?.addEventListener("click", () => {
+        localStorage.removeItem("pinParaEditar");
+        location.href = "index.html";
+    });     
+
+    document.querySelector(".icon-bar.search")?.addEventListener("click", () => {
+        location.href = `perfil.html?id=${usuarioLogueado.id}&tab=busquedas`;
+    });
+    document.querySelector(".icon-bar.boards")?.addEventListener("click", () => {
+        location.href = `perfil.html?id=${usuarioLogueado.id}&tab=tableros`;
+    });
+
+    profileButton?.addEventListener("click", () => {
+        location.href = `perfil.html?id=${usuarioLogueado.id}`;
     });
 }
+
+
+const btnFiltro = document.querySelector(".btn-filtros");
+const panelFiltros = document.querySelector(".filters-panel");
+
+btnFiltro.addEventListener("click", () => {
+  panelFiltros.classList.toggle("activo");
+});
