@@ -1,7 +1,4 @@
-
-const API_BASE_URL = 'http://127.0.0.1:3000';
-const API_IMAGENES = API_BASE_URL + '/imagenes';
-const API_ICONOS = API_BASE_URL + '/iconos';
+import {API_ICONOS_URL, API_IMAGENES_URL} from "../api";
 
 export function crearCard(
     card,
@@ -22,7 +19,7 @@ export function crearCard(
     cardDiv.setAttribute("data-id", card.id);
 
     const img = document.createElement("img");
-    img.src = card.imagen ? `${API_IMAGENES}/${card.imagen}` : '';
+    img.src = card.imagen ? `${API_IMAGENES_URL}/${card.imagen}` : '';
     img.alt = "Imagen de " + (card.usuario_nombre || '');
     img.className = "card-image";
 
@@ -47,7 +44,7 @@ export function crearCard(
 
     footer.innerHTML = `
         <div class="card-author">
-            <img src="${card.usuario_icono ? `${API_ICONOS}/${card.usuario_icono}` : AVATAR_DEFAULT}" class="author-avatar">
+            <img src="${card.usuario_icono ? `${API_ICONOS_URL}/${card.usuario_icono}` : AVATAR_DEFAULT}" class="author-avatar">
             <span class="author-name">${card.usuario_nombre || ''}</span>
         </div>
     `;
