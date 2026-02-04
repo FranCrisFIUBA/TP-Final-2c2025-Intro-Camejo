@@ -6,7 +6,7 @@ import {intentarConseguirUsuarioPorId} from "../utils/database/usuarios.js";
 import {
     intentarConseguirListaPorId,
     intentarConseguirListaPorIdUsuario,
-    intentarConseguirListasPorIdUsuario
+    intentarConseguirListasPorIdUsuario, obtenerPublicacionesPorLista
 } from "../utils/database/listas.js";
 
 const listas = express.Router();
@@ -57,7 +57,19 @@ listas.get("/usuario/:usuario_id", async (req, res) => {
 // GET /:id/publicaciones
 // Obtiene todas las publicaciones de una lista
 listas.get("/:id/publicaciones", async (req, res) => {
+    try {
+        const { id } = req.params;
 
+        obtenerPublicacionesPorLista(id)
+            .then(listas =>
+                res.status(200).send(listas))
+            .catch( (err) => {
+                console.error(err);
+                res.status(500).json({ error: "Error al obtener las publicaciones de una lista" });
+            })
+    } catch (err) {
+        console.error(err);
+    }
 });
 
 // POST /
