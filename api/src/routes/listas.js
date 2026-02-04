@@ -164,7 +164,81 @@ listas.delete("/:id", async (req, res) => {
 // PATCH /:id
 // Actualiza una lista por id
 listas.patch("/:id", async (req, res) => {
+    try {
+        const { id } = req.params;
 
-})
+        const {
+            titulo,
+            etiquetas,
+            likes_minimos,
+            likes_maximos,
+            fecha_minima,
+            fecha_maxima,
+            alto_minimo,
+            alto_maximo,
+            ancho_minimo,
+            ancho_maximo
+        } = req.body;
+
+        // Validaciones lógicas
+        if (likes_minimos !== null && likes_maximos !== null && likes_minimos > likes_maximos)
+            return res.status(400).json({ error: "likes_minimos > likes_maximos" });
+
+        if (alto_minimo !== null && alto_maximo !== null && alto_minimo > alto_maximo)
+            return res.status(400).json({ error: "alto_minimo > alto_maximo" });
+
+        if (ancho_minimo !== null && ancho_maximo !== null && ancho_minimo > ancho_maximo)
+            return res.status(400).json({ error: "ancho_minimo > ancho_maximo" });
+
+        if (fecha_minima && fecha_maxima && new Date(fecha_minima) > new Date(fecha_maxima))
+            return res.status(400).json({ error: "fecha_minima > fecha_maxima" });
+
+        // Construcción dinámica del UPDATE
+        const fields = [];
+        const values = [];
+        let i = 1;
+
+        const add = (name, value) => {
+            if (value !== undefined) {
+                fields.push(`${name} = $${i++}`);
+                values.push(value);
+            }
+        };
+
+        add("titulo", titulo);
+        add("etiquetas", etiquetas);
+        add("likes_minimos", likes_minimos);
+        add("likes_maximos", likes_maximos);
+        add("fecha_minima", fecha_minima);
+        add("fecha_maxima", fecha_maxima);
+        add("alto_minimo", alto_minimo);
+        add("alto_maximo", alto_maximo);
+        add("ancho_minimo", ancho_minimo);
+        add("ancho_maximo", ancho_maximo);
+
+        if (fields.length === 0)
+            return res.status(400).json({ error: "No hay campos para actualizar" });
+
+        const query = `
+            UPDATE listas
+            SET ${fields.join(", ")}
+            WHERE id = $${i}
+            RETURNING *;
+        `;
+
+        values.push(id);
+
+        const result = await pool.query(query, values);
+
+        if (result.rows.length === 0)
+            return res.status(404).json({ error: "Lista no encontrada" });
+
+        res.status(200).json(result.rows[0]);
+
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: "Error al actualizar la lista" });
+    }
+});
 
 export default listas;
