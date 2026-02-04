@@ -48,7 +48,6 @@ export function closeCardModal() {
         modal.style.display = 'none';
         document.body.style.overflow = 'auto';
     }
-    window.location.reload();
 }
 
 
@@ -402,19 +401,22 @@ containerTableros.addEventListener("click", async (e) => {
         };
     }
     const likeBtn = modal.querySelector('#btn-like-modal');
-    if (likeBtn) {
+  if (likeBtn) {
     likeBtn.onclick = async (e) => {
         e.stopPropagation();
 
         const usuarioLogueado = obtenerUsuarioLogueado();
         if (!usuarioLogueado) return alert("Inicia sesión para dar like");
 
+        // 1. Definir variables PRIMERO
         const icon = likeBtn.querySelector('.like-icon');
-        const numero = likeBtn.querySelector('.likes-numero');
+        const numeroSpan = likeBtn.querySelector('.likes-numero');
         const isCurrentlyLiked = likeBtn.classList.contains('likeado');
+        const statsLikes = document.getElementById('estadistica-likes');
 
         try {
             if (!isCurrentlyLiked) {
+                // DAR LIKE
                 const res = await fetch(`${API_BASE_URL}/likes/publicacion`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
@@ -424,26 +426,39 @@ containerTableros.addEventListener("click", async (e) => {
                     })
                 });
 
-                const nuevoLike = await res.json();
-
-                likeBtn.classList.add('likeado');
-                likeBtn.dataset.likeId = nuevoLike.id;
-                icon.className = 'fa-solid fa-heart like-icon';
-
+                if (res.ok) {
+                    const nuevoLike = await res.json();
+                    likeBtn.classList.add('likeado');
+                    likeBtn.dataset.likeId = nuevoLike.id;
+                    icon.className = 'fa-solid fa-heart like-icon';
+                    
+                    // Actualizar estadística global (Perfil)
+                    if (statsLikes) {
+                        statsLikes.textContent = (parseInt(statsLikes.textContent) || 0) + 1;
+                    }
+                }
             } else {
+                // QUITAR LIKE
                 const likeId = likeBtn.dataset.likeId;
-
-                await fetch(`${API_BASE_URL}/likes/${likeId}`, {
+                const res = await fetch(`${API_BASE_URL}/likes/${likeId}`, {
                     method: 'DELETE'
                 });
 
-                likeBtn.classList.remove('likeado');
-                likeBtn.dataset.likeId = '';
-                icon.className = 'fa-regular fa-heart like-icon';
+                if (res.ok) {
+                    likeBtn.classList.remove('likeado');
+                    likeBtn.dataset.likeId = '';
+                    icon.className = 'fa-regular fa-heart like-icon';
+
+                    // Actualizar estadística global (Perfil)
+                    if (statsLikes) {
+                        statsLikes.textContent = Math.max(0, (parseInt(statsLikes.textContent) || 0) - 1);
+                    }
+                }
             }
 
+            // 2. Actualizar el número del modal con el dato real del servidor
             const estado = await obtenerLikes(card.id);
-            numero.textContent = estado.total;
+            numeroSpan.textContent = estado.total;
 
         } catch (err) {
             console.error("Error like:", err);
