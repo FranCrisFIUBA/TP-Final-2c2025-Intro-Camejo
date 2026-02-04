@@ -157,6 +157,25 @@ async function buscarPublicacionesPorTagConFiltros(filtros) {
     }
   }
 
+async function obtenerAutorIdPorNombre(nombre) {
+  try {
+      const resp = await fetch(`${API_BASE_URL}/usuarios`);
+
+      if (!resp.ok) return null;
+
+      const usuarios = await resp.json();  
+      const usuario = usuarios.find(
+          u => u.nombre.toLowerCase() === nombre.toLowerCase()
+      );
+
+      return usuario ? usuario.id : null;
+
+    } catch (e) {
+      console.error("Error buscando autor:", e);
+      return null;
+    }
+}
+
 function armarTituloBusqueda(filtros) {
   const partes = [];
 
