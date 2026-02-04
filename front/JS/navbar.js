@@ -1,4 +1,4 @@
-const API_BASE = 'http://127.0.0.1:3000';
+import {API_ICONOS_URL, API_TABLEROS_URL} from "./api";
 
 document.addEventListener('DOMContentLoaded', () => {
     const container = document.querySelector('.container');
@@ -71,7 +71,7 @@ function inicializarNavbar() {
     const avatarImg = document.querySelector(".user-avatar img");
     if (avatarImg) {
         avatarImg.src = usuarioLogueado.icono
-            ? `${API_BASE}/iconos/${usuarioLogueado.icono}`
+            ? `${API_ICONOS_URL}/${usuarioLogueado.icono}`
             : "./img/avatar-default.jpg";
     }
     const addButton = document.getElementById('add-button');
@@ -94,7 +94,7 @@ function inicializarNavbar() {
         }
 
         try {
-            const res = await fetch(`${API_BASE}/tableros`, {
+            const res = await fetch(API_TABLEROS_URL, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({
