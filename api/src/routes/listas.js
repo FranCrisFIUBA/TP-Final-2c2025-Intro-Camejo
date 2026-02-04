@@ -22,7 +22,18 @@ listas.get("/", async (req, res) => {
 // GET /:id
 // Obtiene una lista por id
 listas.get("/:id", async (req, res) => {
+    try {
+        intentarConseguirListaPorId(req.params.id)
+            .then( (lista) => {
+                res.status(200).send(lista)})
+            .catch( (err) => {
+                console.error(err)
+                res.status(404).json({ error: "Lista no encontrada" });})
 
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ error: "Error del servidor al obtener una lista" });
+    }
 });
 
 
