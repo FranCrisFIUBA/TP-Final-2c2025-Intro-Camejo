@@ -187,6 +187,18 @@ function armarTituloBusqueda(filtros) {
   return partes.join(" · ");
 } 
 
+function esBusquedaPersonalizada(filtros) {
+    const tieneTag = !!filtros.tag;
+    const tieneFiltrosExtra =
+      filtros.autor ||
+      filtros.likesMin !== null ||
+      filtros.likesMax !== null ||
+      filtros.fechaMin ||
+      filtros.fechaMax;
+  
+    return tieneTag && tieneFiltrosExtra;
+  }
+
 
 
 
