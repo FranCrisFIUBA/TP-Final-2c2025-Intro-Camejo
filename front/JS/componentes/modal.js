@@ -1,8 +1,6 @@
-const API_BASE_URL = 'http://127.0.0.1:3000';
-const API_IMAGENES = API_BASE_URL + '/imagenes';
-const API_ICONOS = API_BASE_URL + '/iconos';
-const AVATAR_DEFAULT = './img/avatar-default.jpg';
+import {API_ICONOS_URL, API_IMAGENES_URL} from "../api";
 
+const AVATAR_DEFAULT = './img/avatar-default.jpg';
 
 function irAlPerfil(usuarioId) {
     window.location.href = `perfil.html?id=${usuarioId}`;
@@ -63,10 +61,10 @@ async function renderizarTableros() {
   if (!usuario || !publicacionId) return;
 
   try {
-    const resTableros = await fetch(`${API_BASE_URL}/tableros/usuario/${usuario.id}`);
+    const resTableros = await fetch(`${API_BASE_URL_URL}/tableros/usuario/${usuario.id}`);
     const tableros = await resTableros.json();
 
-    const resEstados = await fetch(`${API_BASE_URL}/tableros/usuario/${usuario.id}/publicacion/${publicacionId}/estados`);
+    const resEstados = await fetch(`${API_BASE_URL_URL}/tableros/usuario/${usuario.id}/publicacion/${publicacionId}/estados`);
     const idsDondeEstaGuardado = await resEstados.json();
 
     if (!tableros.length) {
@@ -97,7 +95,7 @@ async function renderizarTableros() {
 
 async function obtenerLikes(publicacionId) {
     const usuario = obtenerUsuarioLogueado();
-    const res = await fetch(`${API_BASE_URL}/likes/publicacion/${publicacionId}`);
+    const res = await fetch(`${API_BASE_URL_URL}/likes/publicacion/${publicacionId}`);
     const likes = await res.json();
     const total = likes.length;
 
@@ -133,11 +131,11 @@ modal.innerHTML = `
             ${tieneImagen ? `
             <div class="modal-image-section">
                 <div class="modal-image-wrapper ratio-${imageRatio}">
-                    <img src="${API_IMAGENES}/${card.imagen}" class="modal-image">
+                    <img src="${API_IMAGENES_URL}/${card.imagen}" class="modal-image">
                 </div>
                 <div class="modal-author-info">
                     <div class="modal-author-details-wrapper" id="irAPerfil" style="display:flex; align-items:center; gap:12px; cursor:pointer;">
-                        <img src="${card.usuario_icono ? `${API_ICONOS}/${card.usuario_icono}` : AVATAR_DEFAULT}"
+                        <img src="${card.usuario_icono ? `${API_ICONOS_URL}/${card.usuario_icono}` : AVATAR_DEFAULT}"
                              class="modal-author-avatar" onerror="this.src='${AVATAR_DEFAULT}'">
                         <div class="modal-author-details">
                             <span class="modal-author-name">${card.usuario_nombre || 'Usuario'}</span>
@@ -259,7 +257,7 @@ containerTableros.addEventListener("click", async (e) => {
 
     try {
         if (!estaGuardado) {
-            const res = await fetch(`${API_BASE_URL}/tableros/${tableroId}/publicaciones`, {
+            const res = await fetch(`${API_BASE_URL_URL}/tableros/${tableroId}/publicaciones`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ publicacion_id: publicacionId })
@@ -275,7 +273,7 @@ containerTableros.addEventListener("click", async (e) => {
             }
 
         } else {
-            const res = await fetch(`${API_BASE_URL}/tableros/${tableroId}/publicaciones/${publicacionId}`, { 
+            const res = await fetch(`${API_BASE_URL_URL}/tableros/${tableroId}/publicaciones/${publicacionId}`, {
                 method: "DELETE" 
             });
 
@@ -305,7 +303,7 @@ containerTableros.addEventListener("click", async (e) => {
             if (!titulo) return alert("Ingresá un nombre");
 
             try {
-                const res = await fetch(`${API_BASE_URL}/tableros`, {
+                const res = await fetch(`${API_BASE_URL_URL}/tableros`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({
@@ -413,7 +411,7 @@ containerTableros.addEventListener("click", async (e) => {
 
             try {
                 if (!isCurrentlyLiked) {
-                    const res = await fetch(`${API_BASE_URL}/likes/publicacion`, {
+                    const res = await fetch(`${API_BASE_URL_URL}/likes/publicacion`, {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify({
@@ -434,7 +432,7 @@ containerTableros.addEventListener("click", async (e) => {
                     }
                 } else {
                     const likeId = likeBtn.dataset.likeId;
-                    const res = await fetch(`${API_BASE_URL}/likes/${likeId}`, {
+                    const res = await fetch(`${API_BASE_URL_URL}/likes/${likeId}`, {
                         method: 'DELETE'
                     });
 
@@ -467,7 +465,7 @@ async function cargarComentariosEnModal(publicacionId) {
     const container = document.querySelector('.comments-container');
     const countEl = document.querySelector('.comments-count');
     try {
-        const res = await fetch(`${API_BASE_URL}/comentarios/publicacion/${publicacionId}`);
+        const res = await fetch(`${API_BASE_URL_URL}/comentarios/publicacion/${publicacionId}`);
         const comentarios = await res.json();
         const userLog = obtenerUsuarioLogueado();
 
@@ -481,7 +479,7 @@ async function cargarComentariosEnModal(publicacionId) {
         container.innerHTML = comentarios.map(c => `
             <div class="comment-item">
                 <div class="comment-author">
-                    <img src="${c.avatar ? `${API_ICONOS}/${c.avatar}` : AVATAR_DEFAULT}" class="comment-avatar">
+                    <img src="${c.avatar ? `${API_ICONOS_URL}/${c.avatar}` : AVATAR_DEFAULT}" class="comment-avatar">
                     <div class="comment-content">
                         <div class="comment-header">
                             <strong>${c.author}</strong>
@@ -504,7 +502,7 @@ async function cargarComentariosEnModal(publicacionId) {
 }
 
 async function enviarComentario(pubId, contenido, uId) {
-    const res = await fetch(`${API_BASE_URL}/comentarios`, {
+    const res = await fetch(`${API_BASE_URL_URL}/comentarios`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ usuario_id: uId, publicacion_id: pubId, contenido })
@@ -514,7 +512,7 @@ async function enviarComentario(pubId, contenido, uId) {
 
 async function borrarComentario(id) {
     const user = obtenerUsuarioLogueado();
-    const res = await fetch(`${API_BASE_URL}/comentarios/${id}`, {
+    const res = await fetch(`${API_BASE_URL_URL}/comentarios/${id}`, {
         method: 'DELETE',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ usuario_id: user.id })
@@ -524,7 +522,7 @@ async function borrarComentario(id) {
 
 async function editarComentario(id, contenido) {
     const user = obtenerUsuarioLogueado();
-    const res = await fetch(`${API_BASE_URL}/comentarios/${id}`, {
+    const res = await fetch(`${API_BASE_URL_URL}/comentarios/${id}`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ contenido, usuario_id: user.id })
