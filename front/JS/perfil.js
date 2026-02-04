@@ -711,6 +711,10 @@ function renderizarGlobitos(busquedas) {
             <strong>Búsqueda:</strong>
             <span>#${b.etiquetas}</span>
           </div>
+
+          <button class="btn-eliminar-busqueda" data-id="${b.id}" title="Eliminar búsqueda">
+            ✕
+          </button>
       </div>
     
       <div class="globito-body">
@@ -720,6 +724,13 @@ function renderizarGlobitos(busquedas) {
     `;
 
     contenedor.appendChild(globito);
+  });
+
+  contenedor.querySelectorAll(".btn-eliminar-busqueda").forEach(btn => {
+    btn.addEventListener("click", () => {
+      const id = btn.dataset.id;
+      eliminarBusqueda(id);
+    });
   });
 }
 
