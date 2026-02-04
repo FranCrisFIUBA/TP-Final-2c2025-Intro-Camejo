@@ -401,70 +401,62 @@ containerTableros.addEventListener("click", async (e) => {
         };
     }
     const likeBtn = modal.querySelector('#btn-like-modal');
-  if (likeBtn) {
-    likeBtn.onclick = async (e) => {
-        e.stopPropagation();
+    if (likeBtn) {
+        likeBtn.onclick = async (e) => {
+            e.stopPropagation();
+            const usuarioLogueado = obtenerUsuarioLogueado();
+            if (!usuarioLogueado) return alert("Inicia sesión para dar like");
+            const icon = likeBtn.querySelector('.like-icon');
+            const numeroSpan = likeBtn.querySelector('.likes-numero');
+            const isCurrentlyLiked = likeBtn.classList.contains('likeado');
+            const statsLikes = document.getElementById('estadistica-likes');
 
-        const usuarioLogueado = obtenerUsuarioLogueado();
-        if (!usuarioLogueado) return alert("Inicia sesión para dar like");
+            try {
+                if (!isCurrentlyLiked) {
+                    const res = await fetch(`${API_BASE_URL}/likes/publicacion`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            usuario_id: usuarioLogueado.id,
+                            publicacion_id: card.id
+                        })
+                    });
 
-        // 1. Definir variables PRIMERO
-        const icon = likeBtn.querySelector('.like-icon');
-        const numeroSpan = likeBtn.querySelector('.likes-numero');
-        const isCurrentlyLiked = likeBtn.classList.contains('likeado');
-        const statsLikes = document.getElementById('estadistica-likes');
+                    if (res.ok) {
+                        const nuevoLike = await res.json();
+                        likeBtn.classList.add('likeado');
+                        likeBtn.dataset.likeId = nuevoLike.id;
+                        icon.className = 'fa-solid fa-heart like-icon';
+                        
+                        if (statsLikes) {
+                            statsLikes.textContent = (parseInt(statsLikes.textContent) || 0) + 1;
+                        }
+                    }
+                } else {
+                    const likeId = likeBtn.dataset.likeId;
+                    const res = await fetch(`${API_BASE_URL}/likes/${likeId}`, {
+                        method: 'DELETE'
+                    });
 
-        try {
-            if (!isCurrentlyLiked) {
-                // DAR LIKE
-                const res = await fetch(`${API_BASE_URL}/likes/publicacion`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        usuario_id: usuarioLogueado.id,
-                        publicacion_id: card.id
-                    })
-                });
+                    if (res.ok) {
+                        likeBtn.classList.remove('likeado');
+                        likeBtn.dataset.likeId = '';
+                        icon.className = 'fa-regular fa-heart like-icon';
 
-                if (res.ok) {
-                    const nuevoLike = await res.json();
-                    likeBtn.classList.add('likeado');
-                    likeBtn.dataset.likeId = nuevoLike.id;
-                    icon.className = 'fa-solid fa-heart like-icon';
-                    
-                    // Actualizar estadística global (Perfil)
-                    if (statsLikes) {
-                        statsLikes.textContent = (parseInt(statsLikes.textContent) || 0) + 1;
+                        if (statsLikes) {
+                            statsLikes.textContent = Math.max(0, (parseInt(statsLikes.textContent) || 0) - 1);
+                        }
                     }
                 }
-            } else {
-                // QUITAR LIKE
-                const likeId = likeBtn.dataset.likeId;
-                const res = await fetch(`${API_BASE_URL}/likes/${likeId}`, {
-                    method: 'DELETE'
-                });
 
-                if (res.ok) {
-                    likeBtn.classList.remove('likeado');
-                    likeBtn.dataset.likeId = '';
-                    icon.className = 'fa-regular fa-heart like-icon';
+                const estado = await obtenerLikes(card.id);
+                numeroSpan.textContent = estado.total;
 
-                    // Actualizar estadística global (Perfil)
-                    if (statsLikes) {
-                        statsLikes.textContent = Math.max(0, (parseInt(statsLikes.textContent) || 0) - 1);
-                    }
-                }
+            } catch (err) {
+                console.error("Error like:", err);
             }
-
-            // 2. Actualizar el número del modal con el dato real del servidor
-            const estado = await obtenerLikes(card.id);
-            numeroSpan.textContent = estado.total;
-
-        } catch (err) {
-            console.error("Error like:", err);
-        }
-    };
-}
+        };
+    }
 
     modal.querySelector('.modal-close').onclick = closeCardModal;
     modal.querySelector('.modal-overlay').onclick = closeCardModal;
