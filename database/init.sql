@@ -69,8 +69,6 @@ CREATE TABLE tableros (
 );
 
 CREATE TABLE likes (
-<<<<<<< HEAD
-=======
     id SERIAL PRIMARY KEY,
     usuario_id INT NOT NULL,
     publicacion_id INT NOT NULL,
@@ -85,7 +83,6 @@ CREATE TABLE likes (
 )
 
 CREATE TABLE suscripciones_a_usuarios (
->>>>>>> develop
     id SERIAL PRIMARY KEY,
     usuario_id INT NOT NULL,
     publicacion_id INT NOT NULL,
