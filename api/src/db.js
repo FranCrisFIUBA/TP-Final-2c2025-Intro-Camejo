@@ -3,7 +3,7 @@ import { Pool } from 'pg';
 const DB_HOST = process.env.DB_HOST || process.env.DATABASE_HOST;
 const DB_PORT = process.env.DB_PORT || process.env.DATABASE_PORT;
 const DB_NAME = process.env.DB_NAME || process.env.DATABASE_NAME || process.env.DATABASE_DATABASE;
-const DB_USER = process.env.DB_USER || process.env.DATABASE_USER;
+const DB_USER = process.env.DB_USER || process.env.DATABASE_USER || process.env.DB_USERNAME || process.env.DATABASE_USERNAME;
 const DB_PASSWORD = process.env.DB_PASSWORD || process.env.DATABASE_PASSWORD;
 
 const poolConfig = {
