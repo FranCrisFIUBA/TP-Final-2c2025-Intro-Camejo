@@ -5,7 +5,6 @@ const usuariosCache = new Map();
 
 let filtrosActivos = {
     tag: null,
-    autorId: null,
     autor: null,
     likesMin: null,
     likesMax: null,
@@ -121,24 +120,24 @@ async function buscarPublicacionesPorTagConFiltros(filtros) {
         params.append("tag", filtros.tag);
       }
   
-    if (filtros.autorId) {
-      params.append("autor_id", filtros.autorId);
+    if (filtros.autor) {
+      params.append("autor", filtros.autor);
     }
   
     if (filtros.likesMin !== null) {
-      params.append("likes_minimos", filtros.likesMin);
+      params.append("likesMin", filtros.likesMin);
     }
   
     if (filtros.likesMax !== null) {
-      params.append("likes_maximos", filtros.likesMax);
+      params.append("likesMax", filtros.likesMax);
     }
   
     if (filtros.fechaMin) {
-      params.append("fecha_minima", filtros.fechaMin);
+      params.append("fechaMin", filtros.fechaMin);
     }
   
     if (filtros.fechaMax) {
-      params.append("fecha_maxima", filtros.fechaMax);
+      params.append("fechaMax", filtros.fechaMax);
     }
   
     try {
@@ -156,103 +155,6 @@ async function buscarPublicacionesPorTagConFiltros(filtros) {
     } catch (error) {
       console.error("Error aplicando filtros:", error);
     }
-  }
-
-async function obtenerAutorIdPorNombre(nombre) {
-  try {
-      const resp = await fetch(`${API_BASE_URL}/usuarios`);
-
-      if (!resp.ok) return null;
-
-      const usuarios = await resp.json();  
-      const usuario = usuarios.find(
-        u => u.nombre === nombre
-      );
-      
-
-      return usuario ? usuario.id : null;
-
-    } catch (e) {
-      console.error("Error buscando autor:", e);
-      return null;
-    }
-}
-
-function armarTituloBusqueda(filtros) {
-  const partes = [];
-
-  if (filtros.tag) {
-    partes.push(`#${filtros.tag}`);
-  }
-
-  if (filtros.autor) {
-    partes.push(`Autor: ${filtros.autor}`);
-  }
-
-  if (filtros.likesMin !== null) {
-    partes.push(`Likes ≥ ${filtros.likesMin}`);
-  }
-
-  if (filtros.likesMax !== null) {
-    partes.push(`Likes ≤ ${filtros.likesMax}`);
-  }
-
-  if (filtros.fechaMin) {
-    partes.push(`Desde ${filtros.fechaMin}`);
-  }
-
-  if (filtros.fechaMax) {
-    partes.push(`Hasta ${filtros.fechaMax}`);
-  }
-
-  return partes.join(" · ");
-} 
-
-async function guardarBusquedaPersonalizada(filtros) {
-    const usuarioLogueado = JSON.parse(localStorage.getItem("usuarioLogueado"));
-  
-    console.log("USUARIO LOGUEADO EN GUARDAR:", usuarioLogueado);
-  
-    if (!usuarioLogueado || !usuarioLogueado.id) {
-      console.warn("No hay usuario logueado, no se guarda la búsqueda");
-      return;
-    }
-  
-    const body = {
-        usuario_id: usuarioLogueado.id,
-        titulo: armarTituloBusqueda(filtros),
-        etiquetas: filtros.tag,
-      
-        autor_id: filtros.autorId,
-        likes_min: filtros.likesMin,
-        likes_max: filtros.likesMax,
-      
-        fecha_publicacion_min: filtros.fechaMin,
-        fecha_publicacion_max: filtros.fechaMax
-      };
-      
-  
-    console.log("BODY QUE SE ENVÍA:", body);
-  
-    await fetch(`${API_BASE_URL}/listas`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify(body)
-    });
-}
-
-function esBusquedaPersonalizada(filtros) {
-    const tieneTag = !!filtros.tag;
-    const tieneFiltrosExtra =
-      filtros.autor ||
-      filtros.likesMin !== null ||
-      filtros.likesMax !== null ||
-      filtros.fechaMin ||
-      filtros.fechaMax;
-  
-    return tieneTag && tieneFiltrosExtra;
   }
 
 
@@ -397,8 +299,6 @@ async function enviarComentario(publicacionId, contenido, usuarioId) {
 }
 
 document.addEventListener("DOMContentLoaded", () => {
-    const usuarioLogueado = JSON.parse(localStorage.getItem("usuarioLogueado"));
-
     console.log("DOM LISTO");
 
     cargarPublicaciones();
@@ -416,27 +316,12 @@ document.addEventListener("DOMContentLoaded", () => {
     const searchForm = document.querySelector(".search-bar");
     const searchInput = document.querySelector(".search-input");
 
-    btnApply.addEventListener("click", async () => {
+    btnApply.addEventListener("click", () => {
         console.log("CLICK APLICAR");
 
-        const nombreAutor = inputAutor.value.trim();
-
-        if (nombreAutor) {
-            filtrosActivos.autorId = await obtenerAutorIdPorNombre(nombreAutor);
-            filtrosActivos.autor = nombreAutor;
-          } else {
-            filtrosActivos.autorId = null;
-            filtrosActivos.autor = null;
-          }
-    
-        filtrosActivos.likesMin = inputLikesMin.value
-            ? Number(inputLikesMin.value)
-            : null;
-    
-        filtrosActivos.likesMax = inputLikesMax.value
-            ? Number(inputLikesMax.value)
-            : null;
-    
+        filtrosActivos.autor = inputAutor.value.trim() || null;
+        filtrosActivos.likesMin = Number(inputLikesMin.value) || null;
+        filtrosActivos.likesMax = Number(inputLikesMax.value) || null;
         filtrosActivos.fechaMin = inputFechaMin.value || null;
         filtrosActivos.fechaMax = inputFechaMax.value || null;
 
@@ -453,7 +338,6 @@ document.addEventListener("DOMContentLoaded", () => {
         filtrosActivos = {
             tag: null,
             autor: null,
-            autorId: null,
             likesMin: null,
             likesMax: null,
             fechaMin: null,
@@ -463,7 +347,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     if (!searchForm || !searchInput) return;
 
-    searchForm.addEventListener("submit", async (e) => {
+    searchForm.addEventListener("submit", (e) => {
         console.log("SUBMIT FORM");
         e.preventDefault();
 
@@ -479,14 +363,6 @@ document.addEventListener("DOMContentLoaded", () => {
         }
 
         buscarPublicacionesPorTagConFiltros(filtrosActivos);
-
-        if (esBusquedaPersonalizada(filtrosActivos)) {
-            await guardarBusquedaPersonalizada({
-                ...filtrosActivos,
-                usuario_id: usuarioLogueado.id
-            });
-        }
-        
     });
 });
 
