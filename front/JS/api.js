@@ -1,6 +1,7 @@
 
-export const API_BASE_URL = window.API_URL;
+import './config.js';
 
+export const API_BASE_URL = window.API_URL;
 export const API_PUBLICACIONES_URL = API_BASE_URL + "/publicaciones";
 export const API_IMAGENES_URL = API_BASE_URL + '/imagenes';
 export const API_ICONOS_URL = API_BASE_URL + '/iconos';
