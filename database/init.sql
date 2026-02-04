@@ -17,7 +17,7 @@ CREATE TABLE publicaciones (
     alto_imagen INT,
     ancho_imagen INT,
     fecha_publicacion TIMESTAMP NOT NULL DEFAULT now(),
-    fecha_edicion TIMESTAMP NOT NULL DEFAULT now()
+    fecha_edicion TIMESTAMP NOT NULL DEFAULT now(),
 
     FOREIGN KEY (usuario_id)
        REFERENCES usuarios(id)
