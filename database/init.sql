@@ -80,7 +80,9 @@ CREATE TABLE likes (
     FOREIGN KEY (publicacion_id)
         REFERENCES publicaciones(id)
         ON DELETE CASCADE,
-)
+
+        UNIQUE(usuario_id, publicacion_id)
+);
 
 CREATE TABLE suscripciones_a_usuarios (
     id SERIAL PRIMARY KEY,

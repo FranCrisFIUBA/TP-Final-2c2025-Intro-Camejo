@@ -19,74 +19,16 @@ publicaciones.get('/', async (req, res) => {
     console.log("QUERY:", req.query);
 
     try {
-        const {
-            tag,
-            autor,
-            likesMin,
-            likesMax,
-            fechaMin,
-            fechaMax
-        } = req.query;
+        const params = req.query;
 
-        let query = `
-            SELECT p.*, u.nombre AS autor
-            FROM publicaciones p
-            JOIN usuarios u ON p.usuario_id = u.id
-            WHERE 1=1
-        `;
-
-        let values = [];
-        let index = 1;
-
-        // 🔹 FILTRO POR TAG
-        if (tag) {
-            query += ` AND p.etiquetas ILIKE $${index}`;
-            values.push(`%${tag}%`);
-            index++;
+        const error = validarParametrosDeBusqueda(params)
+        if (error !== undefined) {
+            console.error(error);
+            res.status(400).json({ error: error });
         }
 
-        // 🔹 FILTRO POR AUTOR
-        if (autor) {
-            query += ` AND u.nombre ILIKE $${index}`;
-            values.push(`%${autor}%`);
-            index++;
-        }
+        const result = await getPublicacionesConBusqueda(req.query);
 
-        // 🔹 LIKES MÍNIMOS
-        if (likesMin !== undefined) {
-            query += ` AND p.likes >= $${index}`;
-            values.push(Number(likesMin));
-            index++;
-        }
-
-        // 🔹 LIKES MÁXIMOS
-        if (likesMax !== undefined) {
-            query += ` AND p.likes <= $${index}`;
-            values.push(Number(likesMax));
-            index++;
-        }
-
-        // 🔹 FECHA MÍNIMA
-        if (fechaMin) {
-            query += ` AND p.fecha_publicacion >= $${index}`;
-            values.push(fechaMin);
-            index++;
-        }
-
-        // 🔹 FECHA MÁXIMA
-        if (fechaMax) {
-            query += ` AND p.fecha_publicacion <= $${index}`;
-            values.push(fechaMax);
-            index++;
-        }
-
-        query += ` ORDER BY p.fecha_publicacion DESC`;
-
-        console.log("SQL FINAL:", query);
-        console.log("VALUES:", values);
-
-
-        const result = await pool.query(query, values);
         res.status(200).json(result.rows);
 
     } catch (err) {
