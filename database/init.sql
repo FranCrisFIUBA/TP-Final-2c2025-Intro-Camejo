@@ -45,9 +45,16 @@ CREATE TABLE listas ( /*busquedas personalizadas*/
     id SERIAL PRIMARY KEY,
     usuario_id INT NOT NULL,
     titulo VARCHAR NOT NULL,
+
     etiquetas VARCHAR,
-    fecha_publicacion_min TIMESTAMP,
-    fecha_publicacion_max TIMESTAMP,
+    likes_minimos INT NULL,
+    likes_maximos INT NULL,
+    fecha_minima INT NULL,
+    fecha_maxima INT NULL,
+    alto_minimo INT NULL,
+    alto_maximo INT NULL,
+    ancho_minimo INT NULL,
+    ancho_maximo INT NULL,
 
     FOREIGN KEY (usuario_id)
         REFERENCES usuarios(id)
