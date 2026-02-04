@@ -1,0 +1,13 @@
+
+@api_url = http://localhost:3000
+@usuarios_url = {{api_url}}/usuarios
+
+### GET /usuarios
+GET {{usuarios_url}}/
+Content-Type: application/json
+
+### GET /usuarios/:id
+GET {{usuarios_url}}/1
+Content-Type: application/json
+
+###

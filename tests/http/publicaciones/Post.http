@@ -1,0 +1,27 @@
+
+@api_url = http://localhost:3000
+@publicaciones_url = {{api_url}}/publicaciones
+
+###
+POST {{publicaciones_url}}/
+Content-Type: multipart/form-data; boundary=boundary123
+
+--boundary123
+Content-Disposition: form-data; name="usuario_id"
+
+1
+--boundary123
+Content-Disposition: form-data; name="titulo"
+
+Ahhhhh
+--boundary123
+Content-Disposition: form-data; name="etiquetas"
+
+jueguitos
+--boundary123
+Content-Disposition: form-data; name="imagen"; filename="1.jpg"
+Content-Type: image/jpeg
+
+< ../../iconos/capibara123.png
+--boundary123--
+###

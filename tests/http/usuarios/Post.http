@@ -1,0 +1,86 @@
+@api_url = http://localhost:3000
+@usuarios_url = {{api_url}}/usuarios
+
+###
+POST {{usuarios_url}}/
+Content-Type: multipart/form-data; boundary=boundary1
+
+--boundary1
+Content-Disposition: form-data; name="nombre"
+
+Pepito04
+--boundary1
+Content-Disposition: form-data; name="contrasenia"
+
+Contra.1234
+--boundary1
+Content-Disposition: form-data; name="email"
+
+pepe@email.test
+--boundary1
+Content-Disposition: form-data; name="fecha_nacimiento"
+
+2000-05-10T00:00:00Z
+--boundary1
+Content-Disposition: form-data; name="icono"; filename="capibara123.png"
+Content-Type: image/png
+
+< ../../iconos/capibara123.png
+--boundary1--
+###
+
+###
+POST {{usuarios_url}}/
+Content-Type: multipart/form-data; boundary=boundary2
+
+--boundary2
+Content-Disposition: form-data; name="nombre"
+
+Juanito123
+--boundary2
+Content-Disposition: form-data; name="contrasenia"
+
+Contra.1234
+--boundary2
+Content-Disposition: form-data; name="email"
+
+juan@email.test
+--boundary2
+Content-Disposition: form-data; name="fecha_nacimiento"
+
+2000-05-10T00:00:00Z
+--boundary2
+Content-Disposition: form-data; name="icono"; filename="capivinito.jpg"
+Content-Type: image/jpeg
+
+< ../../iconos/capivinito.jpg
+--boundary2--
+###
+
+###
+POST {{usuarios_url}}/
+Content-Type: multipart/form-data; boundary=boundary3
+
+--boundary3
+Content-Disposition: form-data; name="nombre"
+
+yQc321
+--boundary3
+Content-Disposition: form-data; name="contrasenia"
+
+Contra.1234
+--boundary3
+Content-Disposition: form-data; name="email"
+
+yqc@email.test
+--boundary3
+Content-Disposition: form-data; name="fecha_nacimiento"
+
+2000-05-10T00:00:00Z
+--boundary3
+Content-Disposition: form-data; name="icono"; filename="panafresco.jfif"
+Content-Type: image/jpeg
+
+< ../../iconos/panafresco.jfif
+--boundary3--
+###
