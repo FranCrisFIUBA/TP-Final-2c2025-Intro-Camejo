@@ -10,7 +10,13 @@ const listas = express.Router();
 // GET /
 // Obtiene todas las listas
 listas.get("/", async (req, res) => {
-
+    try {
+        const result = await pool.query(`SELECT * FROM listas`);
+        res.status(200).json(result.rows);
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({error: "Error al obtener publicaciones"});
+    }
 });
 
 // GET /:id
