@@ -722,3 +722,26 @@ function renderizarGlobitos(busquedas) {
     contenedor.appendChild(globito);
   });
 }
+
+async function cargarBusquedasPersonalizadas() {
+  try {
+    const usuarioLogueado = JSON.parse(localStorage.getItem("usuarioLogueado"));
+
+    if (!usuarioLogueado) return;
+
+    const response = await fetch(
+      `${API_BASE_URL}/listas?usuario_id=${usuarioLogueado.id}`
+    );
+    
+
+    const busquedas = await response.json();
+    renderizarGlobitos(busquedas);
+
+  } catch (error) {
+    console.error("Error al cargar búsquedas personalizadas", error);
+  }
+}
+
+document.addEventListener("DOMContentLoaded", () => {
+  cargarBusquedasPersonalizadas();
+}); 
