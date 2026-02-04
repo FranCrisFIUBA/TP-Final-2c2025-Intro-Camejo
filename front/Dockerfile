@@ -19,4 +19,4 @@ EXPOSE 80
 
 # generar config final con envsubst y arrancar nginx
 # esto se hace para poder "cargar" variables de entorno en el front
-CMD ["/bin/sh", "-c", "envsubst < /etc/nginx/templates/default.conf.template > /etc/nginx/conf.d/default.conf && nginx -g 'daemon off;'"]
+CMD ["/bin/sh", "-c", "envsubst '${API_URL}' < /etc/nginx/templates/default.conf.template > /etc/nginx/conf.d/default.conf && nginx -g 'daemon off;'"]
