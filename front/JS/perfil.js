@@ -691,3 +691,34 @@ inputIcono.addEventListener('change', () => {
   };
   reader.readAsDataURL(file);
 });
+
+function renderizarGlobitos(busquedas) {
+  const contenedor = document.getElementById("lista-busquedas");
+  contenedor.innerHTML = "";
+
+  if (!busquedas || busquedas.length === 0) {
+    contenedor.innerHTML = "<p>No tenés búsquedas personalizadas.</p>";
+    return;
+  }
+
+  busquedas.forEach(b => {
+    const globito = document.createElement("div");
+    globito.classList.add("globito-busqueda");
+
+    globito.innerHTML = `
+      <div class="globito-header">
+          <div>
+            <strong>Búsqueda:</strong>
+            <span>#${b.etiquetas}</span>
+          </div>
+      </div>
+    
+      <div class="globito-body">
+        <strong>Filtros:</strong>
+        <small>${b.titulo}</small>
+      </div>
+    `;
+
+    contenedor.appendChild(globito);
+  });
+}
