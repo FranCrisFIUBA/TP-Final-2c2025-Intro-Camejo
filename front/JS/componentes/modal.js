@@ -48,36 +48,6 @@ export function closeCardModal() {
         modal.style.display = 'none';
         document.body.style.overflow = 'auto';
     }
-    window.location.reload();
-}
-
-async function quitarDelTablero(tableroId, publicacionId) {
-  await fetch(`${API_BASE_URL}/tableros/${tableroId}/publicaciones/${publicacionId}`, {
-    method: "DELETE"
-  });
-}
-
-
-async function eliminarTablero(tableroId) {
-  if (!confirm("¿Eliminar tablero?")) return;
-
-  await fetch(`${API_BASE_URL}/tableros/${tableroId}`, {
-    method: "DELETE"
-  });
-
-  cargarTableros(obtenerUsuarioLogueado().id);
-}
-
-
-async function obtenerTablerosGuardados(publicacionId) {
-  const usuario = obtenerUsuarioLogueado();
-  if (!usuario) return [];
-
-  const res = await fetch(
-    `${API_BASE_URL}/tableros/publicacion/${publicacionId}/usuario/${usuario.id}`
-  );
-
-  return await res.json();
 }
 
 
@@ -146,6 +116,7 @@ async function obtenerLikes(publicacionId) {
 
 
 export function abrirCardModal(card) {
+    const usuarioLogueado = obtenerUsuarioLogueado();
     window.publicacionActualId = card.id;
     const modal = document.getElementById('card-modal');
     if (!modal) return;
@@ -180,9 +151,11 @@ modal.innerHTML = `
                             <i class="${dioLike ? 'fa-solid' : 'fa-regular'} fa-heart like-icon"></i>
                             <span class="likes-numero">${card.likes_count || 0}</span>
                         </button>
+                        ${usuarioLogueado ? `
                         <button class="modal-save-btn" id="btn-save-tablero">
                             <i class="fa-solid fa-plus add-icon"></i>
                         </button>
+                        ` : ``}
                     </div>
                 </div>
             </div>` : ''}
@@ -196,12 +169,17 @@ modal.innerHTML = `
                         <h3>Comentarios <span class="comments-count"></span></h3>
                     </div>
                     <div class="comments-container"></div>
-                    <div class="add-comment-section">
-                        <div class="comment-input-container">
-                            <textarea class="comment-input" placeholder="Añade un comentario..." rows="3"></textarea>
-                            <button class="comment-submit-btn">Publicar</button>
+                    ${usuarioLogueado ? `
+                        <div class="add-comment-section">
+                            <div class="comment-input-container">
+                                <textarea class="comment-input" placeholder="Añade un comentario..." rows="3"></textarea>
+                                <button class="comment-submit-btn">Publicar</button>
+                            </div>
                         </div>
-                    </div>
+                        ` : `
+                        <div class="add-comment-section disabled" style="border-top: 1px solid #fff;">
+                        </div>
+                        `}
                 </div>
             </div>
         </div>
@@ -256,11 +234,13 @@ modal.innerHTML = `
         const btnCrearTablero = popover.querySelector('.btn-add-tablero-ui');
         const formTablero = popover.querySelector('#form-nuevo-tablero');
 
-        btnSave.onclick = (e) => {
-            e.stopPropagation();
-            popover.classList.toggle('active');
-            renderizarTableros(); 
-        };
+        if (btnSave) {
+            btnSave.onclick = (e) => {
+                e.stopPropagation();
+                popover.classList.toggle('active');
+                renderizarTableros(); 
+            };
+        }
 
         btnCrearTablero.onclick = () => {
             formTablero.style.display = formTablero.style.display === 'flex' ? 'none' : 'flex';
@@ -354,36 +334,64 @@ containerTableros.addEventListener("click", async (e) => {
         popover.onclick = (e) => e.stopPropagation();
     }
 
-    btnPublicar.onclick = async () => {
-        const texto = inputComentario.value.trim();
-        const usuarioLogueado = obtenerUsuarioLogueado();
-        if (!usuarioLogueado) return alert("Debes iniciar sesión para comentar");
-        if (!texto) return;
+    if (btnPublicar && inputComentario) {
+        btnPublicar.onclick = async () => {
+            const texto = inputComentario.value.trim();
+            const usuarioLogueado = obtenerUsuarioLogueado();
+            if (!usuarioLogueado) return alert("Debes iniciar sesión para comentar");
+            if (!texto) return;
 
-        btnPublicar.disabled = true;
-        const exito = await enviarComentario(card.id, texto, usuarioLogueado.id);
-        if (exito) {
-            inputComentario.value = "";
-            await cargarComentariosEnModal(card.id);
-        }
-        btnPublicar.disabled = false;
-    };
+            btnPublicar.disabled = true;
+            const exito = await enviarComentario(card.id, texto, usuarioLogueado.id);
+            if (exito) {
+                inputComentario.value = "";
+                await cargarComentariosEnModal(card.id);
+            }
+            btnPublicar.disabled = false;
+        };
+    }
 
-    commentsContainer.onclick = async (e) => {
-        const id = e.target.dataset.id;
-        if (e.target.classList.contains('btn-delete-comment')) {
-            if (confirm('¿Eliminar comentario?')) {
-                if (await borrarComentario(id)) e.target.closest('.comment-item').remove();
+
+
+    if (commentsContainer) {
+        commentsContainer.onclick = async (e) => {
+            const btnDelete = e.target.closest('.btn-delete-comment');
+            const btnEdit = e.target.closest('.btn-edit-comment');
+            if (!btnDelete && !btnEdit) return;
+            e.preventDefault();
+            e.stopPropagation(); 
+            e.stopImmediatePropagation();
+
+            const id = (btnDelete || btnEdit).dataset.id;
+
+            if (btnDelete) {
+                if (confirm('¿Esta seguro de eliminar este comentario?')) {
+                    btnDelete.disabled = true; 
+                    if (await borrarComentario(id)) {
+                        btnDelete.closest('.comment-item').remove();
+                    } else {
+                        btnDelete.disabled = false;
+                    }
+                }
             }
-        }
-        if (e.target.classList.contains('btn-edit-comment')) {
-            const textEl = e.target.closest('.comment-item').querySelector('.comment-text');
-            const nuevo = prompt('Editar:', textEl.textContent);
-            if (nuevo && nuevo.trim() && await editarComentario(id, nuevo.trim())) {
-                textEl.textContent = nuevo.trim();
+            if (btnEdit) {
+                const commentItem = btnEdit.closest('.comment-item');
+                const textEl = commentItem.querySelector('.comment-text');
+                const nuevo = prompt('Editar:', textEl.textContent);
+                
+                if (nuevo !== null && nuevo.trim() !== "" && nuevo.trim() !== textEl.textContent) {
+                    btnEdit.disabled = true;
+                    const exito = await editarComentario(id, nuevo.trim());
+                    
+                    if (exito) {
+                        textEl.textContent = nuevo.trim();
+                    }
+                    btnEdit.disabled = false;
+                }
             }
-        }
-    };
+        };
+    }
+
 
     const irPerfilUsuario = modal.querySelector('#irAPerfil');
     if (irPerfilUsuario) {
@@ -394,53 +402,61 @@ containerTableros.addEventListener("click", async (e) => {
     }
     const likeBtn = modal.querySelector('#btn-like-modal');
     if (likeBtn) {
-    likeBtn.onclick = async (e) => {
-        e.stopPropagation();
+        likeBtn.onclick = async (e) => {
+            e.stopPropagation();
+            const usuarioLogueado = obtenerUsuarioLogueado();
+            if (!usuarioLogueado) return alert("Inicia sesión para dar like");
+            const icon = likeBtn.querySelector('.like-icon');
+            const numeroSpan = likeBtn.querySelector('.likes-numero');
+            const isCurrentlyLiked = likeBtn.classList.contains('likeado');
+            const statsLikes = document.getElementById('estadistica-likes');
 
-        const usuarioLogueado = obtenerUsuarioLogueado();
-        if (!usuarioLogueado) return alert("Inicia sesión para dar like");
+            try {
+                if (!isCurrentlyLiked) {
+                    const res = await fetch(`${API_BASE_URL}/likes/publicacion`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            usuario_id: usuarioLogueado.id,
+                            publicacion_id: card.id
+                        })
+                    });
 
-        const icon = likeBtn.querySelector('.like-icon');
-        const numero = likeBtn.querySelector('.likes-numero');
-        const isCurrentlyLiked = likeBtn.classList.contains('likeado');
+                    if (res.ok) {
+                        const nuevoLike = await res.json();
+                        likeBtn.classList.add('likeado');
+                        likeBtn.dataset.likeId = nuevoLike.id;
+                        icon.className = 'fa-solid fa-heart like-icon';
+                        
+                        if (statsLikes) {
+                            statsLikes.textContent = (parseInt(statsLikes.textContent) || 0) + 1;
+                        }
+                    }
+                } else {
+                    const likeId = likeBtn.dataset.likeId;
+                    const res = await fetch(`${API_BASE_URL}/likes/${likeId}`, {
+                        method: 'DELETE'
+                    });
 
-        try {
-            if (!isCurrentlyLiked) {
-                const res = await fetch(`${API_BASE_URL}/likes/publicacion`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        usuario_id: usuarioLogueado.id,
-                        publicacion_id: card.id
-                    })
-                });
+                    if (res.ok) {
+                        likeBtn.classList.remove('likeado');
+                        likeBtn.dataset.likeId = '';
+                        icon.className = 'fa-regular fa-heart like-icon';
 
-                const nuevoLike = await res.json();
+                        if (statsLikes) {
+                            statsLikes.textContent = Math.max(0, (parseInt(statsLikes.textContent) || 0) - 1);
+                        }
+                    }
+                }
 
-                likeBtn.classList.add('likeado');
-                likeBtn.dataset.likeId = nuevoLike.id;
-                icon.className = 'fa-solid fa-heart like-icon';
+                const estado = await obtenerLikes(card.id);
+                numeroSpan.textContent = estado.total;
 
-            } else {
-                const likeId = likeBtn.dataset.likeId;
-
-                await fetch(`${API_BASE_URL}/likes/${likeId}`, {
-                    method: 'DELETE'
-                });
-
-                likeBtn.classList.remove('likeado');
-                likeBtn.dataset.likeId = '';
-                icon.className = 'fa-regular fa-heart like-icon';
+            } catch (err) {
+                console.error("Error like:", err);
             }
-
-            const estado = await obtenerLikes(card.id);
-            numero.textContent = estado.total;
-
-        } catch (err) {
-            console.error("Error like:", err);
-        }
-    };
-}
+        };
+    }
 
     modal.querySelector('.modal-close').onclick = closeCardModal;
     modal.querySelector('.modal-overlay').onclick = closeCardModal;
@@ -515,7 +531,6 @@ async function editarComentario(id, contenido) {
     });
     return res.ok;
 }
-
 
 
 

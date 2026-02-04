@@ -22,7 +22,7 @@ async function verPublicacionesTablero(tablero, usuarioId) {
 
     container.innerHTML = `
       <div class="tablero-detalle-header">
-        <button id="btn-atras-tableros" class="btn btn-atras" style="margin-bottom:10px;">
+        <button id="btn-atras-tableros" class="btn-atras">
           <i class="fa-solid fa-arrow-left"></i> Volver a tableros
         </button>
         <h2>${tablero.titulo}</h2>
@@ -146,7 +146,7 @@ async function cargarTableros(usuarioId) {
               : `<p class="tablero-vacio">Tablero vacío</p>`
           }
         </div>
-        <p class="tablero-descripcion">${listarHashtags(tablero.etiquetas) || ''}</p>
+        <p class="tablero-etiquetas">${listarHashtags(tablero.etiquetas) || ''}</p>
       `;
           
       div.querySelector('.tablero-preview').onclick = () => {
@@ -192,7 +192,7 @@ async function cargarTableros(usuarioId) {
             if (response.ok) {
               const actualizado = await response.json();
               div.querySelector('.tablero-titulo').textContent = actualizado.titulo;
-              div.querySelector('.tablero-descripcion').innerHTML = listarHashtags(actualizado.etiquetas);
+              div.querySelector('.tablero-etiquetas').innerHTML = listarHashtags(actualizado.etiquetas);
               alert("Tablero actualizado");
             }
           } catch (error) {
@@ -282,10 +282,30 @@ function configurarNavegacion() {
 }
 
 document.addEventListener('DOMContentLoaded', function() {
+    cargarPerfilUsuario();
+    configurarNavegacion();
+
     setTimeout(() => {
-        cargarPerfilUsuario();
-        configurarNavegacion();
-    }, 100);
+        const urlParams = new URLSearchParams(window.location.search);
+        const tab = urlParams.get('tab');
+
+        if (tab === 'busquedas') {
+            const opciones = document.querySelectorAll('.nav-option');
+            opciones.forEach(option => {
+                if (option.textContent.trim().toLowerCase() === 'búsquedas personalizadas') {
+                    option.click();
+                }
+            });
+        }
+        if (tab === 'tableros') {
+            const opciones = document.querySelectorAll('.nav-option');
+            opciones.forEach(option => {
+                if (option.textContent.trim().toLowerCase() === 'tableros') {
+                    option.click();
+                }
+            });
+        }
+    }, 50); 
 });
 
 async function cargarPerfilUsuario() {

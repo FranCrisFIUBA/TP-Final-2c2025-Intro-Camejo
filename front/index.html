@@ -26,39 +26,39 @@
                     </button>
                     
                 </form>
-                <section class="filters-panel" >
+               <section class="filters-panel">
                     <h3>Filtros</h3>
-    
-                    <label>
-                    Autor
-                    <input type="text" name="autor" placeholder="Nombre de usuario">
-                    </label> <br>
-            
-                    <label>
-                    Likes mínimos
-                    <input type="number" name="likes_minimos" min="0">
-                    </label> <br>
-            
-                    <label>
-                    Likes máximos
-                    <input type="number" name="likes_maximos" min="0">
-                    </label> <br>
-            
-                    <label>
-                    Fecha desde
-                    <input type="date" name="fecha_publicacion_minima">
-                    </label> <br>
-            
-                    <label>
-                    Fecha hasta
-                    <input type="date" name="fecha_publicacion_maxima">
-                    </label> <br>
-            
-                    <div class="filters-actions">
-                    <button type="button" class="btn-clear">Limpiar</button>
-                    <button type="button" class="btn-apply">Aplicar</button>
+
+                    <div class="filter-group">
+                        <label for="autor">Autor</label>
+                        <input type="text" id="autor" name="autor" placeholder="Nombre de usuario">
                     </div>
-            
+
+                    <div class="filter-row">
+                        <div class="filter-group">
+                            <label for="likes_minimos">Likes mín.</label>
+                            <input type="number" id="likes_minimos" name="likes_minimos" min="0" >
+                        </div>
+                        <div class="filter-group">
+                            <label for="likes_maximos">Likes máx.</label>
+                            <input type="number" id="likes_maximos" name="likes_maximos" min="0" >
+                        </div>
+                    </div>
+
+                    <div class="filter-group">
+                        <label>Rango de fechas</label>
+                        <div class="date-range">
+                            <input type="date" name="fecha_publicacion_minima">
+                            <span>a</span>
+                            <input type="date" name="fecha_publicacion_maxima">
+                        </div>
+                    </div>
+
+                    <div class="filters-actions">
+                        <button type="button" class="btn-clear">Limpiar</button>
+                        <button type="button" class="btn-apply">Aplicar</button>
+                        <button type="button" class="btn-save">Guardar</button>
+                    </div>
                 </section>
                 <div class="auth-buttons">
                     <a href="login.html" class="btn-auth btn-login">Iniciar sesión</a>

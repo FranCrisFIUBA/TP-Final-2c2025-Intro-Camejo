@@ -32,10 +32,12 @@ body, html {
 .navigation-options {
     display: flex;
     gap: 0;
-    background: transparent;
+    background: var(--amarillo);
     border-radius: 8px;
     box-shadow: 8px 5px 10px rgba(0,0,0,0.1);
-    color: #000000;
+    color: var(--negro);
+    margin-bottom: 10px;
+    border: var(--border-estandar);
 }
 
 .nav-option {
@@ -49,8 +51,7 @@ body, html {
 }
 
 .nav-option.active {
-    background: var(--amarillo);
-    border: var(--border-estandar);
+    background: var(--amarillo-oscuro);
 }
 
 .nav-option:hover:not(.active) {
@@ -79,13 +80,10 @@ body, html {
 
 
 
-/* Tableros */
 .tableros-container {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(265px, 1fr));
     gap: 20px;
-    cursor: pointer;
-    margin-top: 20px;
 }
 
 .tablero-item {
@@ -127,13 +125,6 @@ body, html {
     border-radius: 12px;
     white-space: nowrap;
 }
-
-.tablero-descripcion {
-    color: var(--gris3);
-    overflow: hidden;
-    padding: 5px;
-}
-
 .tablero-hashtag {
   background: #f0f2f5;
   color: var(--azul);
@@ -714,19 +705,22 @@ body, html {
 .edit-modal-top-actions .btn-cancelar {
     background: var(--gris1);
     border: none;
+    font-family: var(--nunito);
     padding: 8px 16px;
     border-radius: 6px;
     cursor: pointer;
+    color: var(--negro);
 }
 
 .edit-modal-top-actions .btn-guardar {
     background: var(--amarillo); 
     color: var(--negro);
-    border: none;
+    font-family: var(--nunito);
     padding: 8px 20px;
     border-radius: 6px;
     cursor: pointer;
     font-weight: bold;
+    border: none;
 }
 .edit-modal-top-actions .btn-guardar:hover {
     background: var(--amarillo-oscuro);
@@ -802,114 +796,44 @@ body, html {
 
 
 #publicaciones-tablero-grid {
-  display: block;
-  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); 
-  gap: 20px;
+    display: block;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); 
+    gap: 20px;
+    margin-left: 10px;
 }
 
 .tablero-detalle-header {
     width: 100%;
-    margin-bottom: 30px;
     display: block; 
-    margin-left: 10px;
+    margin-left: 20px;
     font-size: 28px;
 }
-
+.tablero-etiquetas{
+    margin: 0;
+    margin-left: -8px;
+}
+.tablero-etiquetas .tablero-hashtag{
+    background: var(--blanco);
+    color: var(--azul);
+}
 .tablero-hashtags-container {
     margin-top: 10px;
     display: flex;
     gap: 8px;
     flex-wrap: wrap;
 }
+
+.tablero-hashtags-container .tablero-hashtag{
+    background: var(--amarillo);
+    color: var(--negro);
+}
 .btn-atras{
     background: var(--amarillo);
-}
-
-#lista-busquedas {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 16px;
-    margin-top: 20px; 
-    align-items: flex-start;
-  }
-  
-.globito-busqueda {
-  background: #ffffff;
-  border-radius: 12px;
-  padding: 14px 16px;
-
-  display: inline-flex;          
-  flex-direction: column;
-  gap: 6px;
-
-  max-width: 320px;
-  flex: 0 0 auto;             
-  width: fit-content;           
-
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
-  border: 1px solid #e5e5e5;
-}
-
-
-
-.globito-busqueda:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 8px 18px rgba(0, 0, 0, 0.12);
-}
-
-.globito-header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 8px;
-    width: 100%;
-  }
-
-.globito-header strong {
-  font-weight: 600;
-  color: #111;
-}
-
-.globito-header span {
-  font-weight: 700;
-  margin-left: 0;       
-}
-
-.globito-body {
-  font-size: 16px;
-  color: #333;
-}
-
-.globito-body strong {
-  display: inline;
-  margin-bottom: 4px;
-  font-size: 16px;
-  font-weight: 600;
-}
-
-.globito-body small {
-  font-size: 16px;
-  line-height: 1.4;
-}
-
-.globito-header > div {
-    display: flex;
-    gap: 6px;
-    align-items: center;
-    flex-wrap: wrap;
-}
-
-.btn-eliminar-busqueda {
-    background: transparent;
-    border: none;
-    color: #999;
-    font-size: 16px;
+    color: var(--negro);
+    font-family: var(--nunito);
+    margin-bottom: 5px;
+    padding: 10px;
+    border-radius: 8px;
     cursor: pointer;
-    line-height: 1;
-    padding: 0;
-    flex-shrink: 0;
-  }
-  
-.btn-eliminar-busqueda:hover {
-  color: #e74c3c;
+    margin-left: -10px;
 }
