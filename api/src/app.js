@@ -5,13 +5,14 @@ import publicacionesRouter from "./routes/publicaciones.js";
 import comentariosRouter from "./routes/comentarios.js";
 import likesRouter from "./routes/likes.js";
 import tablerosRouter from "./routes/tableros.js";
+import listasRouter from "./routes/listas.js";
 import {logRequest} from "./middlewares/logRequest.js";
 import {logResponse} from "./middlewares/logResponse.js";
 import {dataDiagnostic} from "./routes/diagnostics/dataDiagnostic.js";
 import {healthDiagnostic} from "./routes/diagnostics/healthDiagnostic.js";
 import {testConnectionWithRetry} from "./db.js";
 import cors from "cors";
-import {LOCAL_ICONOS_PATH, LOCAL_IMAGENES_PATH} from "./middlewares/storage.js";
+import {LOCAL_ICONOS_PATH, LOCAL_IMAGENES_PATH, USE_S3} from "./middlewares/storage.js";
 import noCache from "./middlewares/noCache.js";
 
 // carga las variables de entorno
@@ -40,14 +41,21 @@ app
     .use("/comentarios", comentariosRouter)
     .use("/likes", likesRouter)
     .use("/tableros", tablerosRouter)
-    .use("/imagenes", express.static(LOCAL_IMAGENES_PATH))
-    .use('/iconos', express.static(LOCAL_ICONOS_PATH));
+    .use('/listas', listasRouter);
 
+if (!USE_S3) {
+    app
+        .use("/imagenes", express.static(LOCAL_IMAGENES_PATH))
+        .use('/iconos', express.static(LOCAL_ICONOS_PATH))
+}
+
+/*
 if (NODE_ENV === "development") {
     app
         .get('/health', healthDiagnostic)
         .get('/api/data', dataDiagnostic); // Ruta para datos completos (ACTUALIZADA PARA INCLUIR LIKES REALES)
 }
+*/
 
 // Inicializar la aplicación
 
@@ -62,8 +70,5 @@ if (!dbConnected) {
 }
 
 app.listen(PORT, '0.0.0.0', () => {
-    console.log(`API escuchando en http://localhost:${PORT}`);
-    console.log(`Health check: http://localhost:${PORT}/health`);
-    console.log(`API Data: http://localhost:${PORT}/api/data`);
-    console.log(`Comentarios API: http://localhost:${PORT}/comentarios`);
+    console.log(`API escuchando en el puerto ${PORT}`);
 });
