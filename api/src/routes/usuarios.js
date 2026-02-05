@@ -33,20 +33,24 @@ usuarios.get('/', async (req, res) => {
 });
 
 // GET /usuarios/:id
-usuarios.get('/:id',  async (req, res) => {
+usuarios.get('/:id', async (req, res) => {
     try {
         intentarConseguirUsuarioPorId(req.params.id)
-            .then( (usuario) => {
-                res.status(200).send(usuario)})
-            .catch( (err) => {
-                console.error(err)
-                res.status(404).json({ error: "Usuario no encontrado" });})
-
+            .then((usuario) => {
+                if (usuario.icono) {
+                    usuario.icono = getFileUrl(usuario.icono);
+                }
+                res.status(200).send(usuario);
+            })
+            .catch((err) => {
+                console.error(err);
+                res.status(404).json({ error: "Usuario no encontrado" });
+            });
     } catch (err) {
         console.error(err);
         res.status(500).json({ error: "Error del servidor al obtener usuario" });
     }
-})
+});
 
 // POST /usuarios
 usuarios.post('/',
