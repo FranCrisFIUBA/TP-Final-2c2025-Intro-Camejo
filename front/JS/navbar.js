@@ -1,4 +1,4 @@
-import {API_ICONOS_URL, API_TABLEROS_URL} from "./api.js";
+import {API_TABLEROS_URL} from "./api.js";
 
 document.addEventListener('DOMContentLoaded', () => {
     const container = document.querySelector('.container');
@@ -71,7 +71,7 @@ function inicializarNavbar() {
     const avatarImg = document.querySelector(".user-avatar img");
     if (avatarImg) {
         avatarImg.src = usuarioLogueado.icono
-            ? `${API_ICONOS_URL}/${usuarioLogueado.icono}`
+            ? `${usuarioLogueado.icono}`
             : "./img/avatar-default.jpg";
     }
     const addButton = document.getElementById('add-button');
