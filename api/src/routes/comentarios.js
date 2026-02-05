@@ -1,6 +1,7 @@
 // routes/comentarios.js
 import express from 'express';
 import { pool } from "../db.js";
+import {getFileUrl} from "../middlewares/storage.js";
 
 const router = express.Router();
 
@@ -8,9 +9,9 @@ const router = express.Router();
 router.get('/publicacion/:publicacionId', async (req, res) => {
     try {
         const { publicacionId } = req.params;
-        
+
         const result = await pool.query(`
-            SELECT 
+            SELECT
                 c.id,
                 c.contenido as text,
                 c.fecha_publicacion as date,
@@ -19,20 +20,20 @@ router.get('/publicacion/:publicacionId', async (req, res) => {
                 u.nombre as author,
                 u.icono as avatar
             FROM comentarios c
-            JOIN usuarios u ON c.usuario_id = u.id
+                     JOIN usuarios u ON c.usuario_id = u.id
             WHERE c.publicacion_id = $1
             ORDER BY c.fecha_publicacion ASC
         `, [publicacionId]);
-        
-        const comentarios = result.rows.map(comentario => ({
+
+        const comentarios = await Promise.all(result.rows.map(async comentario => ({
             id: comentario.id,
             author: comentario.author,
-            avatar: comentario.avatar,
+            avatar: comentario.avatar ? await getFileUrl(comentario.avatar, 'iconos') : null,
             text: comentario.text,
             date: comentario.date,
             usuario_id: comentario.usuario_id
-        }));
-        
+        })));
+
         res.status(200).json(comentarios);
     } catch (error) {
         console.error('Error obteniendo comentarios:', error);
@@ -44,31 +45,36 @@ router.get('/publicacion/:publicacionId', async (req, res) => {
 router.post('/', async (req, res) => {
     try {
         const { usuario_id, publicacion_id, contenido } = req.body;
-        
+
         if (!usuario_id || !publicacion_id || !contenido) {
             return res.status(400).json({ error: "Faltan campos requeridos" });
         }
-        
+
         const result = await pool.query(`
             INSERT INTO comentarios (usuario_id, publicacion_id, contenido)
             VALUES ($1, $2, $3)
             RETURNING *
         `, [usuario_id, publicacion_id, contenido]);
-        
+
         // Obtener el comentario con información del usuario
         const comentarioCompleto = await pool.query(`
-            SELECT 
+            SELECT
                 c.id,
                 c.contenido as text,
                 c.fecha_publicacion as date,
                 u.nombre as author,
                 u.icono as avatar
             FROM comentarios c
-            JOIN usuarios u ON c.usuario_id = u.id
+                     JOIN usuarios u ON c.usuario_id = u.id
             WHERE c.id = $1
         `, [result.rows[0].id]);
-        
-        res.status(201).json(comentarioCompleto.rows[0]);
+
+        const comentario = comentarioCompleto.rows[0];
+        if (comentario.avatar) {
+            comentario.avatar = await getFileUrl(comentario.avatar, 'iconos');
+        }
+
+        res.status(201).json(comentario);
     } catch (error) {
         console.error('Error creando comentario:', error);
         res.status(500).json({ error: "Error al crear comentario" });

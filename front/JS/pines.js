@@ -1,6 +1,7 @@
-import { crearCard } from './componentes/card.js';
-import { abrirCardModal } from './componentes/modal.js';
-const API_BASE_URL = 'http://127.0.0.1:3000';
+import {crearCard} from './componentes/card.js';
+import {abrirCardModal} from './componentes/modal.js';
+import {API_COMENTARIOS_URL, API_PUBLICACIONES_URL, API_USUARIOS_URL} from "./api.js";
+
 const usuariosCache = new Map();
 
 let filtrosActivos = {
@@ -19,11 +20,10 @@ async function obtenerUsuarioPorId(usuarioId) {
     }
 
     try {
-        const res = await fetch(`${API_BASE_URL}/usuarios/${usuarioId}`);
+        const res = await fetch(`${API_USUARIOS_URL}/${usuarioId}`);
         if (!res.ok) throw new Error('Error obteniendo usuario');
 
-        const json = await res.json();
-        const usuario = json.data;
+        const usuario = await res.json();
 
         usuariosCache.set(usuarioId, usuario);
         return usuario;
@@ -34,7 +34,7 @@ async function obtenerUsuarioPorId(usuarioId) {
 }
 const cargarPublicaciones = async () => {
     try {
-        const respuesta = await fetch(`${API_BASE_URL}/publicaciones`);
+        const respuesta = await fetch(`${API_PUBLICACIONES_URL}`);
         if (!respuesta.ok) throw new Error(`Error: ${respuesta.status}`);
 
         const datos = await respuesta.json();
@@ -142,7 +142,7 @@ async function buscarPublicacionesPorTagConFiltros(filtros) {
   
     try {
       const respuesta = await fetch(
-        `${API_BASE_URL}/publicaciones?${params.toString()}`
+        `${API_PUBLICACIONES_URL}?${params.toString()}`
       );
   
       if (!respuesta.ok) {
@@ -209,7 +209,7 @@ async function borrarComentario(comentarioId) {
     const usuarioLogueado = obtenerUsuarioLogueado();
 
     try {
-        const res = await fetch(`${API_BASE_URL}/comentarios/${comentarioId}`, {
+        const res = await fetch(`${API_COMENTARIOS_URL}/${comentarioId}`, {
             method: 'DELETE',
             headers: {
                 'Content-Type': 'application/json'
@@ -236,7 +236,7 @@ async function editarComentario(comentarioId, contenido) {
     const usuarioLogueado = obtenerUsuarioLogueado();
 
     try {
-        const res = await fetch(`${API_BASE_URL}/comentarios/${comentarioId}`, {
+        const res = await fetch(`${API_COMENTARIOS_URL}/${comentarioId}`, {
             method: 'PUT',
             headers: {
                 'Content-Type': 'application/json'
@@ -273,7 +273,7 @@ function obtenerUsuarioLogueado() {
 
 async function enviarComentario(publicacionId, contenido, usuarioId) {
     try {
-        const response = await fetch(`${API_BASE_URL}/comentarios`, {
+        const response = await fetch(`${API_COMENTARIOS_URL}`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'

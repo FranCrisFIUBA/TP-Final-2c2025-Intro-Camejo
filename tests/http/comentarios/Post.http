@@ -1,4 +1,4 @@
-@api_url = http://localhost:3000
+@api_url = https://api-tp-final-2c2025-intro-camejo.onrender.com
 @comentarios_url = {{api_url}}/comentarios
 
 ### 1. Comentario en Viaje de Chihiro (User 2)

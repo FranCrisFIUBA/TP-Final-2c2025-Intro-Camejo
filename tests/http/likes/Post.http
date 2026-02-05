@@ -1,4 +1,4 @@
-@api_url = http://localhost:3000
+@api_url = https://api-tp-final-2c2025-intro-camejo.onrender.com
 @likes_url = {{api_url}}/likes/publicacion
 
 ### --- LIKES PARA PUBLICACIÓN 1 (Popular) ---
@@ -112,259 +112,385 @@ Content-Type: application/json
 ###
 POST {{likes_url}}
 Content-Type: application/json
+
 { "usuario_id": 2, "publicacion_id": 11 }
+
 ###
 POST {{likes_url}}
 Content-Type: application/json
+
 { "usuario_id": 3, "publicacion_id": 11 }
+
 ###
 POST {{likes_url}}
 Content-Type: application/json
+
 { "usuario_id": 4, "publicacion_id": 12 }
+
 ###
 POST {{likes_url}}
 Content-Type: application/json
+
 { "usuario_id": 7, "publicacion_id": 12 }
+
 ###
 POST {{likes_url}}
 Content-Type: application/json
+
 { "usuario_id": 1, "publicacion_id": 13 }
+
 ###
 POST {{likes_url}}
 Content-Type: application/json
+
 { "usuario_id": 5, "publicacion_id": 13 }
+
 ###
 POST {{likes_url}}
 Content-Type: application/json
+
 { "usuario_id": 2, "publicacion_id": 14 }
+
 ###
 POST {{likes_url}}
 Content-Type: application/json
+
 { "usuario_id": 3, "publicacion_id": 15 }
+
 ###
 POST {{likes_url}}
 Content-Type: application/json
+
 { "usuario_id": 6, "publicacion_id": 15 }
+
 ###
 POST {{likes_url}}
 Content-Type: application/json
+
 { "usuario_id": 4, "publicacion_id": 16 }
+
 ###
 POST {{likes_url}}
 Content-Type: application/json
+
 { "usuario_id": 7, "publicacion_id": 17 }
+
 ###
 POST {{likes_url}}
 Content-Type: application/json
+
 { "usuario_id": 1, "publicacion_id": 18 }
+
 ###
 POST {{likes_url}}
 Content-Type: application/json
+
 { "usuario_id": 2, "publicacion_id": 19 }
+
 ###
 POST {{likes_url}}
 Content-Type: application/json
+
 { "usuario_id": 4, "publicacion_id": 19 }
+
 ###
 POST {{likes_url}}
 Content-Type: application/json
+
 { "usuario_id": 5, "publicacion_id": 20 }
 
 ### --- LIKES PARA PUBLICACIONES 21-30 (Mucha actividad) ---
 POST {{likes_url}}
 Content-Type: application/json
+
 { "usuario_id": 6, "publicacion_id": 21 }
+
 ###
 POST {{likes_url}}
 Content-Type: application/json
+
 { "usuario_id": 1, "publicacion_id": 21 }
+
 ###
 POST {{likes_url}}
 Content-Type: application/json
+
 { "usuario_id": 3, "publicacion_id": 22 }
+
 ###
 POST {{likes_url}}
 Content-Type: application/json
+
 { "usuario_id": 7, "publicacion_id": 22 }
+
 ###
 POST {{likes_url}}
 Content-Type: application/json
+
 { "usuario_id": 2, "publicacion_id": 23 }
+
 ###
 POST {{likes_url}}
 Content-Type: application/json
+
 { "usuario_id": 4, "publicacion_id": 23 }
+
 ###
 POST {{likes_url}}
 Content-Type: application/json
+
 { "usuario_id": 5, "publicacion_id": 23 }
+
 ###
 POST {{likes_url}}
 Content-Type: application/json
+
 { "usuario_id": 1, "publicacion_id": 24 }
+
 ###
 POST {{likes_url}}
 Content-Type: application/json
+
 { "usuario_id": 6, "publicacion_id": 24 }
+
 ###
 POST {{likes_url}}
 Content-Type: application/json
+
 { "usuario_id": 3, "publicacion_id": 25 }
+
 ###
 POST {{likes_url}}
 Content-Type: application/json
+
 { "usuario_id": 2, "publicacion_id": 26 }
+
 ###
 POST {{likes_url}}
 Content-Type: application/json
+
 { "usuario_id": 5, "publicacion_id": 26 }
+
 ###
 POST {{likes_url}}
 Content-Type: application/json
+
 { "usuario_id": 7, "publicacion_id": 26 }
+
 ###
 POST {{likes_url}}
 Content-Type: application/json
+
 { "usuario_id": 1, "publicacion_id": 27 }
+
 ###
 POST {{likes_url}}
 Content-Type: application/json
+
 { "usuario_id": 4, "publicacion_id": 27 }
+
 ###
 POST {{likes_url}}
 Content-Type: application/json
+
 { "usuario_id": 6, "publicacion_id": 28 }
+
 ###
 POST {{likes_url}}
 Content-Type: application/json
+
 { "usuario_id": 2, "publicacion_id": 29 }
+
 ###
 POST {{likes_url}}
 Content-Type: application/json
+
 { "usuario_id": 7, "publicacion_id": 29 }
+
 ###
 POST {{likes_url}}
 Content-Type: application/json
+
 { "usuario_id": 3, "publicacion_id": 30 }
 
 ### --- LIKES PARA PUBLICACIONES 31-39 (Populares recientes) ---
 POST {{likes_url}}
 Content-Type: application/json
+
 { "usuario_id": 1, "publicacion_id": 31 }
+
 ###
 POST {{likes_url}}
 Content-Type: application/json
+
 { "usuario_id": 4, "publicacion_id": 31 }
+
 ###
 POST {{likes_url}}
 Content-Type: application/json
+
 { "usuario_id": 2, "publicacion_id": 32 }
+
 ###
 POST {{likes_url}}
 Content-Type: application/json
+
 { "usuario_id": 5, "publicacion_id": 32 }
+
 ###
 POST {{likes_url}}
 Content-Type: application/json
+
 { "usuario_id": 7, "publicacion_id": 32 }
+
 ###
 POST {{likes_url}}
 Content-Type: application/json
+
 { "usuario_id": 3, "publicacion_id": 33 }
+
 ###
 POST {{likes_url}}
 Content-Type: application/json
+
 { "usuario_id": 6, "publicacion_id": 33 }
+
 ###
 POST {{likes_url}}
 Content-Type: application/json
+
 { "usuario_id": 1, "publicacion_id": 34 }
+
 ###
 POST {{likes_url}}
 Content-Type: application/json
+
 { "usuario_id": 2, "publicacion_id": 34 }
+
 ###
 POST {{likes_url}}
 Content-Type: application/json
+
 { "usuario_id": 4, "publicacion_id": 34 }
+
 ###
 POST {{likes_url}}
 Content-Type: application/json
+
 { "usuario_id": 5, "publicacion_id": 35 }
+
 ###
 POST {{likes_url}}
 Content-Type: application/json
+
 { "usuario_id": 7, "publicacion_id": 35 }
+
 ###
 POST {{likes_url}}
 Content-Type: application/json
+
 { "usuario_id": 3, "publicacion_id": 36 }
+
 ###
 POST {{likes_url}}
 Content-Type: application/json
+
 { "usuario_id": 6, "publicacion_id": 36 }
+
 ###
 POST {{likes_url}}
 Content-Type: application/json
+
 { "usuario_id": 1, "publicacion_id": 37 }
+
 ###
 POST {{likes_url}}
 Content-Type: application/json
+
 { "usuario_id": 2, "publicacion_id": 37 }
+
 ###
 POST {{likes_url}}
 Content-Type: application/json
+
 { "usuario_id": 5, "publicacion_id": 38 }
+
 ###
 POST {{likes_url}}
 Content-Type: application/json
+
 { "usuario_id": 4, "publicacion_id": 38 }
+
 ###
 POST {{likes_url}}
 Content-Type: application/json
+
 { "usuario_id": 7, "publicacion_id": 39 }
+
 ###
 POST {{likes_url}}
 Content-Type: application/json
+
 { "usuario_id": 3, "publicacion_id": 39 }
 
 ### --- REPARTIENDO MÁS LIKES ALEATORIOS ---
 POST {{likes_url}}
 Content-Type: application/json
+
 { "usuario_id": 6, "publicacion_id": 1 }
+
 ###
 POST {{likes_url}}
 Content-Type: application/json
+
 { "usuario_id": 5, "publicacion_id": 10 }
+
 ###
 POST {{likes_url}}
 Content-Type: application/json
+
 { "usuario_id": 4, "publicacion_id": 5 }
+
 ###
 POST {{likes_url}}
 Content-Type: application/json
+
 { "usuario_id": 2, "publicacion_id": 20 }
+
 ###
 POST {{likes_url}}
 Content-Type: application/json
+
 { "usuario_id": 1, "publicacion_id": 39 }
+
 ###
 POST {{likes_url}}
 Content-Type: application/json
+
 { "usuario_id": 7, "publicacion_id": 11 }
+
 ###
 POST {{likes_url}}
 Content-Type: application/json
+
 { "usuario_id": 3, "publicacion_id": 27 }
+
 ###
 POST {{likes_url}}
 Content-Type: application/json
+
 { "usuario_id": 5, "publicacion_id": 14 }
+
 ###
 POST {{likes_url}}
 Content-Type: application/json
+
 { "usuario_id": 6, "publicacion_id": 30 }
+
 ###
 POST {{likes_url}}
 Content-Type: application/json
+
 { "usuario_id": 4, "publicacion_id": 35 }
+
+###

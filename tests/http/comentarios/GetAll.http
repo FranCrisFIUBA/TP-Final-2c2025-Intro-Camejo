@@ -1,5 +1,5 @@
 
-@api_url = http://localhost:3000
+@api_url = https://api-tp-final-2c2025-intro-camejo.onrender.com
 @likes_url = {{api_url}}/likes
 ### GET
 GET {{likes_url}}/

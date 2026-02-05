@@ -1,5 +1,4 @@
-const API_BASE = "http://127.0.0.1:3000";
-const API_USUARIOS = API_BASE + "/usuarios";
+import {API_USUARIOS_URL} from "./api.js";
 
 const formRegistro = document.getElementById("form-registro");
 const mensajeError = document.getElementById("mensaje-error-aviso");
@@ -43,7 +42,7 @@ formRegistro.addEventListener("submit", async (e) => {
     }
 
     try {
-        const res = await fetch(API_USUARIOS, {
+        const res = await fetch(API_USUARIOS_URL, {
             method: "POST",
             body: formData
         });
