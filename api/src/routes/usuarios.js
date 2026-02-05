@@ -7,7 +7,7 @@ import {
     existeUsuarioConId, existeUsuarioConNombre
 } from "../utils/database/usuarios.js";
 import {esquemaActualizacionUsuario, esquemaPostUsuario} from "../utils/esquemas/usuarios.js";
-import {deleteFile, getFileUrl, iconoUsuarioUpload} from "../middlewares/storage.js";
+import {deleteFile, getFileUrl, iconoUsuarioUpload, USE_S3} from "../middlewares/storage.js";
 import multer from "multer";
 import {elimiarIconoUsuarioPorId} from "../utils/storage/usuarios.js";
 
@@ -71,7 +71,7 @@ usuarios.post('/',
                 email: req.body.email,
                 fecha_nacimiento: new Date(req.body.fecha_nacimiento),
                 fecha_registro: new Date(),
-                icono: req.file ? req.file.filename : null
+                icono: req.file ? (USE_S3 ? req.file.key : req.file.filename) : null
             };
 
             const usuario = await esquemaPostUsuario.safeParseAsync(usuarioData);
@@ -103,7 +103,7 @@ usuarios.post('/',
 
             const responseUsuario = result.rows[0];
             if (responseUsuario.icono) {
-                responseUsuario.icono = getFileUrl(responseUsuario.icono, "iconos");
+                responseUsuario.icono = await getFileUrl(responseUsuario.icono, "iconos");
             }
 
             res.status(201).json(responseUsuario);
