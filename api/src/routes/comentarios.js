@@ -45,31 +45,36 @@ router.get('/publicacion/:publicacionId', async (req, res) => {
 router.post('/', async (req, res) => {
     try {
         const { usuario_id, publicacion_id, contenido } = req.body;
-        
+
         if (!usuario_id || !publicacion_id || !contenido) {
             return res.status(400).json({ error: "Faltan campos requeridos" });
         }
-        
+
         const result = await pool.query(`
             INSERT INTO comentarios (usuario_id, publicacion_id, contenido)
             VALUES ($1, $2, $3)
             RETURNING *
         `, [usuario_id, publicacion_id, contenido]);
-        
+
         // Obtener el comentario con información del usuario
         const comentarioCompleto = await pool.query(`
-            SELECT 
+            SELECT
                 c.id,
                 c.contenido as text,
                 c.fecha_publicacion as date,
                 u.nombre as author,
                 u.icono as avatar
             FROM comentarios c
-            JOIN usuarios u ON c.usuario_id = u.id
+                     JOIN usuarios u ON c.usuario_id = u.id
             WHERE c.id = $1
         `, [result.rows[0].id]);
-        
-        res.status(201).json(comentarioCompleto.rows[0]);
+
+        const comentario = comentarioCompleto.rows[0];
+        if (comentario.avatar) {
+            comentario.avatar = getFileUrl(comentario.avatar, 'iconos');
+        }
+
+        res.status(201).json(comentario);
     } catch (error) {
         console.error('Error creando comentario:', error);
         res.status(500).json({ error: "Error al crear comentario" });
