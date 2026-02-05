@@ -25,14 +25,14 @@ router.get('/publicacion/:publicacionId', async (req, res) => {
             ORDER BY c.fecha_publicacion ASC
         `, [publicacionId]);
 
-        const comentarios = result.rows.map(async comentario => ({
+        const comentarios = await Promise.all(result.rows.map(async comentario => ({
             id: comentario.id,
             author: comentario.author,
             avatar: comentario.avatar ? await getFileUrl(comentario.avatar, 'iconos') : null,
             text: comentario.text,
             date: comentario.date,
             usuario_id: comentario.usuario_id
-        }));
+        })));
 
         res.status(200).json(comentarios);
     } catch (error) {
