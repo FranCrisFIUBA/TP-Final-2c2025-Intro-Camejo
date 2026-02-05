@@ -96,11 +96,11 @@ tableros.get("/tablero/:idTablero/publicaciones", async (req, res) => {
         `, [idTablero]);
 
         // Convertir imágenes e iconos a URLs públicas o temporales
-        const publicacionesConUrls = result.rows.map(async pub => ({
+        const publicacionesConUrls = await Promise.all(result.rows.map(async pub => ({
             ...pub,
             imagen: pub.imagen ? await getFileUrl(pub.imagen, 'imagenes') : null,
             usuario_icono: pub.usuario_icono ? await getFileUrl(pub.usuario_icono, 'iconos') : null
-        }));
+        })));
 
         res.status(200).json(publicacionesConUrls);
     } catch (err) {
@@ -122,7 +122,7 @@ tableros.get("/usuario/:idUsuario/publicacion/:idPublicacion/estados", async (re
       WHERE t.usuario_id = $1 AND tp.publicacion_id = $2
     `, [idUsuario, idPublicacion]);
 
-    res.json(result.rows.map(row => row.tablero_id));
+    res.status(200).json(result.rows.map(row => row.tablero_id));
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: "Error al verificar estados de guardado" });
