@@ -1,12 +1,8 @@
 // routes/listas.js
 import express from 'express';
 import { pool } from "../db.js";
-import {getPublicacionesConBusqueda, validarParametrosDeBusqueda} from "../utils/database/publicaciones.js";
-import {intentarConseguirUsuarioPorId} from "../utils/database/usuarios.js";
 import {
-    intentarConseguirListaPorId,
-    intentarConseguirListaPorIdUsuario,
-    intentarConseguirListasPorIdUsuario, obtenerPublicacionesPorLista
+    intentarConseguirListaPorId, intentarConseguirListasPorIdUsuario, obtenerPublicacionesPorLista
 } from "../utils/database/listas.js";
 
 const listas = express.Router();
