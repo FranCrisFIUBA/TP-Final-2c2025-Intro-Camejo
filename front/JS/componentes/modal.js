@@ -1,8 +1,6 @@
-const API_BASE_URL = 'http://127.0.0.1:3000';
-const API_IMAGENES = API_BASE_URL + '/imagenes';
-const API_ICONOS = API_BASE_URL + '/iconos';
-const AVATAR_DEFAULT = './img/avatar-default.jpg';
+import {API_COMENTARIOS_URL, API_LIKES_URL, API_TABLEROS_URL} from "../api.js";
 
+const AVATAR_DEFAULT = './img/avatar-default.jpg';
 
 function irAlPerfil(usuarioId) {
     window.location.href = `perfil.html?id=${usuarioId}`;
@@ -50,28 +48,54 @@ export function closeCardModal() {
     }
 }
 
+
+
+
+
+
 async function renderizarTableros() {
-    const container = document.querySelector('.tableros-list-container');
-    const usuario = obtenerUsuarioLogueado();
-    //const res = await fetch(`${API_BASE_URL}/tableros/usuario/${usuario.id}`);
-    //const tableros = await res.json();
-    
-    // Ejemplo local para probar:
-    const tablerosEjemplo = [{id: 1, titulo: 'Favoritos'}, {id: 2, titulo: 'Inspiración'}, {id: 3, titulo: 'Animales'}, {id: 4, titulo: 'Ideas para dibuja'}];
-    
-    container.innerHTML = tablerosEjemplo.map(t => `
+  const container = document.querySelector('.tableros-list-container');
+  const usuario = obtenerUsuarioLogueado();
+  const publicacionId = window.publicacionActualId;
+
+  if (!usuario || !publicacionId) return;
+
+  try {
+    const resTableros = await fetch(`${API_TABLEROS_URL}/usuario/${usuario.id}`);
+    const tableros = await resTableros.json();
+
+    const resEstados = await fetch(`${API_TABLEROS_URL}/usuario/${usuario.id}/publicacion/${publicacionId}/estados`);
+    const idsDondeEstaGuardado = await resEstados.json();
+
+    if (!tableros.length) {
+      container.innerHTML = `<p class="mensaje-sinTableros" >No tenés tableros aún</p>`;
+      return;
+    }
+
+    container.innerHTML = tableros.map(t => {
+      const estaGuardado = idsDondeEstaGuardado.includes(t.id);
+      
+      return `
         <div class="lista-tableros">
-            <span>${t.titulo}</span>
-            <button class="btn-tablero-guardar" data-id="${t.id}">
-                Guardar
-            </button>
+          <span>${t.titulo}</span>
+          <button class="btn-tablero-guardar ${estaGuardado ? 'guardado' : ''}" 
+                  data-id="${t.id}" 
+                  data-guardado="${estaGuardado}">
+            ${estaGuardado ? '✔ Guardado' : 'Guardar'}
+          </button>
         </div>
-    `).join('');
+      `;
+    }).join('');
+
+  } catch (err) {
+    console.error(err);
+    container.innerHTML = `<p>Error al cargar tableros</p>`;
+  }
 }
 
 async function obtenerLikes(publicacionId) {
     const usuario = obtenerUsuarioLogueado();
-    const res = await fetch(`${API_BASE_URL}/likes/publicacion/${publicacionId}`);
+    const res = await fetch(`${API_LIKES_URL}/publicacion/${publicacionId}`);
     const likes = await res.json();
     const total = likes.length;
 
@@ -90,6 +114,8 @@ async function obtenerLikes(publicacionId) {
 
 
 export function abrirCardModal(card) {
+    const usuarioLogueado = obtenerUsuarioLogueado();
+    window.publicacionActualId = card.id;
     const modal = document.getElementById('card-modal');
     if (!modal) return;
 
@@ -97,7 +123,7 @@ export function abrirCardModal(card) {
     const tieneImagen = !!card.imagen;
     const dioLike = card.usuario_dio_like; 
 
-modal.innerHTML = `
+    modal.innerHTML = `
     <div class="modal-overlay"></div>
     <div class="modal-content">
         <button class="modal-close">&times;</button>
@@ -105,11 +131,11 @@ modal.innerHTML = `
             ${tieneImagen ? `
             <div class="modal-image-section">
                 <div class="modal-image-wrapper ratio-${imageRatio}">
-                    <img src="${API_IMAGENES}/${card.imagen}" class="modal-image">
+                    <img src="${card.imagen}" class="modal-image">
                 </div>
                 <div class="modal-author-info">
                     <div class="modal-author-details-wrapper" id="irAPerfil" style="display:flex; align-items:center; gap:12px; cursor:pointer;">
-                        <img src="${card.usuario_icono ? `${API_ICONOS}/${card.usuario_icono}` : AVATAR_DEFAULT}"
+                        <img src="${card.usuario_icono ? `${card.usuario_icono}` : AVATAR_DEFAULT}"
                              class="modal-author-avatar" onerror="this.src='${AVATAR_DEFAULT}'">
                         <div class="modal-author-details">
                             <span class="modal-author-name">${card.usuario_nombre || 'Usuario'}</span>
@@ -123,9 +149,11 @@ modal.innerHTML = `
                             <i class="${dioLike ? 'fa-solid' : 'fa-regular'} fa-heart like-icon"></i>
                             <span class="likes-numero">${card.likes_count || 0}</span>
                         </button>
+                        ${usuarioLogueado ? `
                         <button class="modal-save-btn" id="btn-save-tablero">
                             <i class="fa-solid fa-plus add-icon"></i>
                         </button>
+                        ` : ``}
                     </div>
                 </div>
             </div>` : ''}
@@ -139,12 +167,17 @@ modal.innerHTML = `
                         <h3>Comentarios <span class="comments-count"></span></h3>
                     </div>
                     <div class="comments-container"></div>
-                    <div class="add-comment-section">
-                        <div class="comment-input-container">
-                            <textarea class="comment-input" placeholder="Añade un comentario..." rows="3"></textarea>
-                            <button class="comment-submit-btn">Publicar</button>
+                    ${usuarioLogueado ? `
+                        <div class="add-comment-section">
+                            <div class="comment-input-container">
+                                <textarea class="comment-input" placeholder="Añade un comentario..." rows="3"></textarea>
+                                <button class="comment-submit-btn">Publicar</button>
+                            </div>
                         </div>
-                    </div>
+                        ` : `
+                        <div class="add-comment-section disabled" style="border-top: 1px solid #fff;">
+                        </div>
+                        `}
                 </div>
             </div>
         </div>
@@ -194,63 +227,167 @@ modal.innerHTML = `
             </div>
         `;
         modalActions.appendChild(popover);
-
+        const containerTableros = popover.querySelector('.tableros-list-container');
         const btnSave = modal.querySelector('#btn-save-tablero');
-        const btnShowForm = popover.querySelector('.btn-add-tablero-ui');
+        const btnCrearTablero = popover.querySelector('.btn-add-tablero-ui');
         const formTablero = popover.querySelector('#form-nuevo-tablero');
 
-        btnSave.onclick = (e) => {
-            e.stopPropagation();
-            popover.classList.toggle('active');
-            renderizarTableros(); 
-        };
+        if (btnSave) {
+            btnSave.onclick = (e) => {
+                e.stopPropagation();
+                popover.classList.toggle('active');
+                renderizarTableros(); 
+            };
+        }
 
-        btnShowForm.onclick = () => {
+        btnCrearTablero.onclick = () => {
             formTablero.style.display = formTablero.style.display === 'flex' ? 'none' : 'flex';
         };
 
-        formTablero.onsubmit = async (e) => {
+        containerTableros.addEventListener("click", async (e) => {
+            const btn = e.target.closest(".btn-tablero-guardar");
+            if (!btn) return;
+
+            const tableroId = btn.dataset.id;
+            const publicacionId = window.publicacionActualId;
+
+            if (!publicacionId) return alert("No hay publicación seleccionada");
+
+            const estaGuardado = btn.dataset.guardado === "true";
+
+    try {
+        if (!estaGuardado) {
+            const res = await fetch(`${API_TABLEROS_URL}/${tableroId}/publicaciones`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ publicacion_id: publicacionId })
+            });
+
+                    if (res.ok) {
+                        btn.textContent = "✔ Guardado";
+                        btn.dataset.guardado = "true";
+                        btn.classList.add("guardado");
+                    } else {
+                        const data = await res.json();
+                        alert(data.error || "Error al guardar");
+                    }
+
+        } else {
+            const res = await fetch(`${API_TABLEROS_URL}/${tableroId}/publicaciones/${publicacionId}`, {
+                method: "DELETE" 
+            });
+
+                    if (res.ok) {
+                        btn.textContent = "Guardar";
+                        btn.dataset.guardado = "false";
+                        btn.classList.remove("guardado");
+                    } else {
+                        alert("Error al quitar del tablero");
+                    }
+                }
+            } catch (err) {
+                console.error(err);
+                alert("Error de conexión");
+            }
+        });
+
+        formTablero.addEventListener('submit', async (e) => {
             e.preventDefault();
-            const nombre = document.getElementById('new-tablero-name').value;
-            const etiquetas = document.getElementById('new-tablero-tags').value;
-            console.log("Creando tablero:", { nombre, etiquetas });
-            formTablero.reset();
-            formTablero.style.display = 'none';
-        };
-        
+
+            const usuario = obtenerUsuarioLogueado();
+            if (!usuario) return alert("No estás logueado");
+
+            const titulo = document.getElementById('new-tablero-name').value.trim();
+            const etiquetas = document.getElementById('new-tablero-tags').value.trim();
+
+            if (!titulo) return alert("Ingresá un nombre");
+
+            try {
+                const res = await fetch(`${API_TABLEROS_URL}`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    usuario_id: usuario.id,
+                    titulo,
+                    etiquetas
+                })
+                });
+
+                if (!res.ok) {
+                    const err = await res.json();
+                    return alert(err.error || "Error creando tablero");
+                }
+
+                formTablero.reset();
+                formTablero.style.display = "none";
+
+                await renderizarTableros();
+            } catch (err) {
+                console.error(err);
+                alert("Error de conexión");
+            }
+        });
         popover.onclick = (e) => e.stopPropagation();
     }
 
-    btnPublicar.onclick = async () => {
-        const texto = inputComentario.value.trim();
-        const usuarioLogueado = obtenerUsuarioLogueado();
-        if (!usuarioLogueado) return alert("Debes iniciar sesión para comentar");
-        if (!texto) return;
+    if (btnPublicar && inputComentario) {
+        btnPublicar.onclick = async () => {
+            const texto = inputComentario.value.trim();
+            const usuarioLogueado = obtenerUsuarioLogueado();
+            if (!usuarioLogueado) return alert("Debes iniciar sesión para comentar");
+            if (!texto) return;
 
-        btnPublicar.disabled = true;
-        const exito = await enviarComentario(card.id, texto, usuarioLogueado.id);
-        if (exito) {
-            inputComentario.value = "";
-            await cargarComentariosEnModal(card.id);
-        }
-        btnPublicar.disabled = false;
-    };
+            btnPublicar.disabled = true;
+            const exito = await enviarComentario(card.id, texto, usuarioLogueado.id);
+            if (exito) {
+                inputComentario.value = "";
+                await cargarComentariosEnModal(card.id);
+            }
+            btnPublicar.disabled = false;
+        };
+    }
 
-    commentsContainer.onclick = async (e) => {
-        const id = e.target.dataset.id;
-        if (e.target.classList.contains('btn-delete-comment')) {
-            if (confirm('¿Eliminar comentario?')) {
-                if (await borrarComentario(id)) e.target.closest('.comment-item').remove();
+
+
+    if (commentsContainer) {
+        commentsContainer.onclick = async (e) => {
+            const btnDelete = e.target.closest('.btn-delete-comment');
+            const btnEdit = e.target.closest('.btn-edit-comment');
+            if (!btnDelete && !btnEdit) return;
+            e.preventDefault();
+            e.stopPropagation(); 
+            e.stopImmediatePropagation();
+
+            const id = (btnDelete || btnEdit).dataset.id;
+
+            if (btnDelete) {
+                if (confirm('¿Esta seguro de eliminar este comentario?')) {
+                    btnDelete.disabled = true; 
+                    if (await borrarComentario(id)) {
+                        btnDelete.closest('.comment-item').remove();
+                    } else {
+                        btnDelete.disabled = false;
+                    }
+                }
             }
-        }
-        if (e.target.classList.contains('btn-edit-comment')) {
-            const textEl = e.target.closest('.comment-item').querySelector('.comment-text');
-            const nuevo = prompt('Editar:', textEl.textContent);
-            if (nuevo && nuevo.trim() && await editarComentario(id, nuevo.trim())) {
-                textEl.textContent = nuevo.trim();
+            if (btnEdit) {
+                const commentItem = btnEdit.closest('.comment-item');
+                const textEl = commentItem.querySelector('.comment-text');
+                const nuevo = prompt('Editar:', textEl.textContent);
+                
+                if (nuevo !== null && nuevo.trim() !== "" && nuevo.trim() !== textEl.textContent) {
+                    btnEdit.disabled = true;
+                    const exito = await editarComentario(id, nuevo.trim());
+                    
+                    if (exito) {
+                        textEl.textContent = nuevo.trim();
+                    }
+                    btnEdit.disabled = false;
+                }
             }
-        }
-    };
+        };
+    }
+
 
     const irPerfilUsuario = modal.querySelector('#irAPerfil');
     if (irPerfilUsuario) {
@@ -261,53 +398,61 @@ modal.innerHTML = `
     }
     const likeBtn = modal.querySelector('#btn-like-modal');
     if (likeBtn) {
-    likeBtn.onclick = async (e) => {
-        e.stopPropagation();
+        likeBtn.onclick = async (e) => {
+            e.stopPropagation();
+            const usuarioLogueado = obtenerUsuarioLogueado();
+            if (!usuarioLogueado) return alert("Inicia sesión para dar like");
+            const icon = likeBtn.querySelector('.like-icon');
+            const numeroSpan = likeBtn.querySelector('.likes-numero');
+            const isCurrentlyLiked = likeBtn.classList.contains('likeado');
+            const statsLikes = document.getElementById('estadistica-likes');
 
-        const usuarioLogueado = obtenerUsuarioLogueado();
-        if (!usuarioLogueado) return alert("Inicia sesión para dar like");
+            try {
+                if (!isCurrentlyLiked) {
+                    const res = await fetch(`${API_LIKES_URL}/publicacion`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            usuario_id: usuarioLogueado.id,
+                            publicacion_id: card.id
+                        })
+                    });
 
-        const icon = likeBtn.querySelector('.like-icon');
-        const numero = likeBtn.querySelector('.likes-numero');
-        const isCurrentlyLiked = likeBtn.classList.contains('likeado');
+                    if (res.ok) {
+                        const nuevoLike = await res.json();
+                        likeBtn.classList.add('likeado');
+                        likeBtn.dataset.likeId = nuevoLike.id;
+                        icon.className = 'fa-solid fa-heart like-icon';
+                        
+                        if (statsLikes) {
+                            statsLikes.textContent = (parseInt(statsLikes.textContent) || 0) + 1;
+                        }
+                    }
+                } else {
+                    const likeId = likeBtn.dataset.likeId;
+                    const res = await fetch(`${API_LIKES_URL}/${likeId}`, {
+                        method: 'DELETE'
+                    });
 
-        try {
-            if (!isCurrentlyLiked) {
-                const res = await fetch(`${API_BASE_URL}/likes/publicacion`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        usuario_id: usuarioLogueado.id,
-                        publicacion_id: card.id
-                    })
-                });
+                    if (res.ok) {
+                        likeBtn.classList.remove('likeado');
+                        likeBtn.dataset.likeId = '';
+                        icon.className = 'fa-regular fa-heart like-icon';
 
-                const nuevoLike = await res.json();
+                        if (statsLikes) {
+                            statsLikes.textContent = Math.max(0, (parseInt(statsLikes.textContent) || 0) - 1);
+                        }
+                    }
+                }
 
-                likeBtn.classList.add('likeado');
-                likeBtn.dataset.likeId = nuevoLike.id;
-                icon.className = 'fa-solid fa-heart like-icon';
+                const estado = await obtenerLikes(card.id);
+                numeroSpan.textContent = estado.total;
 
-            } else {
-                const likeId = likeBtn.dataset.likeId;
-
-                await fetch(`${API_BASE_URL}/likes/${likeId}`, {
-                    method: 'DELETE'
-                });
-
-                likeBtn.classList.remove('likeado');
-                likeBtn.dataset.likeId = '';
-                icon.className = 'fa-regular fa-heart like-icon';
+            } catch (err) {
+                console.error("Error like:", err);
             }
-
-            const estado = await obtenerLikes(card.id);
-            numero.textContent = estado.total;
-
-        } catch (err) {
-            console.error("Error like:", err);
-        }
-    };
-}
+        };
+    }
 
     modal.querySelector('.modal-close').onclick = closeCardModal;
     modal.querySelector('.modal-overlay').onclick = closeCardModal;
@@ -318,7 +463,7 @@ async function cargarComentariosEnModal(publicacionId) {
     const container = document.querySelector('.comments-container');
     const countEl = document.querySelector('.comments-count');
     try {
-        const res = await fetch(`${API_BASE_URL}/comentarios/publicacion/${publicacionId}`);
+        const res = await fetch(`${API_COMENTARIOS_URL}/publicacion/${publicacionId}`);
         const comentarios = await res.json();
         const userLog = obtenerUsuarioLogueado();
 
@@ -332,7 +477,7 @@ async function cargarComentariosEnModal(publicacionId) {
         container.innerHTML = comentarios.map(c => `
             <div class="comment-item">
                 <div class="comment-author">
-                    <img src="${c.avatar ? `${API_ICONOS}/${c.avatar}` : AVATAR_DEFAULT}" class="comment-avatar">
+                    <img src="${c.avatar ? `${c.avatar}` : AVATAR_DEFAULT}" class="comment-avatar">
                     <div class="comment-content">
                         <div class="comment-header">
                             <strong>${c.author}</strong>
@@ -355,7 +500,7 @@ async function cargarComentariosEnModal(publicacionId) {
 }
 
 async function enviarComentario(pubId, contenido, uId) {
-    const res = await fetch(`${API_BASE_URL}/comentarios`, {
+    const res = await fetch(`${API_COMENTARIOS_URL}`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ usuario_id: uId, publicacion_id: pubId, contenido })
@@ -365,7 +510,7 @@ async function enviarComentario(pubId, contenido, uId) {
 
 async function borrarComentario(id) {
     const user = obtenerUsuarioLogueado();
-    const res = await fetch(`${API_BASE_URL}/comentarios/${id}`, {
+    const res = await fetch(`${API_COMENTARIOS_URL}/${id}`, {
         method: 'DELETE',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ usuario_id: user.id })
@@ -375,14 +520,13 @@ async function borrarComentario(id) {
 
 async function editarComentario(id, contenido) {
     const user = obtenerUsuarioLogueado();
-    const res = await fetch(`${API_BASE_URL}/comentarios/${id}`, {
+    const res = await fetch(`${API_COMENTARIOS_URL}/${id}`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ contenido, usuario_id: user.id })
     });
     return res.ok;
 }
-
 
 
 

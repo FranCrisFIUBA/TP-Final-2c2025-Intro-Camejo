@@ -1,5 +1,4 @@
-const API_BASE = "http://localhost:3000";
-const API_PUBLICACIONES = API_BASE + "/publicaciones";
+import {API_PUBLICACIONES_URL} from "./api.js";
 
 const formPublicacion = document.getElementById("form-publicacion");
 const fileInput = document.getElementById("file-input");
@@ -23,7 +22,7 @@ if (pinParaEditar) {
     formPublicacion.querySelector('[name="etiquetas"]').value = pinParaEditar.etiquetas || "";
     
     if (pinParaEditar.imagen) {
-        previewImg.src = `${API_BASE}/imagenes/${pinParaEditar.imagen}`;
+        previewImg.src = `${pinParaEditar.imagen}`;
         previewImg.style.display = "block";
         textPrompt.style.display = "none";
     }
@@ -165,14 +164,13 @@ formPublicacion.addEventListener("submit", async (e) => {
         formData.set("alto_imagen", alto);
     }
     
-    let url = API_PUBLICACIONES;
+    let url = API_PUBLICACIONES_URL;
     let metodo = "POST";
 
     if (pinParaEditar) {
-        url = `${API_PUBLICACIONES}/${pinParaEditar.id}`;
+        url = `${API_PUBLICACIONES_URL}/${pinParaEditar.id}`;
         metodo = "PATCH";
         console.log("Editando pin:", pinParaEditar.id);
-        // Añade este console.log antes del fetch en create-pin.js
 console.log("Archivo seleccionado:", fileInput.files[0]);
 console.log("Campos en FormData:");
 for (let pair of formData.entries()) {

@@ -3,106 +3,136 @@ import express from 'express'
 import {pool} from "../db.js";
 import {
     actualizarUsuarioPorId, intentarConseguirUsuarioPorId,
-    intentarConseguirUsuarioPorNombre, existeUsuarioConEmail,
+    existeUsuarioConEmail,
     existeUsuarioConId, existeUsuarioConNombre
 } from "../utils/database/usuarios.js";
 import {esquemaActualizacionUsuario, esquemaPostUsuario} from "../utils/esquemas/usuarios.js";
-import {iconoUsuarioUpload} from "../middlewares/storage.js";
+import {deleteFile, getFileUrl, iconoUsuarioUpload, USE_S3} from "../middlewares/storage.js";
 import multer from "multer";
 import {elimiarIconoUsuarioPorId} from "../utils/storage/usuarios.js";
 
 const usuarios = express.Router()
 
 // GET /usuarios
-
 usuarios.get('/', async (req, res) => {
     try {
         const result = await pool.query('SELECT * FROM usuarios');
-        res.status(200).json(result.rows);
+
+        // Mapear URLs de iconos según storage dinámico y esperar todas las Promises
+        const usuariosConIconos = await Promise.all(result.rows.map(async u => ({
+            ...u,
+            icono: u.icono ? await getFileUrl(u.icono, "iconos") : null
+        })));
+
+        res.status(200).json(usuariosConIconos);
     } catch (err) {
         console.error(err);
         res.status(500).json({ error: "Error del servidor al obtener usuarios" });
     }
-})
+});
 
 // GET /usuarios/:id
-
-usuarios.get('/:id',  async (req, res) => {
+usuarios.get('/:id', async (req, res) => {
     try {
-        intentarConseguirUsuarioPorId(req.params.id)
-            .then( (usuario) => {
-                res.status(200).send(usuario)})
-            .catch( (err) => {
-                console.error(err)
-                res.status(404).json({ error: "Usuario no encontrado" });})
+        const usuario = await intentarConseguirUsuarioPorId(req.params.id);
+        if (!usuario) {
+            return res.status(404).json({ error: "Usuario no encontrado" });
+        }
 
+        if (usuario.icono) {
+            usuario.icono = await getFileUrl(usuario.icono, 'iconos');
+        }
+
+        res.status(200).json(usuario);
     } catch (err) {
         console.error(err);
         res.status(500).json({ error: "Error del servidor al obtener usuario" });
     }
-})
+});
 
 // POST /usuarios
-
 usuarios.post('/',
     (req, res, next) => {
+        console.log('--- Multer Upload Inicio ---');
         iconoUsuarioUpload.single('icono')(req, res, function(err) {
-            if (err instanceof multer.MulterError ) {
+            if (err instanceof multer.MulterError) {
+                console.error('MulterError:', err);
                 return res.status(400).json({ error: err.message });
             } else if (err) {
+                console.error('Error en Multer:', err);
                 return res.status(500).json({ error: "Error en la subida de archivo" });
             }
+            console.log('--- Multer Upload OK ---');
+            console.log('req.file:', req.file);
             next();
         });
     },
-
     async (req, res) => {
-    try {
-        const usuarioData = {
-            nombre: req.body.nombre,
-            contrasenia: req.body.contrasenia,
-            email: req.body.email,
-            fecha_nacimiento: new Date(req.body.fecha_nacimiento),
-            fecha_registro: new Date(),
-            icono: req.file ? `${req.file.filename}` : null
-        };
+        try {
+            console.log('--- Datos recibidos ---');
+            console.log('req.body:', req.body);
 
-        const usuario = await esquemaPostUsuario.safeParseAsync(usuarioData);
-        if (!usuario.success) {
-            return res.status(400).json({ errors: usuario.error.issues });
+            const usuarioData = {
+                nombre: req.body.nombre,
+                contrasenia: req.body.contrasenia,
+                email: req.body.email,
+                fecha_nacimiento: new Date(req.body.fecha_nacimiento),
+                fecha_registro: new Date(),
+                icono: req.file ? (USE_S3 ? req.file.key : req.file.filename) : null
+            };
+
+            console.log('--- usuarioData construido ---');
+            console.log(usuarioData);
+
+            const usuario = await esquemaPostUsuario.safeParseAsync(usuarioData);
+            if (!usuario.success) {
+                console.error('Validación fallida:', usuario.error.issues);
+                return res.status(400).json({ errors: usuario.error.issues });
+            }
+
+            if (await existeUsuarioConNombre(usuario.data.nombre)) {
+                console.warn('Nombre de usuario ya existe:', usuario.data.nombre);
+                return res.status(409).json({ error: "El nombre de usuario ya existe" });
+            }
+            if (await existeUsuarioConEmail(usuario.data.email)) {
+                console.warn('Email ya registrado:', usuario.data.email);
+                return res.status(409).json({ error: "El email ya está registrado" });
+            }
+
+            console.log('--- Insertando usuario en DB ---');
+            const result = await pool.query(
+                `INSERT INTO usuarios
+                     (nombre, contrasenia, email, icono, fecha_nacimiento, fecha_registro)
+                 VALUES ($1, $2, $3, $4, $5, $6)
+                     RETURNING *`,
+                [
+                    usuario.data.nombre,
+                    usuario.data.contrasenia,
+                    usuario.data.email,
+                    usuarioData.icono, // usar valor correcto según storage dinámico
+                    usuario.data.fecha_nacimiento,
+                    usuario.data.fecha_registro
+                ]
+            );
+
+            const responseUsuario = result.rows[0];
+            console.log('--- Usuario insertado ---');
+            console.log(responseUsuario);
+
+            if (responseUsuario.icono) {
+                responseUsuario.icono = await getFileUrl(responseUsuario.icono, "iconos");
+                console.log('URL de icono generado:', responseUsuario.icono);
+            }
+
+            res.status(201).json(responseUsuario);
+        } catch (err) {
+            console.error('Error al crear usuario:', err);
+            res.status(500).json({ error: "Error al crear usuario" });
         }
-
-        if (await existeUsuarioConNombre(usuario.data.nombre)) {
-            return res.status(409).json({ error: "El nombre de usuario ya existe" });
-        }
-        if (await existeUsuarioConEmail(usuario.data.email)) {
-            return res.status(409).json({ error: "El email ya está registrado" });
-        }
-
-        const result = await pool.query(
-            `INSERT INTO usuarios
-                 (nombre, contrasenia, email, icono, fecha_nacimiento, fecha_registro)
-             VALUES ($1, $2, $3, $4, $5, $6)
-                 RETURNING *`,
-            [
-                usuario.data.nombre,
-                usuario.data.contrasenia,
-                usuario.data.email,
-                usuario.data.icono,
-                usuario.data.fecha_nacimiento,
-                usuario.data.fecha_registro
-            ]
-        );
-
-        res.status(201).json(result.rows[0]);
-    } catch (err) {
-        console.error(err);
-        res.status(500).json({ error: "Error al crear usuario" });
     }
-});
+);
 
 // PATCH /usuarios/:id
-
 usuarios.patch(
     '/:id',
     (req, res, next) => {
@@ -122,22 +152,19 @@ usuarios.patch(
 
             if (Number.isNaN(id)) {
                 return res.status(400).json({
-                errors: [{
-                    path: ['id'],
-                    message: 'Id de usuario invalido'
-                }]
+                    errors: [{ path: ['id'], message: 'Id de usuario invalido' }]
                 });
             }
 
             const usuario = await intentarConseguirUsuarioPorId(id);
-            if (!usuario.success) {
+            if (!usuario) {
                 return res.status(404).json({ error: "Usuario no encontrado" });
             }
 
             const datosActualizados = {
                 ...req.body,
                 id,
-                icono: req.file ? req.file.filename : usuario.data.icono
+                icono: req.file ? req.file.filename : usuario.icono
             };
 
             const actualizacion = await esquemaActualizacionUsuario.safeParseAsync(datosActualizados);
@@ -166,7 +193,7 @@ usuarios.patch(
             }
 
             // Si hay icono nuevo, eliminar el anterior
-            if (req.file && usuario.data.icono) {
+            if (req.file && usuario.icono) {
                 await elimiarIconoUsuarioPorId(usuario.data.id);
             }
 
@@ -182,7 +209,12 @@ usuarios.patch(
                 return res.status(404).send({});
             }
 
-            res.status(200).json(result.rows[0]);
+            const usuarioActualizado = result.rows[0];
+            if (usuarioActualizado.icono) {
+                usuarioActualizado.icono = await getFileUrl(usuarioActualizado.icono, "iconos");
+            }
+
+            res.status(200).json(usuarioActualizado);
         } catch (err) {
             console.error(err);
             res.status(500).json({ error: "Error al actualizar usuario" });
@@ -191,7 +223,6 @@ usuarios.patch(
 );
 
 // DELETE /usuarios/:id
-
 usuarios.delete('/:id', async (req, res) => {
     try {
         const { id } = req.params;
@@ -199,7 +230,11 @@ usuarios.delete('/:id', async (req, res) => {
         if (await existeUsuarioConId(id) !== true)
             return res.status(404).json({ error: "Usuario no encontrado" });
 
-        await elimiarIconoUsuarioPorId(id)
+        // Obtener usuario para saber el nombre/path del icono
+        const usuario = await intentarConseguirUsuarioPorId(id);
+        if (usuario && usuario.icono) {
+            await deleteFile(usuario.icono); // elimina icono local o en S3 según storage
+        }
 
         await pool.query(
             "DELETE FROM usuarios WHERE id = $1",
@@ -211,6 +246,6 @@ usuarios.delete('/:id', async (req, res) => {
         console.error(err);
         res.status(500).json({ error: "Error al eliminar usuario" });
     }
-})
+});
 
 export default usuarios

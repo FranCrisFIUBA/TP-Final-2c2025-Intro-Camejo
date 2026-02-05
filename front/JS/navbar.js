@@ -1,9 +1,8 @@
-const API_BASE = 'http://127.0.0.1:3000';
+import {API_TABLEROS_URL} from "./api.js";
 
 document.addEventListener('DOMContentLoaded', () => {
     const container = document.querySelector('.container');
     const navbarContainer = document.getElementById('navbar-container');
-
     const usuarioLogueado = obtenerUsuarioLogueado();
 
     if (!container) return;
@@ -72,7 +71,7 @@ function inicializarNavbar() {
     const avatarImg = document.querySelector(".user-avatar img");
     if (avatarImg) {
         avatarImg.src = usuarioLogueado.icono
-            ? `${API_BASE}/iconos/${usuarioLogueado.icono}`
+            ? `${usuarioLogueado.icono}`
             : "./img/avatar-default.jpg";
     }
     const addButton = document.getElementById('add-button');
@@ -84,7 +83,48 @@ function inicializarNavbar() {
     const boardInput = document.getElementById('board-name');
     const cancelBoardBtn = document.getElementById('cancel-board');
     const createBoardBtn = document.getElementById('create-board');
-   
+    const tagsInput = document.getElementById('board-tags'); 
+
+    createBoardBtn?.addEventListener('click', async () => {
+        const titulo = boardInput.value.trim();
+        const etiquetas = tagsInput ? tagsInput.value.trim() : "";
+
+        if (!titulo) {
+            return alert('Ingresá un nombre para el tablero');
+        }
+
+        try {
+            const res = await fetch(API_TABLEROS_URL, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    usuario_id: usuarioLogueado.id,
+                    titulo: titulo,
+                    etiquetas: etiquetas 
+                })
+            });
+
+            if (!res.ok) {
+                const err = await res.json();
+                return alert(err.error || "Error creando tablero");
+            }
+
+            boardInput.value = '';
+            if(tagsInput) tagsInput.value = '';
+            cerrarformTablero();
+            
+            if (window.location.pathname.includes('perfil.html')) {
+                location.reload(); 
+            } else {
+                alert("¡Tablero creado con éxito!");
+            }
+
+        } catch (err) {
+            console.error("Error al crear tablero:", err);
+            alert("Error de conexión");
+        }
+    });
+
     function abrirformTablero() {
         cerrarDropdown();
         boardform.classList.add('show');
@@ -98,39 +138,28 @@ function inicializarNavbar() {
         overlay.classList.remove('show');
     }
 
-        function cerrarDropdown() {
-            dropdownMenu?.classList.remove('show');
-            overlay?.classList.remove('show');
-        }
+    function cerrarDropdown() {
+        dropdownMenu?.classList.remove('show');
+        overlay?.classList.remove('show');
+    }
 
-        function toggleDropdown() {
-            dropdownMenu?.classList.toggle('show');
-            overlay?.classList.toggle('show');
-        }
+    function toggleDropdown() {
+        dropdownMenu?.classList.toggle('show');
+        overlay?.classList.toggle('show');
+    }
 
-        addButton?.addEventListener('click', e => {
-            e.preventDefault();
-            e.stopPropagation();
-            toggleDropdown();
-        });
+    addButton?.addEventListener('click', e => {
+        e.preventDefault();
+        e.stopPropagation();
+        toggleDropdown();
+    });
 
-        overlay?.addEventListener('click', () => {
+    overlay?.addEventListener('click', () => {
         cerrarDropdown();
         cerrarformTablero();
     });
     cancelBoardBtn?.addEventListener('click', cerrarformTablero);
 
-    createBoardBtn?.addEventListener('click', () => {
-        const nombre = boardInput.value.trim();
-
-        if (!nombre) {
-            alert('Ingresá un nombre para el tablero');
-            return;
-        }
-
-        console.log('Crear tablero:', nombre);
-        cerrarformTablero();
-    });
     createBoardItem?.addEventListener('click', e => {
         e.preventDefault();
         abrirformTablero();
@@ -158,10 +187,22 @@ function inicializarNavbar() {
         location.href = "index.html";
     });     
 
-    document.querySelector(".icon-bar.search")
-        ?.addEventListener("click", () => location.href = "search.html");
+    document.querySelector(".icon-bar.search")?.addEventListener("click", () => {
+        location.href = `perfil.html?id=${usuarioLogueado.id}&tab=busquedas`;
+    });
+    document.querySelector(".icon-bar.boards")?.addEventListener("click", () => {
+        location.href = `perfil.html?id=${usuarioLogueado.id}&tab=tableros`;
+    });
 
     profileButton?.addEventListener("click", () => {
         location.href = `perfil.html?id=${usuarioLogueado.id}`;
     });
 }
+
+
+const btnFiltro = document.querySelector(".btn-filtros");
+const panelFiltros = document.querySelector(".filters-panel");
+
+btnFiltro.addEventListener("click", () => {
+  panelFiltros.classList.toggle("activo");
+});

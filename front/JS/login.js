@@ -1,3 +1,5 @@
+import {API_USUARIOS_URL} from "./api.js";
+
 document.getElementById("form-login").addEventListener("submit", async (e) => {
   e.preventDefault();
 
@@ -17,7 +19,7 @@ document.getElementById("form-login").addEventListener("submit", async (e) => {
   }
 
   try {
-    const respuesta = await fetch("http://localhost:3000/usuarios");
+    const respuesta = await fetch(API_USUARIOS_URL);
     
     if (!respuesta.ok) {
       mensaje.textContent = "No se pudo obtener usuarios";
