@@ -723,3 +723,93 @@ inputIcono.addEventListener('change', () => {
   };
   reader.readAsDataURL(file);
 });
+
+function renderizarGlobitos(busquedas) {
+  const contenedor = document.getElementById("lista-busquedas");
+  contenedor.innerHTML = "";
+
+  if (!busquedas || busquedas.length === 0) {
+    contenedor.innerHTML = "<p>No tenés búsquedas personalizadas.</p>";
+    return;
+  }
+
+  busquedas.forEach(b => {
+    const globito = document.createElement("div");
+    globito.classList.add("globito-busqueda");
+
+    globito.innerHTML = `
+      <div class="globito-header">
+          <div>
+            <strong>Búsqueda:</strong>
+            <span>#${b.etiquetas}</span>
+          </div>
+
+          <button class="btn-eliminar-busqueda" data-id="${b.id}" title="Eliminar búsqueda">
+            ✕
+          </button>
+      </div>
+    
+      <div class="globito-body">
+        <strong>Filtros:</strong>
+        <small>${b.titulo}</small>
+      </div>
+    `;
+
+    globito.addEventListener("click", () => {
+      window.location.href = `/index.html?lista_id=${b.id}`;
+    });
+
+    
+    const btnEliminar = globito.querySelector(".btn-eliminar-busqueda");
+    btnEliminar.addEventListener("click", (e) => {
+      e.stopPropagation(); 
+      eliminarBusqueda(b.id);
+    });
+
+    contenedor.appendChild(globito);
+  });
+
+  contenedor.querySelectorAll(".btn-eliminar-busqueda").forEach(btn => {
+    btn.addEventListener("click", () => {
+      const id = btn.dataset.id;
+      eliminarBusqueda(id);
+    });
+  });
+}
+
+async function cargarBusquedasPersonalizadas() {
+  try {
+    const usuarioLogueado = JSON.parse(localStorage.getItem("usuarioLogueado"));
+
+    if (!usuarioLogueado) return;
+
+    const response = await fetch(
+      `${API_BASE_URL}/listas?usuario_id=${usuarioLogueado.id}`
+    );
+    
+
+    const busquedas = await response.json();
+    renderizarGlobitos(busquedas);
+
+  } catch (error) {
+    console.error("Error al cargar búsquedas personalizadas", error);
+  }
+}
+
+document.addEventListener("DOMContentLoaded", () => {
+  cargarBusquedasPersonalizadas();
+}); 
+
+async function eliminarBusqueda(listaId) {
+  if (!confirm('¿Eliminar esta búsqueda personalizada?')) return;
+
+  const res = await fetch(`${API_BASE_URL}/listas/${listaId}`, {
+    method: 'DELETE'
+  });
+
+  if (res.ok) {
+    cargarBusquedasPersonalizadas(); 
+  } else {
+    alert('Error al eliminar la búsqueda');
+  }
+}

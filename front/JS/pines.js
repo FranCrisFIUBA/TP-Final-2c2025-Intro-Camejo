@@ -6,6 +6,7 @@ const usuariosCache = new Map();
 
 let filtrosActivos = {
     tag: null,
+    autorId: null,
     autor: null,
     likesMin: null,
     likesMax: null,
@@ -79,6 +80,22 @@ const cargarPublicaciones = async () => {
     }
 };
 
+async function cargarPublicacionesPorLista(listaId) {
+    try {
+        const res = await fetch(`${API_BASE_URL}/listas/${listaId}/publicaciones`);
+        if (!res.ok) {
+            console.error("No se pudieron cargar las publicaciones de la lista");
+            return;
+        }
+
+        const datos = await res.json();
+        await renderizarPublicacionesDesdeDatos(datos);
+
+    } catch (error) {
+        console.error("Error cargando publicaciones desde lista", error);
+    }
+}
+
 
 async function renderizarPublicacionesDesdeDatos(datos) {
     const SINPUBLIC = './img/sinPublicaciones1.png';
@@ -120,24 +137,24 @@ async function buscarPublicacionesPorTagConFiltros(filtros) {
         params.append("tag", filtros.tag);
       }
   
-    if (filtros.autor) {
-      params.append("autor", filtros.autor);
+    if (filtros.autorId) {
+      params.append("autor_id", filtros.autorId);
     }
   
     if (filtros.likesMin !== null) {
-      params.append("likesMin", filtros.likesMin);
+      params.append("likes_minimos", filtros.likesMin);
     }
   
     if (filtros.likesMax !== null) {
-      params.append("likesMax", filtros.likesMax);
+      params.append("likes_maximos", filtros.likesMax);
     }
   
     if (filtros.fechaMin) {
-      params.append("fechaMin", filtros.fechaMin);
+      params.append("fecha_minima", filtros.fechaMin);
     }
   
     if (filtros.fechaMax) {
-      params.append("fechaMax", filtros.fechaMax);
+      params.append("fecha_maxima", filtros.fechaMax);
     }
   
     try {
@@ -155,6 +172,102 @@ async function buscarPublicacionesPorTagConFiltros(filtros) {
     } catch (error) {
       console.error("Error aplicando filtros:", error);
     }
+  }
+
+async function obtenerAutorIdPorNombre(nombre) {
+  try {
+      const resp = await fetch(`${API_BASE_URL}/usuarios`);
+
+      if (!resp.ok) return null;
+
+      const usuarios = await resp.json();  
+      const usuario = usuarios.find(
+        u => u.nombre === nombre
+      );
+      
+
+      return usuario ? usuario.id : null;
+
+    } catch (e) {
+      console.error("Error buscando autor:", e);
+      return null;
+    }
+}
+
+function armarTituloBusqueda(filtros) {
+  const partes = [];
+
+  if (filtros.tag) {
+    partes.push(`#${filtros.tag}`);
+  }
+
+  if (filtros.autor) {
+    partes.push(`Autor: ${filtros.autor}`);
+  }
+
+  if (filtros.likesMin !== null) {
+    partes.push(`Likes ≥ ${filtros.likesMin}`);
+  }
+
+  if (filtros.likesMax !== null) {
+    partes.push(`Likes ≤ ${filtros.likesMax}`);
+  }
+
+  if (filtros.fechaMin) {
+    partes.push(`Desde ${filtros.fechaMin}`);
+  }
+
+  if (filtros.fechaMax) {
+    partes.push(`Hasta ${filtros.fechaMax}`);
+  }
+
+  return partes.join(" · ");
+} 
+
+async function guardarBusquedaPersonalizada(filtros) {
+    const usuarioLogueado = JSON.parse(localStorage.getItem("usuarioLogueado"));
+  
+    console.log("USUARIO LOGUEADO EN GUARDAR:", usuarioLogueado);
+  
+    if (!usuarioLogueado || !usuarioLogueado.id) {
+      console.warn("No hay usuario logueado, no se guarda la búsqueda");
+      return;
+    }
+  
+    const body = {
+        usuario_id: usuarioLogueado.id,
+        titulo: armarTituloBusqueda(filtros),
+        etiquetas: filtros.tag,
+        autor_id: filtros.autorId,
+        likes_minimos: filtros.likesMin,
+        likes_maximos: filtros.likesMax,
+      
+        fecha_minima: filtros.fechaMin,
+        fecha_maxima: filtros.fechaMax
+      };
+      
+  
+    console.log("BODY QUE SE ENVÍA:", body);
+  
+    await fetch(`${API_BASE_URL}/listas`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify(body)
+    });
+}
+
+function esBusquedaPersonalizada(filtros) {
+    const tieneTag = !!filtros.tag;
+    const tieneFiltrosExtra =
+      filtros.autor ||
+      filtros.likesMin !== null ||
+      filtros.likesMax !== null ||
+      filtros.fechaMin ||
+      filtros.fechaMax;
+  
+    return tieneTag && tieneFiltrosExtra;
   }
 
 
@@ -299,9 +412,19 @@ async function enviarComentario(publicacionId, contenido, usuarioId) {
 }
 
 document.addEventListener("DOMContentLoaded", () => {
+    const usuarioLogueado = JSON.parse(localStorage.getItem("usuarioLogueado"));
+
     console.log("DOM LISTO");
 
-    cargarPublicaciones();
+    const params = new URLSearchParams(window.location.search);
+    const listaId = params.get("lista_id");
+
+    if (listaId) {
+        cargarPublicacionesPorLista(listaId);
+
+    } else {
+        cargarPublicaciones();
+    }
 
     const panelFiltros = document.querySelector(".filters-panel");
     const inputAutor = panelFiltros.querySelector('input[name="autor"]');
@@ -312,16 +435,32 @@ document.addEventListener("DOMContentLoaded", () => {
 
     const btnApply = panelFiltros.querySelector(".btn-apply");
     const btnClear = panelFiltros.querySelector(".btn-clear");
+    const btnSave  = panelFiltros.querySelector(".btn-save");
 
     const searchForm = document.querySelector(".search-bar");
     const searchInput = document.querySelector(".search-input");
 
-    btnApply.addEventListener("click", () => {
+    btnApply.addEventListener("click", async () => {
         console.log("CLICK APLICAR");
 
-        filtrosActivos.autor = inputAutor.value.trim() || null;
-        filtrosActivos.likesMin = Number(inputLikesMin.value) || null;
-        filtrosActivos.likesMax = Number(inputLikesMax.value) || null;
+        const nombreAutor = inputAutor.value.trim();
+
+        if (nombreAutor) {
+            filtrosActivos.autorId = await obtenerAutorIdPorNombre(nombreAutor);
+            filtrosActivos.autor = nombreAutor;
+          } else {
+            filtrosActivos.autorId = null;
+            filtrosActivos.autor = null;
+          }
+    
+        filtrosActivos.likesMin = inputLikesMin.value
+            ? Number(inputLikesMin.value)
+            : null;
+    
+        filtrosActivos.likesMax = inputLikesMax.value
+            ? Number(inputLikesMax.value)
+            : null;
+    
         filtrosActivos.fechaMin = inputFechaMin.value || null;
         filtrosActivos.fechaMax = inputFechaMax.value || null;
 
@@ -338,6 +477,7 @@ document.addEventListener("DOMContentLoaded", () => {
         filtrosActivos = {
             tag: null,
             autor: null,
+            autorId: null,
             likesMin: null,
             likesMax: null,
             fechaMin: null,
@@ -345,24 +485,35 @@ document.addEventListener("DOMContentLoaded", () => {
         };
     });
 
+    btnSave.addEventListener("click", async () => {
+        if (!usuarioLogueado?.id) {
+            alert("Debes estar logueado para guardar la búsqueda.");
+            return;
+        }
+        if (!esBusquedaPersonalizada(filtrosActivos)) {
+            alert("La búsqueda debe tener una etiqueta y al menos un filtro extra.");
+            return;
+        }
+    
+        await guardarBusquedaPersonalizada(filtrosActivos);
+    })
+
     if (!searchForm || !searchInput) return;
 
-    searchForm.addEventListener("submit", (e) => {
+    searchForm.addEventListener("submit", async (e) => {
         console.log("SUBMIT FORM");
         e.preventDefault();
 
         const valor = searchInput.value.trim();
-        if (!valor) {
-            return;
-        }
-
         if (valor.startsWith("#")) {
             filtrosActivos.tag = valor.slice(1).trim() || null;
         } else {
             filtrosActivos.tag = null;
         }
 
-        buscarPublicacionesPorTagConFiltros(filtrosActivos);
+        if (!filtrosActivos.tag) return;
+    
+        await buscarPublicacionesPorTagConFiltros(filtrosActivos);
     });
 });
 
