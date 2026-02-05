@@ -212,7 +212,11 @@ usuarios.delete('/:id', async (req, res) => {
         if (await existeUsuarioConId(id) !== true)
             return res.status(404).json({ error: "Usuario no encontrado" });
 
-        await elimiarIconoUsuarioPorId(id)
+        // Obtener usuario para saber el nombre/path del icono
+        const usuario = await intentarConseguirUsuarioPorId(id);
+        if (usuario.success && usuario.data.icono) {
+            await deleteFile(usuario.data.icono); // elimina icono local o en S3 según storage
+        }
 
         await pool.query(
             "DELETE FROM usuarios WHERE id = $1",
@@ -224,6 +228,6 @@ usuarios.delete('/:id', async (req, res) => {
         console.error(err);
         res.status(500).json({ error: "Error al eliminar usuario" });
     }
-})
+});
 
 export default usuarios

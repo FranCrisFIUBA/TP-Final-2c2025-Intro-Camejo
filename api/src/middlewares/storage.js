@@ -15,6 +15,8 @@ const USE_S3 = process.env.USE_S3 === "true";
 
 const BUCKET_NAME = process.env.S3_BUCKET_NAME;
 const API_BASE_URL = process.env.API_BASE_URL || ("http://localhost:" + (process.env.PORT || 3000));
+const LOCAL_ICONOS_PATH = process.env.ICONOS_PATH || "public/iconos";
+const LOCAL_IMAGENES_PATH = process.env.IMAGENES_PATH || "public/imagenes";
 
 // --- Configuración S3 ---
 let s3, s3ClientV3;
@@ -42,6 +44,45 @@ export async function getFileUrl(key, folder) {
     } else {
         // URL pública local: api_url/directorio/nombre
         return `${API_BASE_URL}/${folder}/${key}`;
+    }
+}
+
+/**
+ * Elimina un archivo del storage dinámico
+ * @param {string} filePath - Para S3, la "key" (iconos/uuid.png). Para local, el nombre relativo al directorio.
+ */
+export async function deleteFile(filePath) {
+    if (!filePath) return;
+
+    if (USE_S3) {
+        const bucket = process.env.S3_BUCKET_NAME;
+        try {
+            await s3
+                .deleteObject({
+                    Bucket: bucket,
+                    Key: filePath
+                })
+                .promise();
+            console.log(`Archivo S3 eliminado: ${filePath}`);
+        } catch (err) {
+            console.error('Error al eliminar archivo S3:', err);
+            throw err;
+        }
+    } else {
+        // Local
+        let localPath = filePath.startsWith('iconos/')
+            ? path.join(LOCAL_ICONOS_PATH, path.basename(filePath))
+            : path.join(LOCAL_IMAGENES_PATH, path.basename(filePath));
+
+        if (fs.existsSync(localPath)) {
+            try {
+                fs.unlinkSync(localPath);
+                console.log(`Archivo local eliminado: ${localPath}`);
+            } catch (err) {
+                console.error('Error al eliminar archivo local:', err);
+                throw err;
+            }
+        }
     }
 }
 
