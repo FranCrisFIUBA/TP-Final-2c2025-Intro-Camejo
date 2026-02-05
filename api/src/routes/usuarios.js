@@ -54,17 +54,25 @@ usuarios.get('/:id', async (req, res) => {
 // POST /usuarios
 usuarios.post('/',
     (req, res, next) => {
+        console.log('--- Multer Upload Inicio ---');
         iconoUsuarioUpload.single('icono')(req, res, function(err) {
-            if (err instanceof multer.MulterError ) {
+            if (err instanceof multer.MulterError) {
+                console.error('MulterError:', err);
                 return res.status(400).json({ error: err.message });
             } else if (err) {
+                console.error('Error en Multer:', err);
                 return res.status(500).json({ error: "Error en la subida de archivo" });
             }
+            console.log('--- Multer Upload OK ---');
+            console.log('req.file:', req.file);
             next();
         });
     },
     async (req, res) => {
         try {
+            console.log('--- Datos recibidos ---');
+            console.log('req.body:', req.body);
+
             const usuarioData = {
                 nombre: req.body.nombre,
                 contrasenia: req.body.contrasenia,
@@ -74,18 +82,25 @@ usuarios.post('/',
                 icono: req.file ? (USE_S3 ? req.file.key : req.file.filename) : null
             };
 
+            console.log('--- usuarioData construido ---');
+            console.log(usuarioData);
+
             const usuario = await esquemaPostUsuario.safeParseAsync(usuarioData);
             if (!usuario.success) {
+                console.error('Validación fallida:', usuario.error.issues);
                 return res.status(400).json({ errors: usuario.error.issues });
             }
 
             if (await existeUsuarioConNombre(usuario.data.nombre)) {
+                console.warn('Nombre de usuario ya existe:', usuario.data.nombre);
                 return res.status(409).json({ error: "El nombre de usuario ya existe" });
             }
             if (await existeUsuarioConEmail(usuario.data.email)) {
+                console.warn('Email ya registrado:', usuario.data.email);
                 return res.status(409).json({ error: "El email ya está registrado" });
             }
 
+            console.log('--- Insertando usuario en DB ---');
             const result = await pool.query(
                 `INSERT INTO usuarios
                      (nombre, contrasenia, email, icono, fecha_nacimiento, fecha_registro)
@@ -95,23 +110,28 @@ usuarios.post('/',
                     usuario.data.nombre,
                     usuario.data.contrasenia,
                     usuario.data.email,
-                    req.file ? req.file.filename : null, // almacenar solo el filename/path en DB
+                    usuarioData.icono, // usar valor correcto según storage dinámico
                     usuario.data.fecha_nacimiento,
                     usuario.data.fecha_registro
                 ]
             );
 
             const responseUsuario = result.rows[0];
+            console.log('--- Usuario insertado ---');
+            console.log(responseUsuario);
+
             if (responseUsuario.icono) {
                 responseUsuario.icono = await getFileUrl(responseUsuario.icono, "iconos");
+                console.log('URL de icono generado:', responseUsuario.icono);
             }
 
             res.status(201).json(responseUsuario);
         } catch (err) {
-            console.error(err);
+            console.error('Error al crear usuario:', err);
             res.status(500).json({ error: "Error al crear usuario" });
         }
-    });
+    }
+);
 
 // PATCH /usuarios/:id
 usuarios.patch(
