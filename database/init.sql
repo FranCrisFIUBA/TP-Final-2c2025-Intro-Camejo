@@ -18,7 +18,6 @@ CREATE TABLE publicaciones (
     ancho_imagen INT,
     fecha_publicacion TIMESTAMP NOT NULL DEFAULT now(),
     fecha_edicion TIMESTAMP NOT NULL DEFAULT now(),
-    likes INT DEFAULT 0, -- conteo de likes a modo de cache
 
     FOREIGN KEY (usuario_id)
        REFERENCES usuarios(id)
@@ -80,6 +79,8 @@ CREATE TABLE likes (
     FOREIGN KEY (publicacion_id)
         REFERENCES publicaciones(id)
         ON DELETE CASCADE,
+
+        UNIQUE(usuario_id, publicacion_id)
 );
 
 CREATE TABLE listas_guardadas (
