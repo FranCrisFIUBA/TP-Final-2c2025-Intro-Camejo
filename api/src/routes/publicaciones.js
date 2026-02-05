@@ -79,11 +79,11 @@ publicaciones.get('/usuario/:usuario_id', async (req, res) => {
         `, [usuario_id]);
 
         // Mapear URLs según storage dinámico
-        const publicacionesConUrls = result.rows.map(async pub => ({
+        const publicacionesConUrls = await Promise.all(result.rows.map(async pub => ({
             ...pub,
             imagen: await getFileUrl(pub.imagen, "imagenes"),
             usuario_icono: pub.usuario_icono ? await getFileUrl(pub.usuario_icono, "iconos") : null
-        }));
+        })));
 
         res.status(200).json(publicacionesConUrls);
     } catch (err) {
