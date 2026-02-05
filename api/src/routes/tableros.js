@@ -1,6 +1,7 @@
 import express from "express";
 import { pool } from "../db.js";
 import { existeUsuarioConId } from "../utils/database/usuarios.js";
+import {getFileUrl} from "../middlewares/storage.js";
 
 const tableros = express.Router();
 
@@ -68,37 +69,44 @@ tableros.get("/usuario/:idUsuario", async (req, res) => {
 
 // GET /tablero/:idTablero/publicaciones Obtiene todas las publicaciones de un tablero
 tableros.get("/tablero/:idTablero/publicaciones", async (req, res) => {
-  try {
-    const { idTablero } = req.params;
+    try {
+        const { idTablero } = req.params;
 
-    const existe = await pool.query(
-      "SELECT id FROM tableros WHERE id = $1",
-      [idTablero]
-    );
+        const existe = await pool.query(
+            "SELECT id FROM tableros WHERE id = $1",
+            [idTablero]
+        );
 
-    if (!existe.rowCount) {
-      return res.status(404).json({ error: "Tablero no encontrado" });
+        if (!existe.rowCount) {
+            return res.status(404).json({ error: "Tablero no encontrado" });
+        }
+
+        const result = await pool.query(`
+            SELECT
+                p.*,
+                u.nombre AS usuario_nombre,
+                u.icono AS usuario_icono
+            FROM publicaciones p
+                     JOIN tableros_publicaciones tp
+                          ON p.id = tp.publicacion_id
+                     JOIN usuarios u
+                          ON p.usuario_id = u.id
+            WHERE tp.tablero_id = $1
+            ORDER BY p.fecha_publicacion DESC
+        `, [idTablero]);
+
+        // Convertir imágenes e iconos a URLs públicas o temporales
+        const publicacionesConUrls = result.rows.map(pub => ({
+            ...pub,
+            imagen: pub.imagen ? getFileUrl(pub.imagen, 'imagenes') : null,
+            usuario_icono: pub.usuario_icono ? getFileUrl(pub.usuario_icono, 'iconos') : null
+        }));
+
+        res.status(200).json(publicacionesConUrls);
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ error: "Error al obtener publicaciones del tablero" });
     }
-
-    const result = await pool.query(`
-      SELECT 
-        p.*, 
-        u.nombre AS usuario_nombre,
-        u.icono AS usuario_icono
-      FROM publicaciones p
-      JOIN tableros_publicaciones tp 
-        ON p.id = tp.publicacion_id
-      JOIN usuarios u 
-        ON p.usuario_id = u.id
-      WHERE tp.tablero_id = $1
-      ORDER BY p.fecha_publicacion DESC
-    `, [idTablero]);
-
-    res.status(200).json(result.rows);
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ error: "Error al obtener publicaciones del tablero" });
-  }
 });
 
 
