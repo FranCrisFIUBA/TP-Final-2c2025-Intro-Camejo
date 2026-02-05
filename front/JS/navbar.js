@@ -68,7 +68,7 @@ function inicializarNavbar() {
     if (!usuarioLogueado) return;
 
 
-    const avatarImg = document.querySelector(".user-avatar");
+    const avatarImg = document.querySelector(".user-avatar img");
     if (avatarImg) {
         avatarImg.src = usuarioLogueado.icono
             ? `${usuarioLogueado.icono}`
