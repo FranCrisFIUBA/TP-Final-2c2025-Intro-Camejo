@@ -1,8 +1,6 @@
-const API_BASE_URL = 'http://127.0.0.1:3000';
-const API_IMAGENES = API_BASE_URL + '/imagenes';
-const API_ICONOS = API_BASE_URL + '/iconos';
-const AVATAR_DEFAULT = './img/avatar-default.jpg';
+import {API_COMENTARIOS_URL, API_LIKES_URL, API_TABLEROS_URL} from "../api.js";
 
+const AVATAR_DEFAULT = './img/avatar-default.jpg';
 
 function irAlPerfil(usuarioId) {
     window.location.href = `perfil.html?id=${usuarioId}`;
@@ -63,10 +61,10 @@ async function renderizarTableros() {
   if (!usuario || !publicacionId) return;
 
   try {
-    const resTableros = await fetch(`${API_BASE_URL}/tableros/usuario/${usuario.id}`);
+    const resTableros = await fetch(`${API_TABLEROS_URL}/usuario/${usuario.id}`);
     const tableros = await resTableros.json();
 
-    const resEstados = await fetch(`${API_BASE_URL}/tableros/usuario/${usuario.id}/publicacion/${publicacionId}/estados`);
+    const resEstados = await fetch(`${API_TABLEROS_URL}/usuario/${usuario.id}/publicacion/${publicacionId}/estados`);
     const idsDondeEstaGuardado = await resEstados.json();
 
     if (!tableros.length) {
@@ -97,7 +95,7 @@ async function renderizarTableros() {
 
 async function obtenerLikes(publicacionId) {
     const usuario = obtenerUsuarioLogueado();
-    const res = await fetch(`${API_BASE_URL}/likes/publicacion/${publicacionId}`);
+    const res = await fetch(`${API_LIKES_URL}/publicacion/${publicacionId}`);
     const likes = await res.json();
     const total = likes.length;
 
@@ -125,7 +123,7 @@ export function abrirCardModal(card) {
     const tieneImagen = !!card.imagen;
     const dioLike = card.usuario_dio_like; 
 
-modal.innerHTML = `
+    modal.innerHTML = `
     <div class="modal-overlay"></div>
     <div class="modal-content">
         <button class="modal-close">&times;</button>
@@ -133,11 +131,11 @@ modal.innerHTML = `
             ${tieneImagen ? `
             <div class="modal-image-section">
                 <div class="modal-image-wrapper ratio-${imageRatio}">
-                    <img src="${API_IMAGENES}/${card.imagen}" class="modal-image">
+                    <img src="${card.imagen}" class="modal-image">
                 </div>
                 <div class="modal-author-info">
                     <div class="modal-author-details-wrapper" id="irAPerfil" style="display:flex; align-items:center; gap:12px; cursor:pointer;">
-                        <img src="${card.usuario_icono ? `${API_ICONOS}/${card.usuario_icono}` : AVATAR_DEFAULT}"
+                        <img src="${card.usuario_icono ? `${card.usuario_icono}` : AVATAR_DEFAULT}"
                              class="modal-author-avatar" onerror="this.src='${AVATAR_DEFAULT}'">
                         <div class="modal-author-details">
                             <span class="modal-author-name">${card.usuario_nombre || 'Usuario'}</span>
@@ -246,52 +244,52 @@ modal.innerHTML = `
             formTablero.style.display = formTablero.style.display === 'flex' ? 'none' : 'flex';
         };
 
-containerTableros.addEventListener("click", async (e) => {
-    const btn = e.target.closest(".btn-tablero-guardar");
-    if (!btn) return;
+        containerTableros.addEventListener("click", async (e) => {
+            const btn = e.target.closest(".btn-tablero-guardar");
+            if (!btn) return;
 
-    const tableroId = btn.dataset.id;
-    const publicacionId = window.publicacionActualId;
+            const tableroId = btn.dataset.id;
+            const publicacionId = window.publicacionActualId;
 
-    if (!publicacionId) return alert("No hay publicación seleccionada");
+            if (!publicacionId) return alert("No hay publicación seleccionada");
 
-    const estaGuardado = btn.dataset.guardado === "true";
+            const estaGuardado = btn.dataset.guardado === "true";
 
     try {
         if (!estaGuardado) {
-            const res = await fetch(`${API_BASE_URL}/tableros/${tableroId}/publicaciones`, {
+            const res = await fetch(`${API_TABLEROS_URL}/${tableroId}/publicaciones`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ publicacion_id: publicacionId })
             });
 
-            if (res.ok) {
-                btn.textContent = "✔ Guardado";
-                btn.dataset.guardado = "true";
-                btn.classList.add("guardado"); 
-            } else {
-                const data = await res.json();
-                alert(data.error || "Error al guardar");
-            }
+                    if (res.ok) {
+                        btn.textContent = "✔ Guardado";
+                        btn.dataset.guardado = "true";
+                        btn.classList.add("guardado");
+                    } else {
+                        const data = await res.json();
+                        alert(data.error || "Error al guardar");
+                    }
 
         } else {
-            const res = await fetch(`${API_BASE_URL}/tableros/${tableroId}/publicaciones/${publicacionId}`, { 
+            const res = await fetch(`${API_TABLEROS_URL}/${tableroId}/publicaciones/${publicacionId}`, {
                 method: "DELETE" 
             });
 
-            if (res.ok) {
-                btn.textContent = "Guardar";
-                btn.dataset.guardado = "false";
-                btn.classList.remove("guardado"); 
-            } else {
-                alert("Error al quitar del tablero");
+                    if (res.ok) {
+                        btn.textContent = "Guardar";
+                        btn.dataset.guardado = "false";
+                        btn.classList.remove("guardado");
+                    } else {
+                        alert("Error al quitar del tablero");
+                    }
+                }
+            } catch (err) {
+                console.error(err);
+                alert("Error de conexión");
             }
-        }
-    } catch (err) {
-        console.error(err);
-        alert("Error de conexión");
-    }
-});
+        });
 
         formTablero.addEventListener('submit', async (e) => {
             e.preventDefault();
@@ -305,7 +303,7 @@ containerTableros.addEventListener("click", async (e) => {
             if (!titulo) return alert("Ingresá un nombre");
 
             try {
-                const res = await fetch(`${API_BASE_URL}/tableros`, {
+                const res = await fetch(`${API_TABLEROS_URL}`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({
@@ -316,8 +314,8 @@ containerTableros.addEventListener("click", async (e) => {
                 });
 
                 if (!res.ok) {
-                const err = await res.json();
-                return alert(err.error || "Error creando tablero");
+                    const err = await res.json();
+                    return alert(err.error || "Error creando tablero");
                 }
 
                 formTablero.reset();
@@ -328,9 +326,7 @@ containerTableros.addEventListener("click", async (e) => {
                 console.error(err);
                 alert("Error de conexión");
             }
-            });
-
-        
+        });
         popover.onclick = (e) => e.stopPropagation();
     }
 
@@ -413,7 +409,7 @@ containerTableros.addEventListener("click", async (e) => {
 
             try {
                 if (!isCurrentlyLiked) {
-                    const res = await fetch(`${API_BASE_URL}/likes/publicacion`, {
+                    const res = await fetch(`${API_LIKES_URL}/publicacion`, {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify({
@@ -434,7 +430,7 @@ containerTableros.addEventListener("click", async (e) => {
                     }
                 } else {
                     const likeId = likeBtn.dataset.likeId;
-                    const res = await fetch(`${API_BASE_URL}/likes/${likeId}`, {
+                    const res = await fetch(`${API_LIKES_URL}/${likeId}`, {
                         method: 'DELETE'
                     });
 
@@ -467,7 +463,7 @@ async function cargarComentariosEnModal(publicacionId) {
     const container = document.querySelector('.comments-container');
     const countEl = document.querySelector('.comments-count');
     try {
-        const res = await fetch(`${API_BASE_URL}/comentarios/publicacion/${publicacionId}`);
+        const res = await fetch(`${API_COMENTARIOS_URL}/publicacion/${publicacionId}`);
         const comentarios = await res.json();
         const userLog = obtenerUsuarioLogueado();
 
@@ -481,7 +477,7 @@ async function cargarComentariosEnModal(publicacionId) {
         container.innerHTML = comentarios.map(c => `
             <div class="comment-item">
                 <div class="comment-author">
-                    <img src="${c.avatar ? `${API_ICONOS}/${c.avatar}` : AVATAR_DEFAULT}" class="comment-avatar">
+                    <img src="${c.avatar ? `${c.avatar}` : AVATAR_DEFAULT}" class="comment-avatar">
                     <div class="comment-content">
                         <div class="comment-header">
                             <strong>${c.author}</strong>
@@ -504,7 +500,7 @@ async function cargarComentariosEnModal(publicacionId) {
 }
 
 async function enviarComentario(pubId, contenido, uId) {
-    const res = await fetch(`${API_BASE_URL}/comentarios`, {
+    const res = await fetch(`${API_COMENTARIOS_URL}`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ usuario_id: uId, publicacion_id: pubId, contenido })
@@ -514,7 +510,7 @@ async function enviarComentario(pubId, contenido, uId) {
 
 async function borrarComentario(id) {
     const user = obtenerUsuarioLogueado();
-    const res = await fetch(`${API_BASE_URL}/comentarios/${id}`, {
+    const res = await fetch(`${API_COMENTARIOS_URL}/${id}`, {
         method: 'DELETE',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ usuario_id: user.id })
@@ -524,7 +520,7 @@ async function borrarComentario(id) {
 
 async function editarComentario(id, contenido) {
     const user = obtenerUsuarioLogueado();
-    const res = await fetch(`${API_BASE_URL}/comentarios/${id}`, {
+    const res = await fetch(`${API_COMENTARIOS_URL}/${id}`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ contenido, usuario_id: user.id })

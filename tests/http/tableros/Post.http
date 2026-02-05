@@ -1,0 +1,239 @@
+@api_url = https://api-tp-final-2c2025-intro-camejo.onrender.com
+@tableros_url = {{api_url}}/tableros
+
+### --- 1. CREAR TABLEROS ---
+
+### Tablero Ghibli (User 5 - )
+POST {{tableros_url}}
+Content-Type: application/json
+
+{
+    "usuario_id": 5,
+    "titulo": "Mi Mundo Ghibli",
+    "etiquetas": "ghibli,anime,relax"
+}
+
+### Tablero Gaming & Tech (User 3 - )
+POST {{tableros_url}}
+Content-Type: application/json
+
+{
+    "usuario_id": 3,
+    "titulo": "Gaming Vibe",
+    "etiquetas": "minecraft,arcane,hytale"
+}
+
+### Tablero Aesthetic Verde (User 6 - )
+POST {{tableros_url}}
+Content-Type: application/json
+
+{
+    "usuario_id": 6,
+    "titulo": "Everything Green",
+    "etiquetas": "verde,nature,collage"
+}
+
+### Tablero Superhéroes (User 7 - )
+POST {{tableros_url}}
+Content-Type: application/json
+
+{
+    "usuario_id": 7,
+    "titulo": "DC & Marvel Comics",
+    "etiquetas": "batman,spiderman,dibujo"
+}
+
+### Tablero Música (User 3 - )
+POST {{tableros_url}}
+Content-Type: application/json
+
+{
+    "usuario_id": 3,
+    "titulo": "Playlist Visual",
+    "etiquetas": "musica,rock,gorillaz,soda"
+}
+
+### Tablero Libros y Letras (User 4 - )
+POST {{tableros_url}}
+Content-Type: application/json
+
+{
+    "usuario_id": 4,
+    "titulo": "Rincón de Lectura",
+    "etiquetas": "libros,clasicos,literatura"
+}
+
+### Tablero Sanrio & Cute (User 1 - )
+POST {{tableros_url}}
+Content-Type: application/json
+
+{
+    "usuario_id": 1,
+    "titulo": "Cosas Kawaii",
+    "etiquetas": "sanrio,cute,pompompurin"
+}
+
+### Tablero Dark Anime (User 2 - )
+POST {{tableros_url}}
+Content-Type: application/json
+
+{
+    "usuario_id": 2,
+    "titulo": "Seinen & Shonen",
+    "etiquetas": "deathnote,nana,goku"
+}
+
+
+
+
+
+
+
+
+
+### --- 2. AGREGAR PUBLICACIONES A TABLEROS ---
+
+### Agregar Chihiro (ID 1) al Tablero Ghibli (Tablero 1)
+POST {{tableros_url}}/1/publicaciones
+Content-Type: application/json
+
+{ "publicacion_id": 1 }
+
+### Agregar Kiki (ID 4) al Tablero Ghibli (Tablero 1)
+POST {{tableros_url}}/1/publicaciones
+Content-Type: application/json
+
+{ "publicacion_id": 4 }
+
+### Agregar Arroyo (ID 5) al Tablero Ghibli (Tablero 1)
+POST {{tableros_url}}/1/publicaciones
+Content-Type: application/json
+
+{ "publicacion_id": 5 }
+
+### Agregar Minecraft (ID 3) al Tablero Gaming (Tablero 2)
+POST {{tableros_url}}/2/publicaciones
+Content-Type: application/json
+
+{ "publicacion_id": 3 }
+
+### Agregar Arcane (ID 23) al Tablero Gaming (Tablero 2)
+POST {{tableros_url}}/2/publicaciones
+Content-Type: application/json
+
+{ "publicacion_id": 23 }
+
+### Agregar Adventure Time (ID 27) al Tablero Gaming (Tablero 2)
+POST {{tableros_url}}/2/publicaciones
+Content-Type: application/json
+
+{ "publicacion_id": 27 }
+
+### Agregar Collage Verde (ID 6) al Tablero Verde (Tablero 3)
+POST {{tableros_url}}/3/publicaciones
+Content-Type: application/json
+
+{ "publicacion_id": 6 }
+
+### Agregar Gato Verde (ID 8) al Tablero Verde (Tablero 3)
+POST {{tableros_url}}/3/publicaciones
+Content-Type: application/json
+
+{ "publicacion_id": 8 }
+
+### Agregar Spiderman (ID 26) al Tablero Cómics (Tablero 4)
+POST {{tableros_url}}/4/publicaciones
+Content-Type: application/json
+
+{ "publicacion_id": 26 }
+
+### Agregar Batman (ID 28) al Tablero Cómics (Tablero 4)
+POST {{tableros_url}}/4/publicaciones
+Content-Type: application/json
+
+{ "publicacion_id": 28 }
+
+
+### --- Tablero Música (ID 5) ---
+POST {{tableros_url}}/5/publicaciones
+Content-Type: application/json
+
+{ "publicacion_id": 32 } 
+
+###
+POST {{tableros_url}}/5/publicaciones
+Content-Type: application/json
+
+{ "publicacion_id": 36 }
+
+### --- Tablero Libros (ID 6) ---
+POST {{tableros_url}}/6/publicaciones
+Content-Type: application/json
+
+{ "publicacion_id": 30 }
+
+###
+POST {{tableros_url}}/6/publicaciones
+Content-Type: application/json
+
+{ "publicacion_id": 31 }
+
+###
+POST {{tableros_url}}/6/publicaciones
+Content-Type: application/json
+<>
+{ "publicacion_id": 37 }
+
+### --- Tablero Sanrio & Cute (ID 7) ---
+POST {{tableros_url}}/7/publicaciones
+Content-Type: application/json
+
+{ "publicacion_id": 29 }
+
+###
+POST {{tableros_url}}/7/publicaciones
+Content-Type: application/json
+
+{ "publicacion_id": 18 }
+
+###
+POST {{tableros_url}}/7/publicaciones
+Content-Type: application/json
+
+{ "publicacion_id": 19 }
+
+### --- Tablero Dark Anime (ID 8) ---
+POST {{tableros_url}}/8/publicaciones
+Content-Type: application/json
+
+{ "publicacion_id": 33 }
+
+###
+POST {{tableros_url}}/8/publicaciones
+Content-Type: application/json
+
+{ "publicacion_id": 35 }
+
+###
+POST {{tableros_url}}/8/publicaciones
+Content-Type: application/json
+
+{ "publicacion_id": 38 }
+
+### Agregar Spider-Punk (ID 34) al Tablero Cómics (Tablero 4)
+POST {{tableros_url}}/4/publicaciones
+Content-Type: application/json
+
+{ "publicacion_id": 34 }
+
+### Agregar Superman (ID 39) al Tablero Cómics (Tablero 4)
+POST {{tableros_url}}/4/publicaciones
+Content-Type: application/json
+
+{ "publicacion_id": 39 }
+
+### Agregar Cenicienta (ID 24) al Tablero Ghibli (Por estética) (Tablero 1)
+POST {{tableros_url}}/1/publicaciones
+Content-Type: application/json
+
+{ "publicacion_id": 24 }

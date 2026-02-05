@@ -16,6 +16,7 @@ export async function getPublicacionesConBusqueda(params) {
         fecha_minima, fecha_maxima,
         alto_minimo, alto_maximo,
         ancho_minimo, ancho_maximo,
+        etiquetas
     } = params;
 
     const condiciones = [];
@@ -36,7 +37,10 @@ export async function getPublicacionesConBusqueda(params) {
     if (ancho_minimo !== undefined)     addCond("ancho >= ?", ancho_minimo);
     if (ancho_maximo !== undefined)     addCond("ancho <= ?", ancho_maximo);
 
-    // TODO: implementar busqueda por etiquetas
+    if (etiquetas !== undefined) {
+        const etiquetasArray = etiquetas.split(',').map(tag => tag.trim());
+        addCond("string_to_array(etiquetas, ',') @> ?", etiquetasArray);
+    }
 
     const query = condiciones.length === 0
         ? `SELECT * FROM publicaciones`

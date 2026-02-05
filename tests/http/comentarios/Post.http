@@ -1,0 +1,122 @@
+@api_url = https://api-tp-final-2c2025-intro-camejo.onrender.com
+@comentarios_url = {{api_url}}/comentarios
+
+### 1. Comentario en Viaje de Chihiro (User 2)
+POST {{comentarios_url}}
+Content-Type: application/json
+
+{
+    "usuario_id": 2,
+    "publicacion_id": 1,
+    "contenido": "¡Qué buen GIF! Sin Cara es mi personaje favorito de Ghibli."
+}
+
+### 2. Comentario en Sailor Moon (User 5)
+POST {{comentarios_url}}
+Content-Type: application/json
+
+{
+    "usuario_id": 5,
+    "publicacion_id": 2,
+    "contenido": "El estilo del fanart está increíble, ¡muy nostálgico!"
+}
+
+### 3. Comentario en Cerezos Minecraft (User 7)
+POST {{comentarios_url}}
+Content-Type: application/json
+
+{
+    "usuario_id": 7,
+    "publicacion_id": 3,
+    "contenido": "Amo los biomas de cerezos, ojalá así se viera mi mundo."
+}
+
+### 4. Comentario en Kiki Ghibli (User 1)
+POST {{comentarios_url}}
+Content-Type: application/json
+
+{
+    "usuario_id": 1,
+    "publicacion_id": 4,
+    "contenido": "Mi pelicula favorita del estudio ghibli"
+}
+
+### 5. Comentario en Collage Verde (User 3)
+POST {{comentarios_url}}
+Content-Type: application/json
+
+{
+    "usuario_id": 3,
+    "publicacion_id": 6,
+    "contenido": "Me entanta el collage"
+}
+
+### 6. Comentario en Gato Ramen (User 4)
+POST {{comentarios_url}}
+Content-Type: application/json
+
+{
+    "usuario_id": 4,
+    "publicacion_id": 11,
+    "contenido": "¿Un gato comiendo ramen? ¡Deme diez posters de esos!"
+}
+
+### 7. Comentario en Geisha (User 6)
+POST {{comentarios_url}}
+Content-Type: application/json
+
+{
+    "usuario_id": 6,
+    "publicacion_id": 12,
+    "contenido": "Me encanta los colores de la ilustración."
+}
+
+### 8. Comentario en Ajedrez (User 2)
+POST {{comentarios_url}}
+Content-Type: application/json
+
+{
+    "usuario_id": 2,
+    "publicacion_id": 14,
+    "contenido": "Q"
+}
+
+### 9. Comentario en Home Stayer (User 5)
+POST {{comentarios_url}}
+Content-Type: application/json
+
+{
+    "usuario_id": 5,
+    "publicacion_id": 16,
+    "contenido": " gatito :)"
+}
+
+### 10. Comentario en Collage de Gatos (User 1)
+POST {{comentarios_url}}
+Content-Type: application/json
+
+{
+    "usuario_id": 1,
+    "publicacion_id": 19,
+    "contenido": "¡Gatitos! Me encanta"
+}
+
+### 11. Otro comentario en Viaje de Chihiro (User 4)
+POST {{comentarios_url}}
+Content-Type: application/json
+
+{
+    "usuario_id": 4,
+    "publicacion_id": 1,
+    "contenido": "Siempre pense que se veia muy tierno tomando el té"
+}
+
+### 12. Comentario en Estrellas (User 7)
+POST {{comentarios_url}}
+Content-Type: application/json
+
+{
+    "usuario_id": 7,
+    "publicacion_id": 9,
+    "contenido": "Mi nuevo fondo de pantalla, jaja"
+}

@@ -1,0 +1,1212 @@
+@api_url = https://api-tp-final-2c2025-intro-camejo.onrender.com
+@publicaciones_url = {{api_url}}/publicaciones
+
+### 1. Viaje de Chihiro
+POST {{publicaciones_url}}
+Content-Type: multipart/form-data; boundary=b1
+
+--b1
+Content-Disposition: form-data; name="usuario_id"
+
+1
+--b1
+Content-Disposition: form-data; name="titulo"
+
+El Viaje de Chihiro - Sin Cara
+--b1
+Content-Disposition: form-data; name="alto_imagen"
+
+1080
+--b1
+Content-Disposition: form-data; name="ancho_imagen"
+
+1920
+--b1
+Content-Disposition: form-data; name="etiquetas"
+
+chihiro,gif,sincara
+--b1
+Content-Disposition: form-data; name="imagen"; filename="CH_GIF.gif"
+Content-Type: image/gif
+
+< ../../imagenes/CH_GIF.gif
+--b1--
+
+### 2. Sailor Moon
+POST {{publicaciones_url}}
+Content-Type: multipart/form-data; boundary=b2
+
+--b2
+Content-Disposition: form-data; name="usuario_id"
+
+2
+--b2
+Content-Disposition: form-data; name="titulo"
+
+Sailor Moon Fanart
+--b2
+Content-Disposition: form-data; name="alto_imagen"
+
+
+--b2
+Content-Disposition: form-data; name="ancho_imagen"
+
+
+--b2
+Content-Disposition: form-data; name="etiquetas"
+
+sailormoon,fanart
+--b2
+Content-Disposition: form-data; name="imagen"; filename="_ (3).jpeg"
+Content-Type: image/jpeg
+
+< ../../imagenes/_ (3).jpeg
+--b2--
+
+### 3. Cerezos Minecraft
+POST {{publicaciones_url}}
+Content-Type: multipart/form-data; boundary=b3
+
+--b3
+Content-Disposition: form-data; name="usuario_id"
+
+3
+--b3
+Content-Disposition: form-data; name="titulo"
+
+Fondo de cerezos Minecraft
+--b3
+Content-Disposition: form-data; name="alto_imagen"
+
+1080
+--b3
+Content-Disposition: form-data; name="ancho_imagen"
+
+1920
+--b3
+Content-Disposition: form-data; name="etiquetas"
+
+minecraft,gif,cerezos
+--b3
+Content-Disposition: form-data; name="imagen"; filename="micrGIF.gif"
+Content-Type: image/gif
+
+< ../../imagenes/micrGIF.gif
+--b3--
+
+### 4. Kiki Ghibli
+POST {{publicaciones_url}}
+Content-Type: multipart/form-data; boundary=b4
+
+--b4
+Content-Disposition: form-data; name="usuario_id"
+
+4
+--b4
+Content-Disposition: form-data; name="titulo"
+
+Gif de Kiki - Studio Ghibli
+--b4
+Content-Disposition: form-data; name="alto_imagen"
+
+1080
+--b4
+Content-Disposition: form-data; name="ancho_imagen"
+
+1920
+--b4
+Content-Disposition: form-data; name="etiquetas"
+
+kiki,ghibli,gif
+--b4
+Content-Disposition: form-data; name="imagen"; filename="_ (3).gif"
+Content-Type: image/gif
+
+< ../../imagenes/_ (3).gif
+--b4--
+
+### 5. Arroyo Ghibli
+POST {{publicaciones_url}}
+Content-Type: multipart/form-data; boundary=b5
+
+--b5
+Content-Disposition: form-data; name="usuario_id"
+
+5
+--b5
+Content-Disposition: form-data; name="titulo"
+
+Arroyo relajante - Studio Ghibli
+--b5
+Content-Disposition: form-data; name="alto_imagen"
+
+1080
+--b5
+Content-Disposition: form-data; name="ancho_imagen"
+
+1920
+--b5
+Content-Disposition: form-data; name="etiquetas"
+
+arroyo,ghibli,gif
+--b5
+Content-Disposition: form-data; name="imagen"; filename="ghibliGIF.gif"
+Content-Type: image/gif
+
+< ../../imagenes/ghibliGIF.gif
+--b5--
+
+### 6. Collage Verde
+POST {{publicaciones_url}}
+Content-Type: multipart/form-data; boundary=b6
+
+--b6
+Content-Disposition: form-data; name="usuario_id"
+
+6
+--b6
+Content-Disposition: form-data; name="titulo"
+
+Collage Naturaleza Verde
+--b6
+Content-Disposition: form-data; name="alto_imagen"
+
+1080
+--b6
+Content-Disposition: form-data; name="ancho_imagen"
+
+1920
+--b6
+Content-Disposition: form-data; name="etiquetas"
+
+verde,naturaleza,collage
+--b6
+Content-Disposition: form-data; name="imagen"; filename="cork board wallpaper!.jpeg"
+Content-Type: image/jpeg
+
+< ../../imagenes/cork board wallpaper!.jpeg
+--b6--
+
+### 7. Collage Azul
+POST {{publicaciones_url}}
+Content-Type: multipart/form-data; boundary=b7
+
+--b7
+Content-Disposition: form-data; name="usuario_id"
+
+7
+--b7
+Content-Disposition: form-data; name="titulo"
+
+Collage de cosas azules
+--b7
+Content-Disposition: form-data; name="alto_imagen"
+
+1080
+--b7
+Content-Disposition: form-data; name="ancho_imagen"
+
+1080
+--b7
+Content-Disposition: form-data; name="etiquetas"
+
+azul,collage
+--b7
+Content-Disposition: form-data; name="imagen"; filename="_ (8).jpeg"
+Content-Type: image/jpeg
+
+< ../../imagenes/_ (8).jpeg
+--b7--
+
+### 8. Gato Verde
+POST {{publicaciones_url}}
+Content-Type: multipart/form-data; boundary=b8
+
+--b8
+Content-Disposition: form-data; name="usuario_id"
+
+1
+--b8
+Content-Disposition: form-data; name="titulo"
+
+Dibujo de gato verde
+--b8
+Content-Disposition: form-data; name="alto_imagen"
+
+1080
+--b8
+Content-Disposition: form-data; name="ancho_imagen"
+
+1080
+--b8
+Content-Disposition: form-data; name="etiquetas"
+
+gato,verde,dibujo
+--b8
+Content-Disposition: form-data; name="imagen"; filename="_ (4).jpeg"
+Content-Type: image/png
+
+< ../../imagenes/_ (4).jpeg
+--b8--
+
+### 9. Estrellas
+POST {{publicaciones_url}}
+Content-Type: multipart/form-data; boundary=b9
+
+--b9
+Content-Disposition: form-data; name="usuario_id"
+
+3
+--b9
+Content-Disposition: form-data; name="titulo"
+
+Fondo estrellas blancas y negro
+--b9
+Content-Disposition: form-data; name="alto_imagen"
+
+1080
+--b9
+Content-Disposition: form-data; name="ancho_imagen"
+
+1920
+--b9
+Content-Disposition: form-data; name="etiquetas"
+
+estrellas,dark,fondo
+--b9
+Content-Disposition: form-data; name="imagen"; filename="stars.jpeg"
+Content-Type: image/jpeg
+
+< ../../imagenes/stars.jpeg
+--b9--
+
+### 10. Smiki
+POST {{publicaciones_url}}
+Content-Type: multipart/form-data; boundary=b10
+
+--b10
+Content-Disposition: form-data; name="usuario_id"
+
+3
+--b10
+Content-Disposition: form-data; name="titulo"
+
+Smiki - Poster Verde
+--b10
+Content-Disposition: form-data; name="alto_imagen"
+
+
+--b10
+Content-Disposition: form-data; name="ancho_imagen"
+
+
+--b10
+Content-Disposition: form-data; name="etiquetas"
+
+smiki,poster,verde
+--b10
+Content-Disposition: form-data; name="imagen"; filename="print.jpeg"
+Content-Type: image/jpeg
+
+< ../../imagenes/print.jpeg
+--b10--
+
+### 11. Gato Ramen
+POST {{publicaciones_url}}
+Content-Type: multipart/form-data; boundary=b11
+
+--b11
+Content-Disposition: form-data; name="usuario_id"
+
+1
+--b11
+Content-Disposition: form-data; name="titulo"
+
+Gato negro comiendo ramen
+--b11
+Content-Disposition: form-data; name="alto_imagen"
+
+
+--b11
+Content-Disposition: form-data; name="ancho_imagen"
+
+
+--b11
+Content-Disposition: form-data; name="etiquetas"
+
+gato,ramen,poster
+--b11
+Content-Disposition: form-data; name="imagen"; filename="ramen.jpeg"
+Content-Type: image/jpeg
+
+< ../../imagenes/ramen.jpeg
+--b11--
+
+### 12. Geisha
+POST {{publicaciones_url}}
+Content-Type: multipart/form-data; boundary=b12
+
+--b12
+Content-Disposition: form-data; name="usuario_id"
+
+7
+--b12
+Content-Disposition: form-data; name="titulo"
+
+Ilustración de una Geisha
+--b12
+Content-Disposition: form-data; name="alto_imagen"
+
+1080
+--b12
+Content-Disposition: form-data; name="ancho_imagen"
+
+1920
+--b12
+Content-Disposition: form-data; name="etiquetas"
+
+geisha,ilustracion,japon
+--b12
+Content-Disposition: form-data; name="imagen"; filename="GS.jpeg"
+Content-Type: image/png
+
+< ../../imagenes/GS.jpeg
+--b12--
+
+### 13. Geisha Espada
+POST {{publicaciones_url}}
+Content-Type: multipart/form-data; boundary=b13
+
+--b13
+Content-Disposition: form-data; name="usuario_id"
+
+6
+--b13
+Content-Disposition: form-data; name="titulo"
+
+Geisha con espada
+--b13
+Content-Disposition: form-data; name="alto_imagen"
+
+1080
+--b13
+Content-Disposition: form-data; name="ancho_imagen"
+
+1920
+--b13
+Content-Disposition: form-data; name="etiquetas"
+
+geisha,espada,ilustracion
+--b13
+Content-Disposition: form-data; name="imagen"; filename="_ (15).jpeg"
+Content-Type: image/png
+
+< ../../imagenes/_ (15).jpeg
+--b13--
+
+### 14. Ajedrez
+POST {{publicaciones_url}}
+Content-Type: multipart/form-data; boundary=b14
+
+--b14
+Content-Disposition: form-data; name="usuario_id"
+
+7
+--b14
+Content-Disposition: form-data; name="titulo"
+
+Poster de ajedrez rojo
+--b14
+Content-Disposition: form-data; name="alto_imagen"
+
+
+--b14
+Content-Disposition: form-data; name="ancho_imagen"
+
+
+--b14
+Content-Disposition: form-data; name="etiquetas"
+
+ajedrez,rojo,ilustracion
+--b14
+Content-Disposition: form-data; name="imagen"; filename="_ (24).jpeg"
+Content-Type: image/jpeg
+
+< ../../imagenes/_ (24).jpeg
+--b14--
+
+### 15. Hojas y Granada
+POST {{publicaciones_url}}
+Content-Type: multipart/form-data; boundary=b15
+
+--b15
+Content-Disposition: form-data; name="usuario_id"
+
+1
+--b15
+Content-Disposition: form-data; name="titulo"
+
+Poster hojas y granada
+--b15
+Content-Disposition: form-data; name="alto_imagen"
+
+1350
+--b15
+Content-Disposition: form-data; name="ancho_imagen"
+
+1080
+--b15
+Content-Disposition: form-data; name="etiquetas"
+
+hojas,granada,fruta
+--b15
+Content-Disposition: form-data; name="imagen"; filename="_ (23).jpeg"
+Content-Type: image/jpeg
+
+< ../../imagenes/_ (23).jpeg
+--b15--
+
+### 16. Home Stayer
+POST {{publicaciones_url}}
+Content-Type: multipart/form-data; boundary=b16
+
+--b16
+Content-Disposition: form-data; name="usuario_id"
+
+1
+--b16
+Content-Disposition: form-data; name="titulo"
+
+Ilustración verde Home Stayer
+--b16
+Content-Disposition: form-data; name="alto_imagen"
+
+1350
+--b16
+Content-Disposition: form-data; name="ancho_imagen"
+
+1080
+--b16
+Content-Disposition: form-data; name="etiquetas"
+
+verde,homestayer,ilustracion
+--b16
+Content-Disposition: form-data; name="imagen"; filename="_ (22).jpeg"
+Content-Type: image/png
+
+< ../../imagenes/_ (22).jpeg
+--b16--
+
+### 17. Flores
+POST {{publicaciones_url}}
+Content-Type: multipart/form-data; boundary=b17
+
+--b17
+Content-Disposition: form-data; name="usuario_id"
+
+3
+--b17
+Content-Disposition: form-data; name="titulo"
+
+Poster de flores
+--b17
+Content-Disposition: form-data; name="alto_imagen"
+
+
+--b17
+Content-Disposition: form-data; name="ancho_imagen"
+
+
+--b17
+Content-Disposition: form-data; name="etiquetas"
+
+flores,poster,botanico
+--b17
+Content-Disposition: form-data; name="imagen"; filename="_ (27).jpeg"
+Content-Type: image/jpeg
+
+< ../../imagenes/_ (27).jpeg
+--b17--
+
+### 18. Cerezas
+POST {{publicaciones_url}}
+Content-Type: multipart/form-data; boundary=b18
+
+--b18
+Content-Disposition: form-data; name="usuario_id"
+
+4
+--b18
+Content-Disposition: form-data; name="titulo"
+
+Postal de cerezas
+--b18
+Content-Disposition: form-data; name="alto_imagen"
+
+1350
+--b18
+Content-Disposition: form-data; name="ancho_imagen"
+
+1080
+--b18
+Content-Disposition: form-data; name="etiquetas"
+
+cerezas,postal,fruta
+--b18
+Content-Disposition: form-data; name="imagen"; filename="_ (28).jpeg"
+Content-Type: image/jpeg
+
+< ../../imagenes/_ (28).jpeg
+--b18--
+
+### 19. Collage Gatos
+POST {{publicaciones_url}}
+Content-Type: multipart/form-data; boundary=b19
+
+--b19
+Content-Disposition: form-data; name="usuario_id"
+
+6
+--b19
+Content-Disposition: form-data; name="titulo"
+
+Collage de gatos pastel
+--b19
+Content-Disposition: form-data; name="alto_imagen"
+
+
+--b19
+Content-Disposition: form-data; name="ancho_imagen"
+
+
+--b19
+Content-Disposition: form-data; name="etiquetas"
+
+gatos,pastel,collage
+--b19
+Content-Disposition: form-data; name="imagen"; filename="_ (19).jpeg"
+Content-Type: image/jpeg
+
+< ../../imagenes/_ (19).jpeg
+--b19--
+
+### 20. Perro en auto
+POST {{publicaciones_url}}
+Content-Type: multipart/form-data; boundary=b20
+
+--b20
+Content-Disposition: form-data; name="usuario_id"
+
+1
+--b20
+Content-Disposition: form-data; name="titulo"
+
+Perro - GIF
+--b20
+Content-Disposition: form-data; name="alto_imagen"
+
+1080
+--b20
+Content-Disposition: form-data; name="ancho_imagen"
+
+1920
+--b20
+Content-Disposition: form-data; name="etiquetas"
+
+perro,auto,gif,divertido
+--b20
+Content-Disposition: form-data; name="imagen"; filename="_ (2).gif"
+Content-Type: image/gif
+
+< ../../imagenes/_ (2).gif
+--b20--
+
+### 21. Peces Rojos
+POST {{publicaciones_url}}
+Content-Type: multipart/form-data; boundary=b21
+
+--b21
+Content-Disposition: form-data; name="usuario_id"
+
+2
+--b21
+Content-Disposition: form-data; name="titulo"
+
+Gif de peces 
+--b21
+Content-Disposition: form-data; name="alto_imagen"
+
+1080
+--b21
+Content-Disposition: form-data; name="ancho_imagen"
+
+1080
+--b21
+Content-Disposition: form-data; name="etiquetas"
+
+peces,naturaleza,gif,relax
+--b21
+Content-Disposition: form-data; name="imagen"; filename="_.gif"
+Content-Type: image/gif
+
+< ../../imagenes/_.gif
+--b21--
+
+### 22. Mariposa
+POST {{publicaciones_url}}
+Content-Type: multipart/form-data; boundary=b22
+
+--b22
+Content-Disposition: form-data; name="usuario_id"
+
+3
+--b22
+Content-Disposition: form-data; name="titulo"
+
+Vuelo de mariposa
+--b22
+Content-Disposition: form-data; name="alto_imagen"
+
+
+--b22
+Content-Disposition: form-data; name="ancho_imagen"
+
+
+--b22
+Content-Disposition: form-data; name="etiquetas"
+
+mariposa,gif,aesthetic
+--b22
+Content-Disposition: form-data; name="imagen"; filename="_ (1).gif"
+Content-Type: image/gif
+
+< ../../imagenes/_ (1).gif
+--b22--
+
+### 23. Arcane
+POST {{publicaciones_url}}
+Content-Type: multipart/form-data; boundary=b23
+
+--b23
+Content-Disposition: form-data; name="usuario_id"
+
+4
+--b23
+Content-Disposition: form-data; name="titulo"
+
+Escena de Arcane
+--b23
+Content-Disposition: form-data; name="alto_imagen"
+
+1080
+--b23
+Content-Disposition: form-data; name="ancho_imagen"
+
+1920
+--b23
+Content-Disposition: form-data; name="etiquetas"
+
+arcane,serie,lol,ilustracion
+--b23
+Content-Disposition: form-data; name="imagen"; filename="_ (29).jpeg"
+Content-Type: image/jpeg
+
+< ../../imagenes/_ (29).jpeg
+--b23--
+
+### 24. Cenicienta
+POST {{publicaciones_url}}
+Content-Type: multipart/form-data; boundary=b24
+
+--b24
+Content-Disposition: form-data; name="usuario_id"
+
+5
+--b24
+Content-Disposition: form-data; name="titulo"
+
+Cenicienta - Carruajes
+--b24
+Content-Disposition: form-data; name="alto_imagen"
+
+1080
+--b24
+Content-Disposition: form-data; name="ancho_imagen"
+
+1080
+--b24
+Content-Disposition: form-data; name="etiquetas"
+
+disney,cenicienta,gif,vintage
+--b24
+Content-Disposition: form-data; name="imagen"; filename="Anticipation_.gif"
+Content-Type: image/gif
+
+< ../../imagenes/Anticipation_.gif
+--b24--
+
+### 25. La Carta
+POST {{publicaciones_url}}
+Content-Type: multipart/form-data; boundary=b25
+
+--b25
+Content-Disposition: form-data; name="usuario_id"
+
+6
+--b25
+Content-Disposition: form-data; name="titulo"
+
+Una carta antigua
+--b25
+Content-Disposition: form-data; name="alto_imagen"
+
+
+--b25
+Content-Disposition: form-data; name="ancho_imagen"
+
+
+--b25
+Content-Disposition: form-data; name="etiquetas"
+
+carta,retro,postal
+--b25
+Content-Disposition: form-data; name="imagen"; filename="POSTAL.jpeg"
+Content-Type: image/jpeg
+
+< ../../imagenes/POSTAL.jpeg
+--b25--
+
+### 26. Spiderman
+POST {{publicaciones_url}}
+Content-Type: multipart/form-data; boundary=b26
+
+--b26
+Content-Disposition: form-data; name="usuario_id"
+
+7
+--b26
+Content-Disposition: form-data; name="titulo"
+
+Dibujo de Spiderman
+--b26
+Content-Disposition: form-data; name="alto_imagen"
+
+1080
+--b26
+Content-Disposition: form-data; name="ancho_imagen"
+
+1080
+--b26
+Content-Disposition: form-data; name="etiquetas"
+
+spiderman,marvel,dibujo,comic
+--b26
+Content-Disposition: form-data; name="imagen"; filename="https___x_com_GalanMcCree_status_1784672770062012566_t=TKZxcnAfE6qx8ZT4eCHZbw&s=19.jpeg"
+Content-Type: image/png
+
+< ../../imagenes/https___x_com_GalanMcCree_status_1784672770062012566_t=TKZxcnAfE6qx8ZT4eCHZbw&s=19.jpeg
+--b26--
+
+### 27. Adventure Time
+POST {{publicaciones_url}}
+Content-Type: multipart/form-data; boundary=b27
+
+--b27
+Content-Disposition: form-data; name="usuario_id"
+
+1
+--b27
+Content-Disposition: form-data; name="titulo"
+
+Finn y Jake 
+--b27
+Content-Disposition: form-data; name="alto_imagen"
+
+1080
+--b27
+Content-Disposition: form-data; name="ancho_imagen"
+
+1920
+--b27
+Content-Disposition: form-data; name="etiquetas"
+
+adventuretime,gif,cartoon,bmo
+--b27
+Content-Disposition: form-data; name="imagen"; filename="_ (30).jpeg"
+Content-Type: image/gif
+
+< ../../imagenes/_ (30).jpeg
+--b27--
+
+### 28. Batman
+POST {{publicaciones_url}}
+Content-Type: multipart/form-data; boundary=b28
+
+--b28
+Content-Disposition: form-data; name="usuario_id"
+
+2
+--b28
+Content-Disposition: form-data; name="titulo"
+
+The Batman
+--b28
+Content-Disposition: form-data; name="alto_imagen"
+
+1350
+--b28
+Content-Disposition: form-data; name="ancho_imagen"
+
+1080
+--b28
+Content-Disposition: form-data; name="etiquetas"
+
+batman,dc,poster,dark
+--b28
+Content-Disposition: form-data; name="imagen"; filename="BATMAN.jpeg"
+Content-Type: image/jpeg
+
+< ../../imagenes/BATMAN.jpeg
+--b28--
+
+
+### 29. Pompompurin
+POST {{publicaciones_url}}
+Content-Type: multipart/form-data; boundary=b29
+
+--b29
+Content-Disposition: form-data; name="usuario_id"
+
+3
+--b29
+Content-Disposition: form-data; name="titulo"
+
+Pompompurin Sanrio
+--b29
+Content-Disposition: form-data; name="alto_imagen"
+
+1080
+--b29
+Content-Disposition: form-data; name="ancho_imagen"
+
+1080
+--b29
+Content-Disposition: form-data; name="etiquetas"
+
+sanrio,pompompurin,cute,kawaii
+--b29
+Content-Disposition: form-data; name="imagen"; filename="_ (34).jpeg"
+Content-Type: image/jpeg
+
+< ../../imagenes/_ (34).jpeg
+--b29--
+
+### 30. Sensatez y Sentimientos
+POST {{publicaciones_url}}
+Content-Type: multipart/form-data; boundary=b30
+
+--b30
+Content-Disposition: form-data; name="usuario_id"
+
+4
+--b30
+Content-Disposition: form-data; name="titulo"
+
+Sensatez y Sentimientos - Jane Austen
+--b30
+Content-Disposition: form-data; name="alto_imagen"
+
+1350
+--b30
+Content-Disposition: form-data; name="ancho_imagen"
+
+1080
+--b30
+Content-Disposition: form-data; name="etiquetas"
+
+libros,janeausten,clasico,literatura
+--b30
+Content-Disposition: form-data; name="imagen"; filename="_Sense & Sensibility.jpeg"
+Content-Type: image/jpeg
+
+< ../../imagenes/_Sense & Sensibility.jpeg
+--b30--
+
+### 31. La Odisea
+POST {{publicaciones_url}}
+Content-Type: multipart/form-data; boundary=b31
+
+--b31
+Content-Disposition: form-data; name="usuario_id"
+
+5
+--b31
+Content-Disposition: form-data; name="titulo"
+
+La Odisea - Homero
+--b31
+Content-Disposition: form-data; name="alto_imagen"
+
+
+--b31
+Content-Disposition: form-data; name="ancho_imagen"
+
+
+--b31
+Content-Disposition: form-data; name="etiquetas"
+
+odisea,mitologia,grecia,libro
+--b31
+Content-Disposition: form-data; name="imagen"; filename="_ (33).jpeg"
+Content-Type: image/jpeg
+
+< ../../imagenes/_ (33).jpeg
+--b31--
+
+### 32. Gorillaz
+POST {{publicaciones_url}}
+Content-Type: multipart/form-data; boundary=b32
+
+--b32
+Content-Disposition: form-data; name="usuario_id"
+
+6
+--b32
+Content-Disposition: form-data; name="titulo"
+
+Gorillaz - Band Poster
+--b32
+Content-Disposition: form-data; name="alto_imagen"
+
+
+--b32
+Content-Disposition: form-data; name="ancho_imagen"
+
+
+--b32
+Content-Disposition: form-data; name="etiquetas"
+
+gorillaz,musica,art,banda
+--b32
+Content-Disposition: form-data; name="imagen"; filename="_ (32).jpeg"
+Content-Type: image/jpeg
+
+< ../../imagenes/_ (32).jpeg
+--b32--
+
+### 33. Ryuk Death Note
+POST {{publicaciones_url}}
+Content-Type: multipart/form-data; boundary=b33
+
+--b33
+Content-Disposition: form-data; name="usuario_id"
+
+7
+--b33
+Content-Disposition: form-data; name="titulo"
+
+Ryuk - Death Note Poster
+--b33
+Content-Disposition: form-data; name="alto_imagen"
+
+1350
+--b33
+Content-Disposition: form-data; name="ancho_imagen"
+
+1080
+--b33
+Content-Disposition: form-data; name="etiquetas"
+
+deathnote,ryuk,anime,shinigami
+--b33
+Content-Disposition: form-data; name="imagen"; filename="Ryuk.jpeg"
+Content-Type: image/jpeg
+
+< ../../imagenes/Ryuk.jpeg
+--b33--
+
+### 34. Spider-Punk
+POST {{publicaciones_url}}
+Content-Type: multipart/form-data; boundary=b34
+
+--b34
+Content-Disposition: form-data; name="usuario_id"
+
+1
+--b34
+Content-Disposition: form-data; name="titulo"
+
+Hobie Brown - Spider-Punk
+--b34
+Content-Disposition: form-data; name="alto_imagen"
+
+
+--b34
+Content-Disposition: form-data; name="ancho_imagen"
+
+
+--b34
+Content-Disposition: form-data; name="etiquetas"
+
+spiderverse,spiderpunk,marvel,punk
+--b34
+Content-Disposition: form-data; name="imagen"; filename="_ (31).jpeg"
+Content-Type: image/png
+
+< ../../imagenes/_ (31).jpeg
+--b34--
+
+### 35. Black Stones (Nana)
+POST {{publicaciones_url}}
+Content-Type: multipart/form-data; boundary=b35
+
+--b35
+Content-Disposition: form-data; name="usuario_id"
+
+2
+--b35
+Content-Disposition: form-data; name="titulo"
+
+Black Stones - Nana Poster
+--b35
+Content-Disposition: form-data; name="alto_imagen"
+
+
+--b35
+Content-Disposition: form-data; name="ancho_imagen"
+
+
+--b35
+Content-Disposition: form-data; name="etiquetas"
+
+nana,blackstones,anime,manga
+--b35
+Content-Disposition: form-data; name="imagen"; filename="BlackStone.jpeg"
+Content-Type: image/jpeg
+
+< ../../imagenes/BlackStone.jpeg
+--b35--
+
+### 36. Soda Stereo
+POST {{publicaciones_url}}
+Content-Type: multipart/form-data; boundary=b36
+
+--b36
+Content-Disposition: form-data; name="usuario_id"
+
+3
+--b36
+Content-Disposition: form-data; name="titulo"
+
+Soda Stereo - Rock Nacional
+--b36
+Content-Disposition: form-data; name="alto_imagen"
+
+
+--b36
+Content-Disposition: form-data; name="ancho_imagen"
+
+
+--b36
+Content-Disposition: form-data; name="etiquetas"
+
+sodastereo,cerati,musica,rock
+--b36
+Content-Disposition: form-data; name="imagen"; filename="poster soda stereo, gira me verás caer.jpeg"
+Content-Type: image/jpeg
+
+< ../../imagenes/poster soda stereo, gira me verás caer.jpeg
+--b36--
+
+### 37. Mafalda
+POST {{publicaciones_url}}
+Content-Type: multipart/form-data; boundary=b37
+
+--b37
+Content-Disposition: form-data; name="usuario_id"
+
+4
+--b37
+Content-Disposition: form-data; name="titulo"
+
+Mafalda por Quino
+--b37
+Content-Disposition: form-data; name="alto_imagen"
+
+1080
+--b37
+Content-Disposition: form-data; name="ancho_imagen"
+
+1080
+--b37
+Content-Disposition: form-data; name="etiquetas"
+
+mafalda,quino,comic,argentina
+--b37
+Content-Disposition: form-data; name="imagen"; filename="Mafalda.jpeg"
+Content-Type: image/png
+
+< ../../imagenes/Mafalda.jpeg
+--b37--
+
+### 38. Goku Niño
+POST {{publicaciones_url}}
+Content-Type: multipart/form-data; boundary=b38
+
+--b38
+Content-Disposition: form-data; name="usuario_id"
+
+5
+--b38
+Content-Disposition: form-data; name="titulo"
+
+Goku Niño - Dragon Ball
+--b38
+Content-Disposition: form-data; name="alto_imagen"
+
+1080
+--b38
+Content-Disposition: form-data; name="ancho_imagen"
+
+1080
+--b38
+Content-Disposition: form-data; name="etiquetas"
+
+goku,dragonball,anime,vintage
+--b38
+Content-Disposition: form-data; name="imagen"; filename="GOKU.jpg"
+Content-Type: image/jpeg
+
+< ../../imagenes/GOKU.jpg
+--b38--
+
+### 39. Superman
+POST {{publicaciones_url}}
+Content-Type: multipart/form-data; boundary=b39
+
+--b39
+Content-Disposition: form-data; name="usuario_id"
+
+6
+--b39
+Content-Disposition: form-data; name="titulo"
+
+Superman - Man of Steel
+--b39
+Content-Disposition: form-data; name="alto_imagen"
+
+
+--b39
+Content-Disposition: form-data; name="ancho_imagen"
+
+
+--b39
+Content-Disposition: form-data; name="etiquetas"
+
+superman,dc,comics,hero
+--b39
+Content-Disposition: form-data; name="imagen"; filename="superman superman.jpeg"
+Content-Type: image/jpeg
+
+< ../../imagenes/superman superman.jpeg
+--b39--

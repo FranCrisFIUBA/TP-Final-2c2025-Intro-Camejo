@@ -1,32 +1,32 @@
 import { Pool } from 'pg';
 
-console.log('=== DEBUG VARIABLES DE ENTORNO DE LA BASE DE DATOS ===');
-console.log('DATABASE_USERNAME:', process.env.DATABASE_USERNAME);
-console.log('DATABASE_PASSWORD:', process.env.DATABASE_PASSWORD ? '***' : 'undefined');
-console.log('DATABASE_DATABASE:', process.env.DATABASE_DATABASE);
-console.log('DATABASE_HOST:', process.env.DATABASE_HOST);
-console.log('DATABASE_PORT:', process.env.DATABASE_PORT);
-console.log('NODE_ENV:', process.env.NODE_ENV);
-console.log('================================');
+const DB_HOST = process.env.DB_HOST || process.env.DATABASE_HOST;
+const DB_PORT = process.env.DB_PORT || process.env.DATABASE_PORT;
+const DB_NAME = process.env.DB_NAME || process.env.DATABASE_NAME || process.env.DATABASE_DATABASE;
+const DB_USER = process.env.DB_USER || process.env.DATABASE_USER || process.env.DB_USERNAME || process.env.DATABASE_USERNAME;
+const DB_PASSWORD = process.env.DB_PASSWORD || process.env.DATABASE_PASSWORD;
 
 const poolConfig = {
-    user: process.env.DATABASE_USERNAME || 'admin',
-    password: process.env.DATABASE_PASSWORD || '1234',
-    database: process.env.DATABASE_DATABASE || 'imagoDB',
-    host: process.env.DATABASE_HOST || 'db',
-    port: parseInt(process.env.DATABASE_PORT) || 5432
+    host: DB_HOST,
+    port: parseInt(DB_PORT),
+    database: DB_NAME,
+    user: DB_USER,
+    password: DB_PASSWORD,
+    ssl: {
+        require: true,
+        rejectUnauthorized: false
+    },
 };
 
-console.log('Pool config:', { ...poolConfig, password: '***' });
+console.log('Pool config:', { ...poolConfig, password: '********' });
 
 export const pool = new Pool(poolConfig);
 
-// Manejo de errores
 pool.on('error', (err) => {
     console.error('Error en la DB:', err);
 });
 
-export async function testConnectionWithRetry(maxRetries = 10, delay = 2000) {
+export async function testConnectionWithRetry(maxRetries = 20, delay = 2000) {
     let lastError;
 
     for (let attempt = 1; attempt <= maxRetries; attempt++) {
