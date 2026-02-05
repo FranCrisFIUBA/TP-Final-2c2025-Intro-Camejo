@@ -1,6 +1,7 @@
 // routes/comentarios.js
 import express from 'express';
 import { pool } from "../db.js";
+import {getFileUrl} from "../middlewares/storage.js";
 
 const router = express.Router();
 
@@ -8,9 +9,9 @@ const router = express.Router();
 router.get('/publicacion/:publicacionId', async (req, res) => {
     try {
         const { publicacionId } = req.params;
-        
+
         const result = await pool.query(`
-            SELECT 
+            SELECT
                 c.id,
                 c.contenido as text,
                 c.fecha_publicacion as date,
@@ -19,20 +20,20 @@ router.get('/publicacion/:publicacionId', async (req, res) => {
                 u.nombre as author,
                 u.icono as avatar
             FROM comentarios c
-            JOIN usuarios u ON c.usuario_id = u.id
+                     JOIN usuarios u ON c.usuario_id = u.id
             WHERE c.publicacion_id = $1
             ORDER BY c.fecha_publicacion ASC
         `, [publicacionId]);
-        
+
         const comentarios = result.rows.map(comentario => ({
             id: comentario.id,
             author: comentario.author,
-            avatar: comentario.avatar,
+            avatar: comentario.avatar ? getFileUrl(comentario.avatar, 'iconos') : null,
             text: comentario.text,
             date: comentario.date,
             usuario_id: comentario.usuario_id
         }));
-        
+
         res.status(200).json(comentarios);
     } catch (error) {
         console.error('Error obteniendo comentarios:', error);
