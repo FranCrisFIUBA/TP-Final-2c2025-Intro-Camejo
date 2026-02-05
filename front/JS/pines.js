@@ -80,6 +80,22 @@ const cargarPublicaciones = async () => {
     }
 };
 
+async function cargarPublicacionesPorLista(listaId) {
+    try {
+        const res = await fetch(`${API_BASE_URL}/listas/${listaId}/publicaciones`);
+        if (!res.ok) {
+            console.error("No se pudieron cargar las publicaciones de la lista");
+            return;
+        }
+
+        const datos = await res.json();
+        await renderizarPublicacionesDesdeDatos(datos);
+
+    } catch (error) {
+        console.error("Error cargando publicaciones desde lista", error);
+    }
+}
+
 
 async function renderizarPublicacionesDesdeDatos(datos) {
     const SINPUBLIC = './img/sinPublicaciones1.png';
@@ -400,7 +416,15 @@ document.addEventListener("DOMContentLoaded", () => {
 
     console.log("DOM LISTO");
 
-    cargarPublicaciones();
+    const params = new URLSearchParams(window.location.search);
+    const listaId = params.get("lista_id");
+
+    if (listaId) {
+        cargarPublicacionesPorLista(listaId);
+
+    } else {
+        cargarPublicaciones();
+    }
 
     const panelFiltros = document.querySelector(".filters-panel");
     const inputAutor = panelFiltros.querySelector('input[name="autor"]');
