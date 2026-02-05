@@ -1,6 +1,7 @@
-import { crearCard } from './componentes/card.js';
-import { abrirCardModal } from './componentes/modal.js';
+import {crearCard} from './componentes/card.js';
+import {abrirCardModal} from './componentes/modal.js';
 import {API_COMENTARIOS_URL, API_PUBLICACIONES_URL, API_USUARIOS_URL} from "./api.js";
+
 const usuariosCache = new Map();
 
 let filtrosActivos = {
@@ -22,8 +23,7 @@ async function obtenerUsuarioPorId(usuarioId) {
         const res = await fetch(`${API_USUARIOS_URL}/${usuarioId}`);
         if (!res.ok) throw new Error('Error obteniendo usuario');
 
-        const json = await res.json();
-        const usuario = json.data;
+        const usuario = await res.json();
 
         usuariosCache.set(usuarioId, usuario);
         return usuario;

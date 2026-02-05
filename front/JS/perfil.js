@@ -321,12 +321,7 @@ async function cargarPerfilUsuario() {
     if (!response.ok) throw new Error('Usuario no encontrado');
 
     const json = await response.json();
-
-    if (!json.success || !json.data) {
-      throw new Error('Respuesta inválida del servidor');
-    }
-
-    const usuario = json.data;
+    const usuario = json;
     usuarioActual = usuario;
 
     mostrarDatosUsuario(usuario);
