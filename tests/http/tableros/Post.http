@@ -181,7 +181,7 @@ Content-Type: application/json
 ###
 POST {{tableros_url}}/6/publicaciones
 Content-Type: application/json
-<>
+
 { "publicacion_id": 37 }
 
 ### --- Tablero Sanrio & Cute (ID 7) ---
