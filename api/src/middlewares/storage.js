@@ -10,7 +10,6 @@ import { S3Client, GetObjectCommand } from "@aws-sdk/client-s3";
 
 dotenv.config();
 
-// true: usar AWS S3. false usa almacenamiento local
 export const USE_S3 = process.env.USE_S3 === "true";
 
 const BUCKET_NAME = process.env.S3_BUCKET_NAME;
@@ -21,12 +20,16 @@ export const LOCAL_IMAGENES_PATH = process.env.IMAGENES_PATH || "public/imagenes
 // --- Configuración S3 ---
 let s3, s3ClientV3;
 if (USE_S3) {
+    console.log("=== USANDO S3 PARA STORAGE ===");
+
+    // Cliente AWS SDK v2 para Multer-S3
     s3 = new AWS.S3({
         accessKeyId: process.env.AWS_ACCESS_KEY,
         secretAccessKey: process.env.AWS_SECRET_KEY,
         region: process.env.AWS_REGION,
     });
 
+    // Cliente AWS SDK v3 para URLs firmadas
     s3ClientV3 = new S3Client({
         region: process.env.AWS_REGION,
         credentials: {
@@ -34,42 +37,42 @@ if (USE_S3) {
             secretAccessKey: process.env.AWS_SECRET_KEY,
         },
     });
+} else {
+    console.log("=== USANDO ALMACENAMIENTO LOCAL ===");
 }
 
 // --- Función para generar URLs temporales ---
 export async function getFileUrl(key, folder) {
+    if (!key) return null;
+
     if (USE_S3) {
-        const command = new GetObjectCommand({ Bucket: BUCKET_NAME, Key: key });
-        return await getSignedUrl(s3ClientV3, command, { expiresIn: 600 });
+        try {
+            const command = new GetObjectCommand({ Bucket: BUCKET_NAME, Key: key });
+            const url = await getSignedUrl(s3ClientV3, command, { expiresIn: 600 });
+            console.log("URL firmado generado:", url);
+            return url;
+        } catch (err) {
+            console.error("Error generando URL firmado:", err);
+            return null;
+        }
     } else {
-        // URL pública local: api_url/directorio/nombre
         return `${API_BASE_URL}/${folder}/${key}`;
     }
 }
 
-/**
- * Elimina un archivo del storage dinámico
- * @param {string} filePath - Para S3, la "key" (iconos/uuid.png). Para local, el nombre relativo al directorio.
- */
+// --- Eliminar archivo ---
 export async function deleteFile(filePath) {
     if (!filePath) return;
 
     if (USE_S3) {
-        const bucket = process.env.S3_BUCKET_NAME;
         try {
-            await s3
-                .deleteObject({
-                    Bucket: bucket,
-                    Key: filePath
-                })
-                .promise();
+            await s3.deleteObject({ Bucket: BUCKET_NAME, Key: filePath }).promise();
             console.log(`Archivo S3 eliminado: ${filePath}`);
         } catch (err) {
             console.error('Error al eliminar archivo S3:', err);
             throw err;
         }
     } else {
-        // Local
         let localPath = filePath.startsWith('iconos/')
             ? path.join(LOCAL_ICONOS_PATH, path.basename(filePath))
             : path.join(LOCAL_IMAGENES_PATH, path.basename(filePath));
@@ -86,18 +89,20 @@ export async function deleteFile(filePath) {
     }
 }
 
-// --- Helper para crear storage Multer ---
+// --- Helper Multer ---
 function createMulterStorage(folder, maxSizeMB) {
     if (USE_S3) {
         return multer({
             storage: multerS3({
-                s3: s3,
+                s3: s3, // cliente v2
                 bucket: BUCKET_NAME,
-                acl: "private", // privado, se usa URL temporal
+                acl: "private",
                 contentType: multerS3.AUTO_CONTENT_TYPE,
                 key: (req, file, cb) => {
                     const ext = path.extname(file.originalname);
-                    cb(null, `${folder}/${crypto.randomUUID()}${ext}`);
+                    const filename = `${folder}/${crypto.randomUUID()}${ext}`;
+                    console.log("Subiendo archivo a S3 con key:", filename);
+                    cb(null, filename);
                 },
             }),
             limits: { fileSize: maxSizeMB * 1024 * 1024 },
@@ -115,7 +120,9 @@ function createMulterStorage(folder, maxSizeMB) {
                 destination: (req, file, cb) => cb(null, LOCAL_PATH),
                 filename: (req, file, cb) => {
                     const ext = path.extname(file.originalname);
-                    cb(null, `${crypto.randomUUID()}${ext}`);
+                    const filename = `${crypto.randomUUID()}${ext}`;
+                    console.log("Subiendo archivo local:", filename);
+                    cb(null, filename);
                 },
             }),
             limits: { fileSize: maxSizeMB * 1024 * 1024 },
@@ -127,6 +134,6 @@ function createMulterStorage(folder, maxSizeMB) {
     }
 }
 
-// --- Exportar storages ---
+// --- Exportar ---
 export const iconoUsuarioUpload = createMulterStorage("iconos", 2);
 export const imagenPublicacionUpload = createMulterStorage("imagenes", 10);
