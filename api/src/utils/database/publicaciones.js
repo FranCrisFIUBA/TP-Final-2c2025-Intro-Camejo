@@ -6,7 +6,7 @@ export async function intentarConseguirPublicacionPorId(id) {
 }
 
 /**
- * @param params Parametros de busqueda.
+ * @param params Parametros de busqueda. Debe tener el mismo formato que una fila de la tabla "listas"
  * @returns {Promise<*>}
  */
 export async function getPublicacionesConBusqueda(params) {
