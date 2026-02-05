@@ -32,7 +32,8 @@ export async function actualizarUsuarioPorId(
   nombre,
   contrasenia,
   email,
-  icono
+  icono,
+  fecha_nacimiento
 ) {
   const sets = [];
   const params = [];
@@ -58,6 +59,10 @@ export async function actualizarUsuarioPorId(
     params.push(icono);
   }
 
+  if (fecha_nacimiento !== undefined) {
+    sets.push(`fecha_nacimiento = $${index++}`); 
+    params.push(fecha_nacimiento);
+  }
   if (sets.length === 0) {
     throw new Error("No se ha pasado ningún campo para actualizar");
   }
