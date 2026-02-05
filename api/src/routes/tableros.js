@@ -96,10 +96,10 @@ tableros.get("/tablero/:idTablero/publicaciones", async (req, res) => {
         `, [idTablero]);
 
         // Convertir imágenes e iconos a URLs públicas o temporales
-        const publicacionesConUrls = result.rows.map(pub => ({
+        const publicacionesConUrls = result.rows.map(async pub => ({
             ...pub,
-            imagen: pub.imagen ? getFileUrl(pub.imagen, 'imagenes') : null,
-            usuario_icono: pub.usuario_icono ? getFileUrl(pub.usuario_icono, 'iconos') : null
+            imagen: pub.imagen ? await getFileUrl(pub.imagen, 'imagenes') : null,
+            usuario_icono: pub.usuario_icono ? await getFileUrl(pub.usuario_icono, 'iconos') : null
         }));
 
         res.status(200).json(publicacionesConUrls);
