@@ -25,7 +25,7 @@ export async function intentarConseguirUsuarioPorEmail(email) {
     if (result.rowCount === 0)
         return Promise.reject(`No existe usuario con la email ${email}`)
 
-    return esquemaUsuario.safeParseAsync(result.rows[0])
+    return result.rows[0]
 }
 
 export async function actualizarUsuarioPorId(
