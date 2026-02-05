@@ -17,9 +17,14 @@ export const esquemaUsuario = zod.object({
         .nullable()
         .optional(),
 
-    fecha_nacimiento: zod.date("Fecha de nacimiento invalida"),
+    //fecha_nacimiento: zod.date("Fecha de nacimiento invalida"),
 
-    fecha_registro: zod.date("Fecha de registro invalida")
+    //fecha_registro: zod.date("Fecha de registro invalida")
+    fecha_nacimiento: zod.coerce.date({ 
+        errorMap: () => ({ message: "Fecha de nacimiento inválida" }) 
+    }),
+
+    fecha_registro: zod.coerce.date()
 })
 
 export const esquemaPostUsuario = esquemaUsuario

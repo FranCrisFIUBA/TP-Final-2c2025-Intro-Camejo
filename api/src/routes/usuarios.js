@@ -202,7 +202,8 @@ usuarios.patch(
                 actualizacion.data.nombre,
                 actualizacion.data.contrasenia,
                 actualizacion.data.email,
-                actualizacion.data.icono
+                actualizacion.data.icono,
+                actualizacion.data.fecha_nacimiento
             );
 
             if (result.rowCount !== 1) {
