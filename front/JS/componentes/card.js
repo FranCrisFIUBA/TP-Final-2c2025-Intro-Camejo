@@ -44,7 +44,7 @@ export function crearCard(
 
     footer.innerHTML = `
         <div class="card-author">
-            <img src="${card.usuario_icono ? `${API_ICONOS_URL}/${card.usuario_icono}` : AVATAR_DEFAULT}" class="author-avatar">
+            <img src="${card.usuario_icono ? `${card.usuario_icono}` : AVATAR_DEFAULT}" class="author-avatar">
             <span class="author-name">${card.usuario_nombre || ''}</span>
         </div>
     `;

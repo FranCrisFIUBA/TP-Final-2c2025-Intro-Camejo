@@ -135,7 +135,7 @@ export function abrirCardModal(card) {
                 </div>
                 <div class="modal-author-info">
                     <div class="modal-author-details-wrapper" id="irAPerfil" style="display:flex; align-items:center; gap:12px; cursor:pointer;">
-                        <img src="${card.usuario_icono ? `${API_ICONOS_URL}/${card.usuario_icono}` : AVATAR_DEFAULT}"
+                        <img src="${card.usuario_icono ? `${card.usuario_icono}` : AVATAR_DEFAULT}"
                              class="modal-author-avatar" onerror="this.src='${AVATAR_DEFAULT}'">
                         <div class="modal-author-details">
                             <span class="modal-author-name">${card.usuario_nombre || 'Usuario'}</span>
@@ -477,7 +477,7 @@ async function cargarComentariosEnModal(publicacionId) {
         container.innerHTML = comentarios.map(c => `
             <div class="comment-item">
                 <div class="comment-author">
-                    <img src="${c.avatar ? `${API_ICONOS_URL}/${c.avatar}` : AVATAR_DEFAULT}" class="comment-avatar">
+                    <img src="${c.avatar ? `${c.avatar}` : AVATAR_DEFAULT}" class="comment-avatar">
                     <div class="comment-content">
                         <div class="comment-header">
                             <strong>${c.author}</strong>

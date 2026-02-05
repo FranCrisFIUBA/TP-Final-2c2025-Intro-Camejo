@@ -229,7 +229,7 @@ function obtenerUsuarioId() {
 
 function resolverIcono(icono) {
   if (!icono) return './img/avatar-default.jpg';
-  return `${API_ICONOS_URL}/${icono}`;
+  return `${icono}`;
 }
 
 function formatearFecha(fechaString) {
