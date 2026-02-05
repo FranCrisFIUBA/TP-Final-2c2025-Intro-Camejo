@@ -353,9 +353,9 @@ function mostrarDatosUsuario(usuario) {
   }
 
   if (profileDate) {
-    profileDate.textContent = usuario.fecha_registro
-      ? `Miembro desde ${formatearFecha(usuario.fecha_registro)}`
-      : 'Miembro desde 2024';
+    profileDate.textContent = usuario.fecha_nacimiento
+      ? `Cumpleaños: ${formatearFecha(usuario.fecha_nacimiento)}`
+      : '';
   }
 }
 
@@ -525,10 +525,16 @@ function completarFormularioPerfil(usuario) {
   if (!usuario) return;
 
   const nombre = document.getElementById('edit-nombre');
+  const email = document.getElementById('edit-email');
+  const fecha_nacimiento = document.getElementById('edit-fecha_nacimiento');
   const img = document.getElementById('profile-image-edit');
 
   if (nombre) nombre.value = usuario.nombre || '';
-
+  if (email) email.value = usuario.email || '';
+  if (fecha_nacimiento && usuario.fecha_nacimiento) {
+    const fecha = new Date(usuario.fecha_nacimiento);
+    fecha_nacimiento.value = fecha.toISOString().split('T')[0];
+  }
   if (img) {
     img.src = resolverIcono(usuario.icono);
     img.onerror = () => img.src = './img/avatar-default.jpg';
@@ -610,6 +616,8 @@ editForm.addEventListener('submit', async (e) => {
   }
 
   const nombre = document.getElementById('edit-nombre').value.trim();
+  const email = document.getElementById('edit-email').value.trim();;
+  const fecha_nacimiento = document.getElementById('edit-fecha_nacimiento').value;
   const pass = document.getElementById('edit-contraseña').value;
   const passRep = document.getElementById('edit-contraseña-repetida').value;
   const iconoInput = document.getElementById('edit-icono');
@@ -651,6 +659,13 @@ editForm.addEventListener('submit', async (e) => {
     formData.append('nombre', nombre);
   }
 
+  if (email && email !== usuarioActual.email) {
+    formData.append('email', email);
+  }
+
+  if (fecha_nacimiento) {
+    formData.append('fecha_nacimiento', fecha_nacimiento);
+  }
   if (pass) formData.append('contrasenia', pass);
 
   if (iconoInput?.files?.length > 0) { 

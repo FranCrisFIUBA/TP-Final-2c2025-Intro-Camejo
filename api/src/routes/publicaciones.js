@@ -11,6 +11,7 @@ import {existeUsuarioConId} from "../utils/database/usuarios.js";
 import {getFileUrl, imagenPublicacionUpload} from "../middlewares/storage.js";
 import multer from "multer";
 import {eliminarImagenPublicacionPorId} from "../utils/storage/publicaciones.js";
+import usuarios from './usuarios.js';
 
 const publicaciones = express.Router();
 
@@ -89,6 +90,29 @@ publicaciones.get('/usuario/:usuario_id', async (req, res) => {
     } catch (err) {
         console.error(err);
         res.status(500).json({ error: "Error al obtener publicaciones del usuario" });
+    }
+});
+
+
+// GET /publicaciones/busqueda/etiquetas-exactas?etiquetas=etiqueta1,etiqueta2 - Obtener publicaciones filtadas por las etiquetas
+publicaciones.get('/busqueda/etiquetas-exactas', async (req, res) => {
+    try {
+        const { etiquetas } = req.query;
+
+        if (!etiquetas) {
+            return res.status(400).json({ error: "Debes enviar etiquetas para buscar" });
+        }
+        const etiquetasArray = etiquetas.split(',').map(tag => tag.trim());
+        const query = `
+            SELECT * FROM publicaciones 
+            WHERE string_to_array(etiquetas, ',') @> $1
+        `;
+        const result = await pool.query(query, [etiquetasArray]);
+
+        res.json(result.rows);
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ error: "Error en la búsqueda por etiquetas" });
     }
 });
 
