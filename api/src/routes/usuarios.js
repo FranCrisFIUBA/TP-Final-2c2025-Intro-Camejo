@@ -134,10 +134,7 @@ usuarios.patch(
 
             if (Number.isNaN(id)) {
                 return res.status(400).json({
-                errors: [{
-                    path: ['id'],
-                    message: 'Id de usuario invalido'
-                }]
+                    errors: [{ path: ['id'], message: 'Id de usuario invalido' }]
                 });
             }
 
@@ -194,7 +191,12 @@ usuarios.patch(
                 return res.status(404).send({});
             }
 
-            res.status(200).json(result.rows[0]);
+            const usuarioActualizado = result.rows[0];
+            if (usuarioActualizado.icono) {
+                usuarioActualizado.icono = getFileUrl(usuarioActualizado.icono);
+            }
+
+            res.status(200).json(usuarioActualizado);
         } catch (err) {
             console.error(err);
             res.status(500).json({ error: "Error al actualizar usuario" });
