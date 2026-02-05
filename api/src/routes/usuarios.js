@@ -38,7 +38,7 @@ usuarios.get('/:id', async (req, res) => {
         intentarConseguirUsuarioPorId(req.params.id)
             .then((usuario) => {
                 if (usuario.icono) {
-                    usuario.icono = getFileUrl(usuario.icono);
+                    usuario.icono = getFileUrl(usuario.icono, 'iconos');
                 }
                 res.status(200).send(usuario);
             })
