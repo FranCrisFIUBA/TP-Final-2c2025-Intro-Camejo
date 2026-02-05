@@ -266,8 +266,7 @@ function configurarNavegacion() {
                     
                 case 'Tableros':
                     document.querySelector('.tableros-content').style.display = 'block';
-                    const usuario = obtenerUsuarioLogueado();
-                    if (usuario) {
+                    if (usuarioId) {
                       cargarTableros(usuarioId);
                     }
 
