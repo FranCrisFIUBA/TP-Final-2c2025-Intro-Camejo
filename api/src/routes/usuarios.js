@@ -7,7 +7,7 @@ import {
     existeUsuarioConId, existeUsuarioConNombre
 } from "../utils/database/usuarios.js";
 import {esquemaActualizacionUsuario, esquemaPostUsuario} from "../utils/esquemas/usuarios.js";
-import {getFileUrl, iconoUsuarioUpload} from "../middlewares/storage.js";
+import {deleteFile, getFileUrl, iconoUsuarioUpload} from "../middlewares/storage.js";
 import multer from "multer";
 import {elimiarIconoUsuarioPorId} from "../utils/storage/usuarios.js";
 
