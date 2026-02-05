@@ -45,9 +45,16 @@ CREATE TABLE listas ( /*busquedas personalizadas*/
     id SERIAL PRIMARY KEY,
     usuario_id INT NOT NULL,
     titulo VARCHAR NOT NULL,
+
     etiquetas VARCHAR,
-    fecha_publicacion_min TIMESTAMP,
-    fecha_publicacion_max TIMESTAMP,
+    likes_minimos INT NULL,
+    likes_maximos INT NULL,
+    fecha_minima TIMESTAMP NULL,
+    fecha_maxima TIMESTAMP NULL,
+    alto_minimo INT NULL,
+    alto_maximo INT NULL,
+    ancho_minimo INT NULL,
+    ancho_maximo INT NULL,
 
     FOREIGN KEY (usuario_id)
         REFERENCES usuarios(id)
@@ -79,6 +86,8 @@ CREATE TABLE likes (
     FOREIGN KEY (publicacion_id)
         REFERENCES publicaciones(id)
         ON DELETE CASCADE,
+
+        UNIQUE(usuario_id, publicacion_id)
 );
 
 CREATE TABLE listas_guardadas (

@@ -11,7 +11,7 @@ import {dataDiagnostic} from "./routes/diagnostics/dataDiagnostic.js";
 import {healthDiagnostic} from "./routes/diagnostics/healthDiagnostic.js";
 import {testConnectionWithRetry} from "./db.js";
 import cors from "cors";
-import {ICONOS_PATH, IMAGENES_PATH} from "./middlewares/storage.js";
+import {LOCAL_ICONOS_PATH, LOCAL_IMAGENES_PATH} from "./middlewares/storage.js";
 import noCache from "./middlewares/noCache.js";
 
 // carga las variables de entorno
@@ -23,8 +23,8 @@ const PORT = process.env.PORT || 3000;
 console.log('=== INICIANDO APP ===');
 console.log('NODE_ENV:', NODE_ENV);
 console.log('PORT:', PORT);
-console.log('IMAGENES_PATH:', IMAGENES_PATH);
-console.log('ICONOS_PATH:', ICONOS_PATH);
+console.log('IMAGENES_PATH:', LOCAL_IMAGENES_PATH);
+console.log('ICONOS_PATH:', LOCAL_ICONOS_PATH);
 
 const app = express()
 
@@ -40,8 +40,8 @@ app
     .use("/comentarios", comentariosRouter)
     .use("/likes", likesRouter)
     .use("/tableros", tablerosRouter)
-    .use("/imagenes", express.static(IMAGENES_PATH))
-    .use('/iconos', express.static(ICONOS_PATH));
+    .use("/imagenes", express.static(LOCAL_IMAGENES_PATH))
+    .use('/iconos', express.static(LOCAL_ICONOS_PATH));
 
 if (NODE_ENV === "development") {
     app
