@@ -14,7 +14,6 @@ import {elimiarIconoUsuarioPorId} from "../utils/storage/usuarios.js";
 const usuarios = express.Router()
 
 // GET /usuarios
-
 usuarios.get('/', async (req, res) => {
     try {
         const result = await pool.query('SELECT * FROM usuarios');
@@ -22,7 +21,7 @@ usuarios.get('/', async (req, res) => {
         // Mapear URLs de iconos según storage dinámico
         const usuariosConIconos = result.rows.map(u => ({
             ...u,
-            icono: u.icono ? getFileUrl(u.icono) : null
+            icono: u.icono ? getFileUrl(u.icono, "iconos") : null
         }));
 
         res.status(200).json(usuariosConIconos);
@@ -72,7 +71,7 @@ usuarios.post('/',
                 email: req.body.email,
                 fecha_nacimiento: new Date(req.body.fecha_nacimiento),
                 fecha_registro: new Date(),
-                icono: req.file ? await getFileUrl(req.file.filename) : null
+                icono: req.file ? req.file.filename : null
             };
 
             const usuario = await esquemaPostUsuario.safeParseAsync(usuarioData);
@@ -104,7 +103,7 @@ usuarios.post('/',
 
             const responseUsuario = result.rows[0];
             if (responseUsuario.icono) {
-                responseUsuario.icono = getFileUrl(responseUsuario.icono);
+                responseUsuario.icono = getFileUrl(responseUsuario.icono, "iconos");
             }
 
             res.status(201).json(responseUsuario);
@@ -193,7 +192,7 @@ usuarios.patch(
 
             const usuarioActualizado = result.rows[0];
             if (usuarioActualizado.icono) {
-                usuarioActualizado.icono = getFileUrl(usuarioActualizado.icono);
+                usuarioActualizado.icono = getFileUrl(usuarioActualizado.icono, "iconos");
             }
 
             res.status(200).json(usuarioActualizado);
