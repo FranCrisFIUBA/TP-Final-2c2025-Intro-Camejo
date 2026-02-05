@@ -411,6 +411,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     const btnApply = panelFiltros.querySelector(".btn-apply");
     const btnClear = panelFiltros.querySelector(".btn-clear");
+    const btnSave  = panelFiltros.querySelector(".btn-save");
 
     const searchForm = document.querySelector(".search-bar");
     const searchInput = document.querySelector(".search-input");
@@ -460,6 +461,19 @@ document.addEventListener("DOMContentLoaded", () => {
         };
     });
 
+    btnSave.addEventListener("click", async () => {
+        if (!usuarioLogueado?.id) {
+            alert("Debes estar logueado para guardar la búsqueda.");
+            return;
+        }
+        if (!esBusquedaPersonalizada(filtrosActivos)) {
+            alert("La búsqueda debe tener una etiqueta y al menos un filtro extra.");
+            return;
+        }
+    
+        await guardarBusquedaPersonalizada(filtrosActivos);
+    })
+
     if (!searchForm || !searchInput) return;
 
     searchForm.addEventListener("submit", async (e) => {
@@ -476,21 +490,6 @@ document.addEventListener("DOMContentLoaded", () => {
         if (!filtrosActivos.tag) return;
     
         await buscarPublicacionesPorTagConFiltros(filtrosActivos);
-
-        const filtrosExtra = filtrosActivos.autorId !== null ||
-                         filtrosActivos.likesMin !== null ||
-                         filtrosActivos.likesMax !== null ||
-                         filtrosActivos.fechaMin ||
-                         filtrosActivos.fechaMax;
-
-        if (filtrosExtra) {
-            if (usuarioLogueado?.id) {
-                await guardarBusquedaPersonalizada({
-                    ...filtrosActivos,
-                    usuario_id: usuarioLogueado.id
-                });
-            }
-        }
     });
 });
 
