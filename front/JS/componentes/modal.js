@@ -1,4 +1,4 @@
-import {API_COMENTARIOS_URL, API_LIKES_URL, API_TABLEROS_URL} from "../api.js";
+import {API_BASE_URL, API_COMENTARIOS_URL, API_LIKES_URL, API_TABLEROS_URL} from "../api.js";
 
 const AVATAR_DEFAULT = './img/avatar-default.jpg';
 
@@ -409,7 +409,7 @@ export function abrirCardModal(card) {
 
             try {
                 if (!isCurrentlyLiked) {
-                    const res = await fetch(`${API_BASE_URL}/likes/publicacion`, {
+                    const res = await fetch(`${API_LIKES_URL}/publicacion`, {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify({
