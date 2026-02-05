@@ -60,9 +60,11 @@ publicaciones.get('/:id', async (req, res) => {
 });
 
 // GET /publicaciones/usuario/:usuarioId - Obtener publicaciones por usuario
-publicaciones.get('/usuario/:usuarioId', async (req, res) => {
+publicaciones.get('/usuario/:usuario_id', async (req, res) => {
     try {
-        const usuarioExiste = await existeUsuarioConId(req.params.usuarioId);
+        const { usuario_id } = req.params;
+
+        const usuarioExiste = await existeUsuarioConId(usuario_id);
         if (!usuarioExiste) {
             return res.status(404).json({ error: "Usuario no encontrado" });
         }
@@ -73,7 +75,7 @@ publicaciones.get('/usuario/:usuarioId', async (req, res) => {
             JOIN usuarios u ON p.usuario_id = u.id
             WHERE p.usuario_id = $1
             ORDER BY p.fecha_publicacion DESC
-        `, [req.params.usuarioId]);
+        `, [usuario_id]);
 
         // Mapear URLs según storage dinámico
         const publicacionesConUrls = result.rows.map(pub => ({
