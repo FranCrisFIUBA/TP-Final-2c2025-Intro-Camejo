@@ -18,11 +18,11 @@ usuarios.get('/', async (req, res) => {
     try {
         const result = await pool.query('SELECT * FROM usuarios');
 
-        // Mapear URLs de iconos según storage dinámico
-        const usuariosConIconos = result.rows.map(async u => ({
+        // Mapear URLs de iconos según storage dinámico y esperar todas las Promises
+        const usuariosConIconos = await Promise.all(result.rows.map(async u => ({
             ...u,
             icono: u.icono ? await getFileUrl(u.icono, "iconos") : null
-        }));
+        })));
 
         res.status(200).json(usuariosConIconos);
     } catch (err) {
@@ -34,17 +34,16 @@ usuarios.get('/', async (req, res) => {
 // GET /usuarios/:id
 usuarios.get('/:id', async (req, res) => {
     try {
-        intentarConseguirUsuarioPorId(req.params.id)
-            .then(async (usuario) => {
-                if (usuario.icono) {
-                    usuario.icono = await getFileUrl(usuario.icono, 'iconos');
-                }
-                res.status(200).send(usuario);
-            })
-            .catch((err) => {
-                console.error(err);
-                res.status(404).json({ error: "Usuario no encontrado" });
-            });
+        const usuario = await intentarConseguirUsuarioPorId(req.params.id);
+        if (!usuario) {
+            return res.status(404).json({ error: "Usuario no encontrado" });
+        }
+
+        if (usuario.icono) {
+            usuario.icono = await getFileUrl(usuario.icono, 'iconos');
+        }
+
+        res.status(200).json(usuario);
     } catch (err) {
         console.error(err);
         res.status(500).json({ error: "Error del servidor al obtener usuario" });
