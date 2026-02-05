@@ -2,14 +2,13 @@ import express from 'express';
 import { pool } from "../db.js";
 import {
     esquemaActualizacionPublicacion,
-    esquemaPostPublicacion,
-    esquemaPublicacion
+    esquemaPostPublicacion
 } from "../utils/esquemas/publicaciones.js";
 import {
     getPublicacionesConBusqueda,intentarConseguirPublicacionPorId, validarParametrosDeBusqueda
 } from "../utils/database/publicaciones.js"
 import {existeUsuarioConId} from "../utils/database/usuarios.js";
-import {iconoUsuarioUpload, imagenPublicacionUpload} from "../middlewares/storage.js";
+import {getFileUrl, imagenPublicacionUpload} from "../middlewares/storage.js";
 import multer from "multer";
 
 const publicaciones = express.Router();
@@ -21,16 +20,21 @@ publicaciones.get('/', async (req, res) => {
     try {
         const params = req.query;
 
-        const error = validarParametrosDeBusqueda(params)
+        const error = validarParametrosDeBusqueda(params);
         if (error !== undefined) {
             console.error(error);
-            res.status(400).json({ error: error });
+            return res.status(400).json({ error: error });
         }
 
         const result = await getPublicacionesConBusqueda(req.query);
 
-        res.status(200).json(result.rows);
+        // Mapear imagenes para devolver URL completa segun storage
+        const publicacionesConUrls = result.rows.map(publicacion => ({
+            ...publicacion,
+            imagen: getFileUrl(publicacion.imagen)
+        }));
 
+        res.status(200).json(publicacionesConUrls);
     } catch (err) {
         console.error(err);
         res.status(500).json({ error: "Error al obtener publicaciones" });
@@ -44,6 +48,10 @@ publicaciones.get('/:id', async (req, res) => {
         if (!publicacion) {
             return res.status(404).json({ error: "Publicación no encontrada" });
         }
+
+        // Reemplazar imagen por URL segun storage
+        publicacion.imagen = getFileUrl(publicacion.imagen);
+
         res.status(200).json(publicacion);
     } catch (err) {
         console.error(err);
@@ -60,19 +68,27 @@ publicaciones.get('/usuario/:usuarioId', async (req, res) => {
         }
 
         const result = await pool.query(`
-            SELECT p.*, u.nombre as usuario_nombre, u.icono as usuario_icono 
-            FROM publicaciones p 
-            JOIN usuarios u ON p.usuario_id = u.id 
-            WHERE p.usuario_id = $1 
+            SELECT p.*, u.nombre as usuario_nombre, u.icono as usuario_icono
+            FROM publicaciones p
+            JOIN usuarios u ON p.usuario_id = u.id
+            WHERE p.usuario_id = $1
             ORDER BY p.fecha_publicacion DESC
         `, [req.params.usuarioId]);
-        
-        res.status(200).json(result.rows);
+
+        // Mapear URLs según storage dinámico
+        const publicacionesConUrls = result.rows.map(pub => ({
+            ...pub,
+            imagen: getFileUrl(pub.imagen),
+            usuario_icono: pub.usuario_icono ? getFileUrl(pub.usuario_icono) : null
+        }));
+
+        res.status(200).json(publicacionesConUrls);
     } catch (err) {
         console.error(err);
         res.status(500).json({ error: "Error al obtener publicaciones del usuario" });
     }
 });
+
 // POST /publicaciones - Crear nueva publicación con imagen
 publicaciones.post(
     '/',
@@ -96,12 +112,15 @@ publicaciones.post(
                 return res.status(400).json({ error: "Imagen requerida" });
             }
 
+            // Determinar key/filename segun storage
+            const imagenKey = req.file.key || req.file.filename;
+
             // Parseo y normalización (multipart => strings)
             const parsedPublicacion = esquemaPostPublicacion.safeParse({
                 usuario_id: Number(req.body.usuario_id),
                 titulo: req.body.titulo,
                 etiquetas: req.body.etiquetas,
-                imagen: req.file.filename,
+                imagen: imagenKey,
                 alto_imagen: req.body.alto_imagen
                     ? Number(req.body.alto_imagen)
                     : undefined,
@@ -130,11 +149,11 @@ publicaciones.post(
             // Insertar publicación
             const result = await pool.query(
                 `INSERT INTO publicaciones
-                    (usuario_id, titulo, etiquetas, imagen,
-                     alto_imagen, ancho_imagen,
-                     fecha_publicacion, fecha_edicion)
+                 (usuario_id, titulo, etiquetas, imagen,
+                  alto_imagen, ancho_imagen,
+                  fecha_publicacion, fecha_edicion)
                  VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
-                 RETURNING *`,
+                     RETURNING *`,
                 [
                     parsedPublicacion.data.usuario_id,
                     parsedPublicacion.data.titulo,
@@ -179,9 +198,9 @@ publicaciones.patch(
             }
 
             const datosActualizados = {
-                id: Number(id), 
+                id: Number(id),
                 ...req.body,
-                imagen: req.file ? req.file.filename : undefined,
+                imagen: req.file ? req.file.key : undefined,
                 alto_imagen: req.body.alto_imagen ? Number(req.body.alto_imagen) : undefined,
                 ancho_imagen: req.body.ancho_imagen ? Number(req.body.ancho_imagen) : undefined
             };
@@ -196,7 +215,7 @@ publicaciones.patch(
 
             const dataParaDB = { ...parsedActualizacion.data };
             if (req.file) {
-                dataParaDB.imagen = req.file.filename;
+                dataParaDB.imagen = req.file.key; // <-- aquí también
             }
 
             const campos = [];
@@ -224,14 +243,20 @@ publicaciones.patch(
 
             const result = await pool.query(query, valores);
 
-            res.status(200).json(result.rows[0]);
-        } catch (err) { 
+            // Mapear URL de la imagen según storage dinámico
+            const publicacionActualizada = {
+                ...result.rows[0],
+                imagen: result.rows[0].imagen ? getFileUrl(result.rows[0].imagen) : null
+            };
+
+            res.status(200).json(publicacionActualizada);
+        } catch (err) {
             console.error("Error detallado:", err);
-            
+
             if (err && err.issues) {
-                return res.status(400).json({ 
-                    error: "Datos inválidos", 
-                    detalles: err.issues.map(i => i.message) 
+                return res.status(400).json({
+                    error: "Datos inválidos",
+                    detalles: err.issues.map(i => i.message)
                 });
             }
             return res.status(500).json({ error: "Error al actualizar publicación" });
