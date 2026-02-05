@@ -11,12 +11,12 @@ import { S3Client, GetObjectCommand } from "@aws-sdk/client-s3";
 dotenv.config();
 
 // true: usar AWS S3. false usa almacenamiento local
-const USE_S3 = process.env.USE_S3 === "true";
+export const USE_S3 = process.env.USE_S3 === "true";
 
 const BUCKET_NAME = process.env.S3_BUCKET_NAME;
 const API_BASE_URL = process.env.API_BASE_URL || ("http://localhost:" + (process.env.PORT || 3000));
-const LOCAL_ICONOS_PATH = process.env.ICONOS_PATH || "public/iconos";
-const LOCAL_IMAGENES_PATH = process.env.IMAGENES_PATH || "public/imagenes";
+export const LOCAL_ICONOS_PATH = process.env.ICONOS_PATH || "public/iconos";
+export const LOCAL_IMAGENES_PATH = process.env.IMAGENES_PATH || "public/imagenes";
 
 // --- Configuración S3 ---
 let s3, s3ClientV3;

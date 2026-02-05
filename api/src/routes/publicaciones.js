@@ -10,6 +10,7 @@ import {
 import {existeUsuarioConId} from "../utils/database/usuarios.js";
 import {getFileUrl, imagenPublicacionUpload} from "../middlewares/storage.js";
 import multer from "multer";
+import {eliminarImagenPublicacionPorId} from "../utils/storage/publicaciones.js";
 
 const publicaciones = express.Router();
 
