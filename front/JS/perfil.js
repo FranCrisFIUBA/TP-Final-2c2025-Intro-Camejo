@@ -743,6 +743,17 @@ function renderizarGlobitos(busquedas) {
       </div>
     `;
 
+    globito.addEventListener("click", () => {
+      window.location.href = `/index.html?lista_id=${b.id}`;
+    });
+
+    
+    const btnEliminar = globito.querySelector(".btn-eliminar-busqueda");
+    btnEliminar.addEventListener("click", (e) => {
+      e.stopPropagation(); 
+      eliminarBusqueda(b.id);
+    });
+
     contenedor.appendChild(globito);
   });
 
