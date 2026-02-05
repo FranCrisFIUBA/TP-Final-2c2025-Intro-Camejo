@@ -123,7 +123,7 @@ export function abrirCardModal(card) {
     const tieneImagen = !!card.imagen;
     const dioLike = card.usuario_dio_like; 
 
-modal.innerHTML = `
+    modal.innerHTML = `
     <div class="modal-overlay"></div>
     <div class="modal-content">
         <button class="modal-close">&times;</button>
@@ -244,16 +244,16 @@ modal.innerHTML = `
             formTablero.style.display = formTablero.style.display === 'flex' ? 'none' : 'flex';
         };
 
-containerTableros.addEventListener("click", async (e) => {
-    const btn = e.target.closest(".btn-tablero-guardar");
-    if (!btn) return;
+        containerTableros.addEventListener("click", async (e) => {
+            const btn = e.target.closest(".btn-tablero-guardar");
+            if (!btn) return;
 
-    const tableroId = btn.dataset.id;
-    const publicacionId = window.publicacionActualId;
+            const tableroId = btn.dataset.id;
+            const publicacionId = window.publicacionActualId;
 
-    if (!publicacionId) return alert("No hay publicación seleccionada");
+            if (!publicacionId) return alert("No hay publicación seleccionada");
 
-    const estaGuardado = btn.dataset.guardado === "true";
+            const estaGuardado = btn.dataset.guardado === "true";
 
     try {
         if (!estaGuardado) {
@@ -263,33 +263,33 @@ containerTableros.addEventListener("click", async (e) => {
                 body: JSON.stringify({ publicacion_id: publicacionId })
             });
 
-            if (res.ok) {
-                btn.textContent = "✔ Guardado";
-                btn.dataset.guardado = "true";
-                btn.classList.add("guardado"); 
-            } else {
-                const data = await res.json();
-                alert(data.error || "Error al guardar");
-            }
+                    if (res.ok) {
+                        btn.textContent = "✔ Guardado";
+                        btn.dataset.guardado = "true";
+                        btn.classList.add("guardado");
+                    } else {
+                        const data = await res.json();
+                        alert(data.error || "Error al guardar");
+                    }
 
         } else {
             const res = await fetch(`${API_TABLEROS_URL}/${tableroId}/publicaciones/${publicacionId}`, {
                 method: "DELETE" 
             });
 
-            if (res.ok) {
-                btn.textContent = "Guardar";
-                btn.dataset.guardado = "false";
-                btn.classList.remove("guardado"); 
-            } else {
-                alert("Error al quitar del tablero");
+                    if (res.ok) {
+                        btn.textContent = "Guardar";
+                        btn.dataset.guardado = "false";
+                        btn.classList.remove("guardado");
+                    } else {
+                        alert("Error al quitar del tablero");
+                    }
+                }
+            } catch (err) {
+                console.error(err);
+                alert("Error de conexión");
             }
-        }
-    } catch (err) {
-        console.error(err);
-        alert("Error de conexión");
-    }
-});
+        });
 
         formTablero.addEventListener('submit', async (e) => {
             e.preventDefault();
@@ -314,8 +314,8 @@ containerTableros.addEventListener("click", async (e) => {
                 });
 
                 if (!res.ok) {
-                const err = await res.json();
-                return alert(err.error || "Error creando tablero");
+                    const err = await res.json();
+                    return alert(err.error || "Error creando tablero");
                 }
 
                 formTablero.reset();
@@ -326,9 +326,7 @@ containerTableros.addEventListener("click", async (e) => {
                 console.error(err);
                 alert("Error de conexión");
             }
-            });
-
-        
+        });
         popover.onclick = (e) => e.stopPropagation();
     }
 
@@ -411,7 +409,7 @@ containerTableros.addEventListener("click", async (e) => {
 
             try {
                 if (!isCurrentlyLiked) {
-                    const res = await fetch(`${API_LIKES_URL}/publicacion`, {
+                    const res = await fetch(`${API_BASE_URL}/likes/publicacion`, {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify({

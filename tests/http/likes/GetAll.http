@@ -1,0 +1,8 @@
+
+@api_url = http://localhost:3000
+@likes_url = {{api_url}}/likes
+### GET
+GET {{likes_url}}/
+Content-Type: application/json
+
+###

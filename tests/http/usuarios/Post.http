@@ -1,0 +1,193 @@
+@api_url = http://localhost:3000
+@usuarios_url = {{api_url}}/usuarios
+
+###
+POST {{usuarios_url}}/
+Content-Type: multipart/form-data; boundary=boundary1
+
+--boundary1
+Content-Disposition: form-data; name="nombre"
+
+cami_ml
+--boundary1
+Content-Disposition: form-data; name="contrasenia"
+
+Contra.1234
+--boundary1
+Content-Disposition: form-data; name="email"
+
+cami78@email.test
+--boundary1
+Content-Disposition: form-data; name="fecha_nacimiento"
+
+2000-05-10T00:00:00Z
+--boundary1
+Content-Disposition: form-data; name="icono"; filename="cami.jpeg"
+Content-Type: image/png
+
+< ../../iconos/cami.jpeg
+--boundary1--
+###
+
+###
+POST {{usuarios_url}}/
+Content-Type: multipart/form-data; boundary=boundary2
+
+--boundary2
+Content-Disposition: form-data; name="nombre"
+
+chief_keef
+--boundary2
+Content-Disposition: form-data; name="contrasenia"
+
+Contra.1234
+--boundary2
+Content-Disposition: form-data; name="email"
+
+chief_k@email.test
+--boundary2
+Content-Disposition: form-data; name="fecha_nacimiento"
+
+2000-05-10T00:00:00Z
+--boundary2
+Content-Disposition: form-data; name="icono"; filename="_ (11).jpeg"
+Content-Type: image/jpeg
+
+< ../../iconos/_ (11).jpeg
+--boundary2--
+###
+
+### Usuario 3: 
+POST {{usuarios_url}}/
+Content-Type: multipart/form-data; boundary=u3
+
+--u3
+Content-Disposition: form-data; name="nombre"
+
+Error_404
+--u3
+Content-Disposition: form-data; name="contrasenia"
+
+Contra.1234
+--u3
+Content-Disposition: form-data; name="email"
+
+coffee@test.com
+--u3
+Content-Disposition: form-data; name="fecha_nacimiento"
+
+1995-07-04T00:00:00Z
+--u3
+Content-Disposition: form-data; name="icono"; filename="_ (16).jpeg"
+Content-Type: image/png
+
+< ../../iconos/_ (16).jpeg
+--u3--
+
+### Usuario 4:
+POST {{usuarios_url}}/
+Content-Type: multipart/form-data; boundary=u4
+
+--u4
+Content-Disposition: form-data; name="nombre"
+
+Kirb_54
+--u4
+Content-Disposition: form-data; name="contrasenia"
+
+Contra.1234
+--u4
+Content-Disposition: form-data; name="email"
+
+neon@test.com
+--u4
+Content-Disposition: form-data; name="fecha_nacimiento"
+
+2003-01-30T00:00:00Z
+--u4
+Content-Disposition: form-data; name="icono"; filename="_ (17).jpeg"
+Content-Type: image/jpeg
+
+< ../../iconos/_ (17).jpeg
+--u4--
+
+### Usuario 5: 
+POST {{usuarios_url}}/
+Content-Type: multipart/form-data; boundary=u5
+
+--u5
+Content-Disposition: form-data; name="nombre"
+
+Wolf_780
+--u5
+Content-Disposition: form-data; name="contrasenia"
+
+Contra.1234
+--u5
+Content-Disposition: form-data; name="email"
+
+fire@test.com
+--u5
+Content-Disposition: form-data; name="fecha_nacimiento"
+
+1992-05-12T00:00:00Z
+--u5
+Content-Disposition: form-data; name="icono"; filename="_ (18).jpeg"
+Content-Type: image/png
+
+< ../../iconos/_ (18).jpeg
+--u5--
+
+### Usuario 6: 
+POST {{usuarios_url}}/
+Content-Type: multipart/form-data; boundary=u6
+
+--u6
+Content-Disposition: form-data; name="nombre"
+
+Duck-123
+--u6
+Content-Disposition: form-data; name="contrasenia"
+
+Contra.1234
+--u6
+Content-Disposition: form-data; name="email"
+
+meow@test.com
+--u6
+Content-Disposition: form-data; name="fecha_nacimiento"
+
+1999-08-25T00:00:00Z
+--u6
+Content-Disposition: form-data; name="icono"; filename="_ (25).jpeg"
+Content-Type: image/jpeg
+
+< ../../iconos/_ (25).jpeg
+--u6--
+
+### Usuario 7: 
+POST {{usuarios_url}}/
+Content-Type: multipart/form-data; boundary=u7
+
+--u7
+Content-Disposition: form-data; name="nombre"
+
+Shizuku_
+--u7
+Content-Disposition: form-data; name="contrasenia"
+
+Contra.1234
+--u7
+Content-Disposition: form-data; name="email"
+
+chill@test.com
+--u7
+Content-Disposition: form-data; name="fecha_nacimiento"
+
+2005-12-01T00:00:00Z
+--u7
+Content-Disposition: form-data; name="icono"; filename="Ｓｈｉｚｕｋｕ.jpeg"
+Content-Type: image/png
+
+< ../../iconos/Ｓｈｉｚｕｋｕ.jpeg
+--u7--
