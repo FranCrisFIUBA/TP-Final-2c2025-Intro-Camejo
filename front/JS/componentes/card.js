@@ -1,4 +1,4 @@
-import {API_ICONOS_URL, API_IMAGENES_URL} from "../api.js";
+import {API_IMAGENES_URL} from "../api.js";
 
 export function crearCard(
     card,

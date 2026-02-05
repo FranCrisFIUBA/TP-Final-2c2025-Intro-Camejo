@@ -1,7 +1,6 @@
 import { crearCard } from './componentes/card.js';
 import { abrirCardModal } from './componentes/modal.js';
 import {
-    API_ICONOS_URL,
     API_IMAGENES_URL,
     API_LIKES_URL,
     API_PUBLICACIONES_URL,
