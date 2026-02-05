@@ -175,7 +175,7 @@ usuarios.patch(
             // Validar unicidad nombre
             if (
                 actualizacion.data.nombre !== undefined &&
-                actualizacion.data.nombre !== usuario.data.nombre
+                actualizacion.data.nombre !== usuario.nombre
             ) {
                 if (await existeUsuarioConNombre(actualizacion.data.nombre)) {
                     return res.status(409).json({ error: "El nombre de usuario ya existe" });
@@ -185,7 +185,7 @@ usuarios.patch(
             // Validar unicidad email
             if (
                 actualizacion.data.email !== undefined &&
-                actualizacion.data.email !== usuario.data.email
+                actualizacion.data.email !== usuario.email
             ) {
                 if (await existeUsuarioConEmail(actualizacion.data.email)) {
                     return res.status(409).json({ error: "El email ya está registrado" });
@@ -194,7 +194,7 @@ usuarios.patch(
 
             // Si hay icono nuevo, eliminar el anterior
             if (req.file && usuario.icono) {
-                await elimiarIconoUsuarioPorId(usuario.data.id);
+                await elimiarIconoUsuarioPorId(usuario.id);
             }
 
             const result = await actualizarUsuarioPorId(
