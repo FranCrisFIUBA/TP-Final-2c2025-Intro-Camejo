@@ -19,9 +19,9 @@ usuarios.get('/', async (req, res) => {
         const result = await pool.query('SELECT * FROM usuarios');
 
         // Mapear URLs de iconos según storage dinámico
-        const usuariosConIconos = result.rows.map(u => ({
+        const usuariosConIconos = result.rows.map(async u => ({
             ...u,
-            icono: u.icono ? getFileUrl(u.icono, "iconos") : null
+            icono: u.icono ? await getFileUrl(u.icono, "iconos") : null
         }));
 
         res.status(200).json(usuariosConIconos);
@@ -35,9 +35,9 @@ usuarios.get('/', async (req, res) => {
 usuarios.get('/:id', async (req, res) => {
     try {
         intentarConseguirUsuarioPorId(req.params.id)
-            .then((usuario) => {
+            .then(async (usuario) => {
                 if (usuario.icono) {
-                    usuario.icono = getFileUrl(usuario.icono, 'iconos');
+                    usuario.icono = await getFileUrl(usuario.icono, 'iconos');
                 }
                 res.status(200).send(usuario);
             })
@@ -212,7 +212,7 @@ usuarios.patch(
 
             const usuarioActualizado = result.rows[0];
             if (usuarioActualizado.icono) {
-                usuarioActualizado.icono = getFileUrl(usuarioActualizado.icono, "iconos");
+                usuarioActualizado.icono = await getFileUrl(usuarioActualizado.icono, "iconos");
             }
 
             res.status(200).json(usuarioActualizado);
