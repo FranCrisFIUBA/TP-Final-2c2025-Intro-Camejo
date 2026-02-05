@@ -35,12 +35,12 @@ usuarios.get('/', async (req, res) => {
 usuarios.get('/:id', async (req, res) => {
     try {
         const usuario = await intentarConseguirUsuarioPorId(req.params.id);
-        if (!usuario) {
+        if (!usuario.success) {
             return res.status(404).json({ error: "Usuario no encontrado" });
         }
 
-        if (usuario.icono) {
-            usuario.icono = await getFileUrl(usuario.icono, 'iconos');
+        if (usuario.data.icono) {
+            usuario.data.icono = await getFileUrl(usuario.data.icono, 'iconos');
         }
 
         res.status(200).json(usuario);
