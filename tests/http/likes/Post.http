@@ -1,4 +1,4 @@
-@api_url = http://localhost:3000
+@api_url = https://api-tp-final-2c2025-intro-camejo.onrender.com
 @likes_url = {{api_url}}/likes/publicacion
 
 ### --- LIKES PARA PUBLICACIÓN 1 (Popular) ---

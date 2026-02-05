@@ -1,4 +1,4 @@
-@api_url = http://localhost:3000
+@api_url = https://api-tp-final-2c2025-intro-camejo.onrender.com
 @publicaciones_url = {{api_url}}/publicaciones
 
 ### 1. Viaje de Chihiro
