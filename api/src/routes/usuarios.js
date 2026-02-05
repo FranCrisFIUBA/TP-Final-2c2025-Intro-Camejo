@@ -35,12 +35,12 @@ usuarios.get('/', async (req, res) => {
 usuarios.get('/:id', async (req, res) => {
     try {
         const usuario = await intentarConseguirUsuarioPorId(req.params.id);
-        if (!usuario.success) {
+        if (!usuario) {
             return res.status(404).json({ error: "Usuario no encontrado" });
         }
 
-        if (usuario.data.icono) {
-            usuario.data.icono = await getFileUrl(usuario.data.icono, 'iconos');
+        if (usuario.icono) {
+            usuario.icono = await getFileUrl(usuario.icono, 'iconos');
         }
 
         res.status(200).json(usuario);
@@ -157,14 +157,14 @@ usuarios.patch(
             }
 
             const usuario = await intentarConseguirUsuarioPorId(id);
-            if (!usuario.success) {
+            if (!usuario) {
                 return res.status(404).json({ error: "Usuario no encontrado" });
             }
 
             const datosActualizados = {
                 ...req.body,
                 id,
-                icono: req.file ? req.file.filename : usuario.data.icono
+                icono: req.file ? req.file.filename : usuario.icono
             };
 
             const actualizacion = await esquemaActualizacionUsuario.safeParseAsync(datosActualizados);
@@ -193,7 +193,7 @@ usuarios.patch(
             }
 
             // Si hay icono nuevo, eliminar el anterior
-            if (req.file && usuario.data.icono) {
+            if (req.file && usuario.icono) {
                 await elimiarIconoUsuarioPorId(usuario.data.id);
             }
 
@@ -232,8 +232,8 @@ usuarios.delete('/:id', async (req, res) => {
 
         // Obtener usuario para saber el nombre/path del icono
         const usuario = await intentarConseguirUsuarioPorId(id);
-        if (usuario.success && usuario.data.icono) {
-            await deleteFile(usuario.data.icono); // elimina icono local o en S3 según storage
+        if (usuario && usuario.icono) {
+            await deleteFile(usuario.icono); // elimina icono local o en S3 según storage
         }
 
         await pool.query(
