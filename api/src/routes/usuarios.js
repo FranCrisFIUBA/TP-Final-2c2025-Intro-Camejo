@@ -64,51 +64,55 @@ usuarios.post('/',
             next();
         });
     },
-
     async (req, res) => {
-    try {
-        const usuarioData = {
-            nombre: req.body.nombre,
-            contrasenia: req.body.contrasenia,
-            email: req.body.email,
-            fecha_nacimiento: new Date(req.body.fecha_nacimiento),
-            fecha_registro: new Date(),
-            icono: req.file ? `${req.file.filename}` : null
-        };
+        try {
+            const usuarioData = {
+                nombre: req.body.nombre,
+                contrasenia: req.body.contrasenia,
+                email: req.body.email,
+                fecha_nacimiento: new Date(req.body.fecha_nacimiento),
+                fecha_registro: new Date(),
+                icono: req.file ? await getFileUrl(req.file.filename) : null
+            };
 
-        const usuario = await esquemaPostUsuario.safeParseAsync(usuarioData);
-        if (!usuario.success) {
-            return res.status(400).json({ errors: usuario.error.issues });
+            const usuario = await esquemaPostUsuario.safeParseAsync(usuarioData);
+            if (!usuario.success) {
+                return res.status(400).json({ errors: usuario.error.issues });
+            }
+
+            if (await existeUsuarioConNombre(usuario.data.nombre)) {
+                return res.status(409).json({ error: "El nombre de usuario ya existe" });
+            }
+            if (await existeUsuarioConEmail(usuario.data.email)) {
+                return res.status(409).json({ error: "El email ya está registrado" });
+            }
+
+            const result = await pool.query(
+                `INSERT INTO usuarios
+                     (nombre, contrasenia, email, icono, fecha_nacimiento, fecha_registro)
+                 VALUES ($1, $2, $3, $4, $5, $6)
+                     RETURNING *`,
+                [
+                    usuario.data.nombre,
+                    usuario.data.contrasenia,
+                    usuario.data.email,
+                    req.file ? req.file.filename : null, // almacenar solo el filename/path en DB
+                    usuario.data.fecha_nacimiento,
+                    usuario.data.fecha_registro
+                ]
+            );
+
+            const responseUsuario = result.rows[0];
+            if (responseUsuario.icono) {
+                responseUsuario.icono = getFileUrl(responseUsuario.icono);
+            }
+
+            res.status(201).json(responseUsuario);
+        } catch (err) {
+            console.error(err);
+            res.status(500).json({ error: "Error al crear usuario" });
         }
-
-        if (await existeUsuarioConNombre(usuario.data.nombre)) {
-            return res.status(409).json({ error: "El nombre de usuario ya existe" });
-        }
-        if (await existeUsuarioConEmail(usuario.data.email)) {
-            return res.status(409).json({ error: "El email ya está registrado" });
-        }
-
-        const result = await pool.query(
-            `INSERT INTO usuarios
-                 (nombre, contrasenia, email, icono, fecha_nacimiento, fecha_registro)
-             VALUES ($1, $2, $3, $4, $5, $6)
-                 RETURNING *`,
-            [
-                usuario.data.nombre,
-                usuario.data.contrasenia,
-                usuario.data.email,
-                usuario.data.icono,
-                usuario.data.fecha_nacimiento,
-                usuario.data.fecha_registro
-            ]
-        );
-
-        res.status(201).json(result.rows[0]);
-    } catch (err) {
-        console.error(err);
-        res.status(500).json({ error: "Error al crear usuario" });
-    }
-});
+    });
 
 // PATCH /usuarios/:id
 usuarios.patch(
