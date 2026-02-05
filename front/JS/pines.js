@@ -222,13 +222,12 @@ async function guardarBusquedaPersonalizada(filtros) {
         usuario_id: usuarioLogueado.id,
         titulo: armarTituloBusqueda(filtros),
         etiquetas: filtros.tag,
-      
         autor_id: filtros.autorId,
-        likes_min: filtros.likesMin,
-        likes_max: filtros.likesMax,
+        likes_minimos: filtros.likesMin,
+        likes_maximos: filtros.likesMax,
       
-        fecha_publicacion_min: filtros.fechaMin,
-        fecha_publicacion_max: filtros.fechaMax
+        fecha_minima: filtros.fechaMin,
+        fecha_maxima: filtros.fechaMax
       };
       
   
@@ -468,25 +467,30 @@ document.addEventListener("DOMContentLoaded", () => {
         e.preventDefault();
 
         const valor = searchInput.value.trim();
-        if (!valor) {
-            return;
-        }
-
         if (valor.startsWith("#")) {
             filtrosActivos.tag = valor.slice(1).trim() || null;
         } else {
             filtrosActivos.tag = null;
         }
 
-        buscarPublicacionesPorTagConFiltros(filtrosActivos);
+        if (!filtrosActivos.tag) return;
+    
+        await buscarPublicacionesPorTagConFiltros(filtrosActivos);
 
-        if (esBusquedaPersonalizada(filtrosActivos)) {
-            await guardarBusquedaPersonalizada({
-                ...filtrosActivos,
-                usuario_id: usuarioLogueado.id
-            });
+        const filtrosExtra = filtrosActivos.autorId !== null ||
+                         filtrosActivos.likesMin !== null ||
+                         filtrosActivos.likesMax !== null ||
+                         filtrosActivos.fechaMin ||
+                         filtrosActivos.fechaMax;
+
+        if (filtrosExtra) {
+            if (usuarioLogueado?.id) {
+                await guardarBusquedaPersonalizada({
+                    ...filtrosActivos,
+                    usuario_id: usuarioLogueado.id
+                });
+            }
         }
-        
     });
 });
 
