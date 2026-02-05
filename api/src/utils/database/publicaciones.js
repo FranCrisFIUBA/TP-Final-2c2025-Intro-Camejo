@@ -27,8 +27,8 @@ export async function getPublicacionesConBusqueda(params) {
     };
 
     if (autor_id !== undefined)         addCond("usuario_id = ?", autor_id);
-    if (likes_minimos !== undefined)    addCond("likes >= ?", likes_minimos);
-    if (likes_maximos !== undefined)    addCond("likes <= ?", likes_maximos);
+    if (likes_minimos !== undefined)    addCond("(SELECT COUNT(*) FROM likes l WHERE l.publicacion_id = publicaciones.id) >= ?", likes_minimos);
+    if (likes_maximos !== undefined)    addCond("(SELECT COUNT(*) FROM likes l WHERE l.publicacion_id = publicaciones.id) <= ?", likes_maximos);
     if (fecha_minima !== undefined)     addCond("fecha_publicacion >= ?", fecha_minima);
     if (fecha_maxima !== undefined)     addCond("fecha_publicacion <= ?", fecha_maxima);
     if (alto_minimo !== undefined)      addCond("alto >= ?", alto_minimo);

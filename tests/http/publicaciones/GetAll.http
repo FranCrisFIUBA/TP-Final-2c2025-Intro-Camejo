@@ -1,0 +1,9 @@
+
+@api_url = http://localhost:3000
+@publicaciones_url = {{api_url}}/publicaciones
+
+### GET
+GET {{publicaciones_url}}/
+Content-Type: application/json
+
+###

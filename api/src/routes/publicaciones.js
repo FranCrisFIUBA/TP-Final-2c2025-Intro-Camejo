@@ -11,6 +11,7 @@ import {
 import {existeUsuarioConId} from "../utils/database/usuarios.js";
 import {iconoUsuarioUpload, imagenPublicacionUpload} from "../middlewares/storage.js";
 import multer from "multer";
+import usuarios from './usuarios.js';
 
 const publicaciones = express.Router();
 
@@ -19,74 +20,16 @@ publicaciones.get('/', async (req, res) => {
     console.log("QUERY:", req.query);
 
     try {
-        const {
-            tag,
-            autor,
-            likesMin,
-            likesMax,
-            fechaMin,
-            fechaMax
-        } = req.query;
+        const params = req.query;
 
-        let query = `
-            SELECT p.*, u.nombre AS autor
-            FROM publicaciones p
-            JOIN usuarios u ON p.usuario_id = u.id
-            WHERE 1=1
-        `;
-
-        let values = [];
-        let index = 1;
-
-        // 🔹 FILTRO POR TAG
-        if (tag) {
-            query += ` AND p.etiquetas ILIKE $${index}`;
-            values.push(`%${tag}%`);
-            index++;
+        const error = validarParametrosDeBusqueda(params)
+        if (error !== undefined) {
+            console.error(error);
+            res.status(400).json({ error: error });
         }
 
-        // 🔹 FILTRO POR AUTOR
-        if (autor) {
-            query += ` AND u.nombre ILIKE $${index}`;
-            values.push(`%${autor}%`);
-            index++;
-        }
+        const result = await getPublicacionesConBusqueda(req.query);
 
-        // 🔹 LIKES MÍNIMOS
-        if (likesMin !== undefined) {
-            query += ` AND p.likes >= $${index}`;
-            values.push(Number(likesMin));
-            index++;
-        }
-
-        // 🔹 LIKES MÁXIMOS
-        if (likesMax !== undefined) {
-            query += ` AND p.likes <= $${index}`;
-            values.push(Number(likesMax));
-            index++;
-        }
-
-        // 🔹 FECHA MÍNIMA
-        if (fechaMin) {
-            query += ` AND p.fecha_publicacion >= $${index}`;
-            values.push(fechaMin);
-            index++;
-        }
-
-        // 🔹 FECHA MÁXIMA
-        if (fechaMax) {
-            query += ` AND p.fecha_publicacion <= $${index}`;
-            values.push(fechaMax);
-            index++;
-        }
-
-        query += ` ORDER BY p.fecha_publicacion DESC`;
-
-        console.log("SQL FINAL:", query);
-        console.log("VALUES:", values);
-
-
-        const result = await pool.query(query, values);
         res.status(200).json(result.rows);
 
     } catch (err) {
@@ -131,6 +74,29 @@ publicaciones.get('/usuario/:usuarioId', async (req, res) => {
         res.status(500).json({ error: "Error al obtener publicaciones del usuario" });
     }
 });
+
+// GET /publicaciones/busqueda/etiquetas-exactas?etiquetas=etiqueta1,etiqueta2 - Obtener publicaciones filtadas por las etiquetas
+publicaciones.get('/busqueda/etiquetas-exactas', async (req, res) => {
+    try {
+        const { etiquetas } = req.query;
+
+        if (!etiquetas) {
+            return res.status(400).json({ error: "Debes enviar etiquetas para buscar" });
+        }
+        const etiquetasArray = etiquetas.split(',').map(tag => tag.trim());
+        const query = `
+            SELECT * FROM publicaciones 
+            WHERE string_to_array(etiquetas, ',') @> $1
+        `;
+        const result = await pool.query(query, [etiquetasArray]);
+
+        res.json(result.rows);
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ error: "Error en la búsqueda por etiquetas" });
+    }
+});
+
 // POST /publicaciones - Crear nueva publicación con imagen
 publicaciones.post(
     '/',
