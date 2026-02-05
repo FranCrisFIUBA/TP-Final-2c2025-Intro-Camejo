@@ -30,10 +30,10 @@ publicaciones.get('/', async (req, res) => {
         const result = await getPublicacionesConBusqueda(req.query);
 
         // Mapear imagenes para devolver URL completa segun storage
-        const publicacionesConUrls = result.rows.map(async publicacion => ({
+        const publicacionesConUrls = await Promise.all(result.rows.map(async publicacion => ({
             ...publicacion,
             imagen: await getFileUrl(publicacion.imagen, "imagenes")
-        }));
+        })));
 
         res.status(200).json(publicacionesConUrls);
     } catch (err) {
