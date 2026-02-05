@@ -3,11 +3,11 @@ import express from 'express'
 import {pool} from "../db.js";
 import {
     actualizarUsuarioPorId, intentarConseguirUsuarioPorId,
-    intentarConseguirUsuarioPorNombre, existeUsuarioConEmail,
+    existeUsuarioConEmail,
     existeUsuarioConId, existeUsuarioConNombre
 } from "../utils/database/usuarios.js";
 import {esquemaActualizacionUsuario, esquemaPostUsuario} from "../utils/esquemas/usuarios.js";
-import {iconoUsuarioUpload} from "../middlewares/storage.js";
+import {getFileUrl, iconoUsuarioUpload} from "../middlewares/storage.js";
 import multer from "multer";
 import {elimiarIconoUsuarioPorId} from "../utils/storage/usuarios.js";
 
@@ -18,15 +18,21 @@ const usuarios = express.Router()
 usuarios.get('/', async (req, res) => {
     try {
         const result = await pool.query('SELECT * FROM usuarios');
-        res.status(200).json(result.rows);
+
+        // Mapear URLs de iconos según storage dinámico
+        const usuariosConIconos = result.rows.map(u => ({
+            ...u,
+            icono: u.icono ? getFileUrl(u.icono) : null
+        }));
+
+        res.status(200).json(usuariosConIconos);
     } catch (err) {
         console.error(err);
         res.status(500).json({ error: "Error del servidor al obtener usuarios" });
     }
-})
+});
 
 // GET /usuarios/:id
-
 usuarios.get('/:id',  async (req, res) => {
     try {
         intentarConseguirUsuarioPorId(req.params.id)
@@ -43,7 +49,6 @@ usuarios.get('/:id',  async (req, res) => {
 })
 
 // POST /usuarios
-
 usuarios.post('/',
     (req, res, next) => {
         iconoUsuarioUpload.single('icono')(req, res, function(err) {
@@ -102,7 +107,6 @@ usuarios.post('/',
 });
 
 // PATCH /usuarios/:id
-
 usuarios.patch(
     '/:id',
     (req, res, next) => {
@@ -191,7 +195,6 @@ usuarios.patch(
 );
 
 // DELETE /usuarios/:id
-
 usuarios.delete('/:id', async (req, res) => {
     try {
         const { id } = req.params;
