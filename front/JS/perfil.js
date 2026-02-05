@@ -1,7 +1,6 @@
 import { crearCard } from './componentes/card.js';
 import { abrirCardModal } from './componentes/modal.js';
 import {
-    API_IMAGENES_URL,
     API_LIKES_URL,
     API_PUBLICACIONES_URL,
     API_TABLEROS_URL,
@@ -113,7 +112,7 @@ async function cargarTableros(usuarioId) {
         .slice(0, 3)
         .map(p => {
           if (p.imagen.startsWith("http")) return p.imagen;
-          return `${API_IMAGENES_URL}/${p.imagen}`;
+          return `${p.imagen}`;
         });
 
       const div = document.createElement('div');

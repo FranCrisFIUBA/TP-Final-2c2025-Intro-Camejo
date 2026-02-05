@@ -1,4 +1,4 @@
-import {API_COMENTARIOS_URL, API_IMAGENES_URL, API_LIKES_URL, API_TABLEROS_URL} from "../api.js";
+import {API_COMENTARIOS_URL, API_LIKES_URL, API_TABLEROS_URL} from "../api.js";
 
 const AVATAR_DEFAULT = './img/avatar-default.jpg';
 
@@ -131,7 +131,7 @@ export function abrirCardModal(card) {
             ${tieneImagen ? `
             <div class="modal-image-section">
                 <div class="modal-image-wrapper ratio-${imageRatio}">
-                    <img src="${API_IMAGENES_URL}/${card.imagen}" class="modal-image">
+                    <img src="${card.imagen}" class="modal-image">
                 </div>
                 <div class="modal-author-info">
                     <div class="modal-author-details-wrapper" id="irAPerfil" style="display:flex; align-items:center; gap:12px; cursor:pointer;">

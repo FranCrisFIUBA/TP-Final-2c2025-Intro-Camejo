@@ -1,5 +1,3 @@
-import {API_IMAGENES_URL} from "../api.js";
-
 export function crearCard(
     card,
     {
@@ -19,7 +17,7 @@ export function crearCard(
     cardDiv.setAttribute("data-id", card.id);
 
     const img = document.createElement("img");
-    img.src = card.imagen ? `${API_IMAGENES_URL}/${card.imagen}` : '';
+    img.src = card.imagen ? `${card.imagen}` : '';
     img.alt = "Imagen de " + (card.usuario_nombre || '');
     img.className = "card-image";
 

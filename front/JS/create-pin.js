@@ -1,4 +1,4 @@
-import {API_IMAGENES_URL, API_PUBLICACIONES_URL} from "./api.js";
+import {API_PUBLICACIONES_URL} from "./api.js";
 
 const formPublicacion = document.getElementById("form-publicacion");
 const fileInput = document.getElementById("file-input");
@@ -22,7 +22,7 @@ if (pinParaEditar) {
     formPublicacion.querySelector('[name="etiquetas"]').value = pinParaEditar.etiquetas || "";
     
     if (pinParaEditar.imagen) {
-        previewImg.src = `${API_IMAGENES_URL}${pinParaEditar.imagen}`;
+        previewImg.src = `${pinParaEditar.imagen}`;
         previewImg.style.display = "block";
         textPrompt.style.display = "none";
     }
