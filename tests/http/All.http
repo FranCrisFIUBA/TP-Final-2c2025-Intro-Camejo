@@ -1,0 +1,6 @@
+### Este archivo ejecuta todas las requests en el orden correspondiente
+
+###
+run ./usuarios/Post.http
+###
+run ./likes/Post.http
