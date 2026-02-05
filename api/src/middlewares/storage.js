@@ -28,36 +28,25 @@ if (USE_S3) {
         secretAccessKey: process.env.AWS_SECRET_KEY,
         region: process.env.AWS_REGION,
     });
-
-    // Cliente AWS SDK v3 para URLs firmadas
-    s3ClientV3 = new S3Client({
-        region: process.env.AWS_REGION,
-        credentials: {
-            accessKeyId: process.env.AWS_ACCESS_KEY,
-            secretAccessKey: process.env.AWS_SECRET_KEY,
-        },
-    });
 } else {
     console.log("=== USANDO ALMACENAMIENTO LOCAL ===");
 }
 
 // --- Función para generar URLs temporales ---
 export async function getFileUrl(key, folder) {
-    if (!key) return null;
+    console.log("Generando url: ");
+    console.log("Key: ", key);
+    console.log("Folder: ", folder);
+    console.log("USE_S3: ", USE_S3);
 
-    if (USE_S3) {
-        try {
-            const command = new GetObjectCommand({ Bucket: BUCKET_NAME, Key: key });
-            const url = await getSignedUrl(s3ClientV3, command, { expiresIn: 600 });
-            console.log("URL firmado generado:", url);
-            return url;
-        } catch (err) {
-            console.error("Error generando URL firmado:", err);
-            return null;
-        }
-    } else {
-        return `${API_BASE_URL}/${folder}/${key}`;
-    }
+   const url = USE_S3 ? s3.getSignedUrl('getObject', {
+        Bucket: BUCKET_NAME,
+        Key: key,
+        Expires: 600,
+    }) : `${API_BASE_URL}/${folder}/${key}`;
+
+   console.log("URL: ", url);
+   return url;
 }
 
 // --- Eliminar archivo ---
