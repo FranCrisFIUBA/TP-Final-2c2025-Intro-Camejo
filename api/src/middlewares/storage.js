@@ -5,8 +5,6 @@ import fs from "fs";
 import dotenv from "dotenv";
 import AWS from "aws-sdk";
 import multerS3 from "multer-s3";
-import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
-import { S3Client, GetObjectCommand } from "@aws-sdk/client-s3";
 
 dotenv.config();
 
