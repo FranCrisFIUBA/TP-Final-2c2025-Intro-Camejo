@@ -32,7 +32,7 @@ publicaciones.get('/', async (req, res) => {
         // Mapear imagenes para devolver URL completa segun storage
         const publicacionesConUrls = result.rows.map(publicacion => ({
             ...publicacion,
-            imagen: getFileUrl(publicacion.imagen)
+            imagen: getFileUrl(publicacion.imagen, "imagenes")
         }));
 
         res.status(200).json(publicacionesConUrls);
@@ -51,7 +51,7 @@ publicaciones.get('/:id', async (req, res) => {
         }
 
         // Reemplazar imagen por URL segun storage
-        publicacion.imagen = getFileUrl(publicacion.imagen);
+        publicacion.imagen = getFileUrl(publicacion.imagen, "imagenes");
 
         res.status(200).json(publicacion);
     } catch (err) {
@@ -81,8 +81,8 @@ publicaciones.get('/usuario/:usuario_id', async (req, res) => {
         // Mapear URLs según storage dinámico
         const publicacionesConUrls = result.rows.map(pub => ({
             ...pub,
-            imagen: getFileUrl(pub.imagen),
-            usuario_icono: pub.usuario_icono ? getFileUrl(pub.usuario_icono) : null
+            imagen: getFileUrl(pub.imagen, "imagenes"),
+            usuario_icono: pub.usuario_icono ? getFileUrl(pub.usuario_icono, "iconos") : null
         }));
 
         res.status(200).json(publicacionesConUrls);
@@ -249,7 +249,7 @@ publicaciones.patch(
             // Mapear URL de la imagen según storage dinámico
             const publicacionActualizada = {
                 ...result.rows[0],
-                imagen: result.rows[0].imagen ? getFileUrl(result.rows[0].imagen) : null
+                imagen: result.rows[0].imagen ? await getFileUrl(result.rows[0].imagen, "imagenes") : null
             };
 
             res.status(200).json(publicacionActualizada);
